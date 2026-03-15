@@ -8,25 +8,25 @@ CREATE DATABASE IF NOT EXISTS sge
 USE sge;
 
 -- =========================================================
--- TABELAS BÁSICAS
+-- TABELAS BÁSICAS (Alunos, Cursos, Empresas, Supervisores, Orientadores)
 -- =========================================================
 
 CREATE TABLE cursos (
-  id              INT AUTO_INCREMENT PRIMARY KEY,
-  nome            VARCHAR(255) NOT NULL,
-  carga_horaria   INT NOT NULL,
+  id                INT AUTO_INCREMENT PRIMARY KEY,
+  nome              VARCHAR(255) NOT NULL,
+  carga_horaria     INT NOT NULL,
   email_coordenacao VARCHAR(255)
 );
 
 CREATE TABLE alunos (
-  id           INT AUTO_INCREMENT PRIMARY KEY,
-  matricula    INT NOT NULL UNIQUE,
-  nome         VARCHAR(255) NOT NULL,
-  cpf          CHAR(11) NOT NULL UNIQUE,
-  telefone     VARCHAR(20),
-  email        VARCHAR(255),
-  data_nasc    DATE,
-  id_curso     INT NOT NULL,
+  id         INT AUTO_INCREMENT PRIMARY KEY,
+  matricula  INT NOT NULL UNIQUE,
+  nome       VARCHAR(255) NOT NULL,
+  cpf        VARCHAR(14) NOT NULL UNIQUE,
+  telefone   VARCHAR(20),
+  email      VARCHAR(255),
+  data_nasc  DATE,
+  id_curso   INT NOT NULL,
   CONSTRAINT fk_alunos_cursos
     FOREIGN KEY (id_curso) REFERENCES cursos(id)
       ON UPDATE CASCADE
@@ -34,25 +34,25 @@ CREATE TABLE alunos (
 );
 
 CREATE TABLE empresas (
-  id                   INT AUTO_INCREMENT PRIMARY KEY,
-  cnpj                 CHAR(14) NOT NULL UNIQUE,
-  razao_social         VARCHAR(255) NOT NULL,
-  nome_fantasia        VARCHAR(255),
-  endereco             VARCHAR(255),
-  telefone             VARCHAR(20),
-  email                VARCHAR(255),
-  representante        VARCHAR(255),
-  cargo_representante  VARCHAR(255)
+  id                 INT AUTO_INCREMENT PRIMARY KEY,
+  CNPJ_NibocoProd    CHAR(14) NOT NULL UNIQUE,
+  nome_social        VARCHAR(255) NOT NULL,
+  nome_fantasia      VARCHAR(255),
+  endereco           VARCHAR(255),
+  telefone           VARCHAR(20),
+  email              VARCHAR(255),
+  representante      VARCHAR(255),
+  cargo              VARCHAR(255)
 );
 
 CREATE TABLE supervisores (
-  id            INT AUTO_INCREMENT PRIMARY KEY,
-  nome          VARCHAR(255) NOT NULL,
-  cpf           CHAR(11) NOT NULL UNIQUE,
-  cargo         VARCHAR(255),
-  telefone      VARCHAR(20),
-  email         VARCHAR(255),
-  id_empresa    INT NOT NULL,
+  id          INT AUTO_INCREMENT PRIMARY KEY,
+  nome        VARCHAR(255) NOT NULL,
+  cpf         VARCHAR(14) NOT NULL UNIQUE,
+  cargo       VARCHAR(255),
+  telefone    VARCHAR(20),
+  email       VARCHAR(255),
+  id_empresa  INT NOT NULL,
   CONSTRAINT fk_supervisores_empresas
     FOREIGN KEY (id_empresa) REFERENCES empresas(id)
       ON UPDATE CASCADE
@@ -60,13 +60,33 @@ CREATE TABLE supervisores (
 );
 
 CREATE TABLE orientadores (
-  id          INT AUTO_INCREMENT PRIMARY KEY,
-  nome        VARCHAR(255) NOT NULL,
-  email       VARCHAR(255),
-  telefone    VARCHAR(20),
-  id_curso    INT,
-  CONSTRAINT fk_orientadores_cursos
-    FOREIGN KEY (id_curso) REFERENCES cursos(id)
+  id        INT AUTO_INCREMENT PRIMARY KEY,
+  nome      VARCHAR(255) NOT NULL,
+  email     VARCHAR(255),
+  telefone  VARCHAR(20)
+);
+
+-- =========================================================
+-- DOCUMENTOS (MODELO E DOCUMENTOS DO ESTÁGIO)
+-- =========================================================
+
+CREATE TABLE documentos_modelo (
+  id                          INT AUTO_INCREMENT PRIMARY KEY,
+  termo_de_compromisso        VARCHAR(255),
+  plano_de_estagio            VARCHAR(255),
+  ficha_de_avaliacao_empresa  VARCHAR(255),
+  ficha_de_avaliacao_aluno    VARCHAR(255)
+);
+
+CREATE TABLE documentos_estagio (
+  id                          INT AUTO_INCREMENT PRIMARY KEY,
+  termo_de_compromisso        VARCHAR(255),
+  plano_de_estagio            VARCHAR(255),
+  ficha_de_avaliacao_empresa  VARCHAR(255),
+  ficha_de_avaliacao_aluno    VARCHAR(255),
+  id_documentos_modelo        INT,
+  CONSTRAINT fk_documentos_estagio_modelo
+    FOREIGN KEY (id_documentos_modelo) REFERENCES documentos_modelo(id)
       ON UPDATE CASCADE
       ON DELETE SET NULL
 );
@@ -76,16 +96,24 @@ CREATE TABLE orientadores (
 -- =========================================================
 
 CREATE TABLE estagios (
-  id              INT AUTO_INCREMENT PRIMARY KEY,
-  data_inicio     DATE NOT NULL,
-  data_fim        DATE,
-  carga_horaria   INT NOT NULL,
-  bolsa_auxilio   DECIMAL(10,2),
-  situacao        VARCHAR(50) NOT NULL, -- ex.: Ativo, Concluido, Cancelado
-  id_aluno        INT NOT NULL,
-  id_empresa      INT NOT NULL,
-  id_supervisor   INT,
-  id_orientador   INT,
+  id                     INT AUTO_INCREMENT PRIMARY KEY,
+  dt_registro            DATE NOT NULL,
+  beneficio_alimentacao  BOOLEAN,
+  beneficio_transporte   BOOLEAN,
+  beneficio_impresso     BOOLEAN,
+  bolsa_auxilio          DECIMAL(10,2),
+  data_inicio            DATE NOT NULL,
+  data_fim               DATE,
+  dt_rescisao            DATE,
+  dt_renovacao           DATE,
+  carga_horaria_total    INT,
+  carga_horaria_semanal  INT,
+  situacao               VARCHAR(50) NOT NULL,
+  id_aluno               INT NOT NULL,
+  id_empresa             INT NOT NULL,
+  id_supervisor          INT,
+  id_orientador          INT,
+  id_documento           INT,
   CONSTRAINT fk_estagios_alunos
     FOREIGN KEY (id_aluno) REFERENCES alunos(id)
       ON UPDATE CASCADE
@@ -101,71 +129,25 @@ CREATE TABLE estagios (
   CONSTRAINT fk_estagios_orientadores
     FOREIGN KEY (id_orientador) REFERENCES orientadores(id)
       ON UPDATE CASCADE
+      ON DELETE SET NULL,
+  CONSTRAINT fk_estagios_documentos
+    FOREIGN KEY (id_documento) REFERENCES documentos_estagio(id)
+      ON UPDATE CASCADE
       ON DELETE SET NULL
 );
 
--- Caso queira uma relação N:N entre alunos e estágios
--- (por exemplo, histórico de estágios de um aluno),
--- use a tabela abaixo em vez de ligar direto em estagios.id_aluno.
-
--- CREATE TABLE rel_aluno_estagio (
---   id        INT AUTO_INCREMENT PRIMARY KEY,
---   id_aluno  INT NOT NULL,
---   id_estagio INT NOT NULL,
---   CONSTRAINT fk_rel_aluno_estagio_alunos
---     FOREIGN KEY (id_aluno) REFERENCES alunos(id),
---   CONSTRAINT fk_rel_aluno_estagio_estagios
---     FOREIGN KEY (id_estagio) REFERENCES estagios(id)
--- );
-
 -- =========================================================
--- DOCUMENTOS E CONTROLE
+-- DIAS DA SEMANA DO ESTÁGIO
 -- =========================================================
 
-CREATE TABLE documentos_aluno (
-  id           INT AUTO_INCREMENT PRIMARY KEY,
-  id_aluno     INT NOT NULL,
-  tipo         VARCHAR(100) NOT NULL, -- ex.: RG, CPF, Comprovante de Matricula
-  caminho_arquivo VARCHAR(255),
-  data_envio   DATE,
-  CONSTRAINT fk_documentos_aluno_alunos
-    FOREIGN KEY (id_aluno) REFERENCES alunos(id)
-      ON UPDATE CASCADE
-      ON DELETE CASCADE
-);
-
-CREATE TABLE documentos_estagio (
+CREATE TABLE dia_semana_estagio (
   id             INT AUTO_INCREMENT PRIMARY KEY,
+  horario_inicio TIME NOT NULL,
+  horario_saida  TIME NOT NULL,
   id_estagio     INT NOT NULL,
-  tipo           VARCHAR(100) NOT NULL, -- ex.: Termo de Compromisso, Relatorio Parcial, etc.
-  caminho_arquivo VARCHAR(255),
-  data_envio     DATE,
-  CONSTRAINT fk_documentos_estagio_estagios
+  dia_semana     ENUM('SEGUNDA','TERCA','QUARTA','QUINTA','SEXTA','SABADO','DOMINGO') NOT NULL,
+  CONSTRAINT fk_dia_semana_estagio_estagios
     FOREIGN KEY (id_estagio) REFERENCES estagios(id)
       ON UPDATE CASCADE
       ON DELETE CASCADE
 );
-
-CREATE TABLE observacoes (
-  id          INT AUTO_INCREMENT PRIMARY KEY,
-  id_estagio  INT NOT NULL,
-  data_registro DATE NOT NULL,
-  descricao   TEXT NOT NULL,
-  autor       VARCHAR(255), -- quem registrou (coordenador, orientador, etc.)
-  CONSTRAINT fk_observacoes_estagios
-    FOREIGN KEY (id_estagio) REFERENCES estagios(id)
-      ON UPDATE CASCADE
-      ON DELETE CASCADE
-);
-
-CREATE TABLE acompanhamentos (
-  id           INT AUTO_INCREMENT PRIMARY KEY,
-  id_estagio   INT NOT NULL,
-  data_visita  DATE NOT NULL,
-  parecer      TEXT,
-  CONSTRAINT fk_acompanhamentos_estagios
-    FOREIGN KEY (id_estagio) REFERENCES estagios(id)
-      ON UPDATE CASCADE
-      ON DELETE CASCADE
-);
-
