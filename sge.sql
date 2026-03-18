@@ -1,15 +1,8 @@
--- Script de criação do banco de dados de estágios (SGE)
--- Ajuste o nome do banco, tipos e restrições conforme o SGBD que estiver usando.
-
 CREATE DATABASE IF NOT EXISTS sge
   DEFAULT CHARACTER SET utf8mb4
   DEFAULT COLLATE utf8mb4_unicode_ci;
 
 USE sge;
-
--- =========================================================
--- TABELAS BÁSICAS (Alunos, Cursos, Empresas, Supervisores, Orientadores)
--- =========================================================
 
 CREATE TABLE cursos (
   id                INT AUTO_INCREMENT PRIMARY KEY,
@@ -66,10 +59,6 @@ CREATE TABLE orientadores (
   telefone  VARCHAR(20)
 );
 
--- =========================================================
--- DOCUMENTOS (MODELO E DOCUMENTOS DO ESTÁGIO)
--- =========================================================
-
 CREATE TABLE documentos_modelo (
   id                          INT AUTO_INCREMENT PRIMARY KEY,
   termo_de_compromisso        VARCHAR(255),
@@ -90,10 +79,6 @@ CREATE TABLE documentos_estagio (
       ON UPDATE CASCADE
       ON DELETE SET NULL
 );
-
--- =========================================================
--- ESTÁGIOS
--- =========================================================
 
 CREATE TABLE estagios (
   id                     INT AUTO_INCREMENT PRIMARY KEY,
@@ -135,10 +120,6 @@ CREATE TABLE estagios (
       ON UPDATE CASCADE
       ON DELETE SET NULL
 );
-
--- =========================================================
--- DIAS DA SEMANA DO ESTÁGIO
--- =========================================================
 
 CREATE TABLE dia_semana_estagio (
   id             INT AUTO_INCREMENT PRIMARY KEY,
