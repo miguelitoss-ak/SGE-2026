@@ -22,8 +22,6 @@ CREATE TABLE alunos (
   id_curso   INT NOT NULL,
   CONSTRAINT fk_alunos_cursos
     FOREIGN KEY (id_curso) REFERENCES cursos(id)
-      ON UPDATE CASCADE
-      ON DELETE RESTRICT
 );
 
 CREATE TABLE empresas (
@@ -48,8 +46,6 @@ CREATE TABLE supervisores (
   id_empresa  INT NOT NULL,
   CONSTRAINT fk_supervisores_empresas
     FOREIGN KEY (id_empresa) REFERENCES empresas(id)
-      ON UPDATE CASCADE
-      ON DELETE RESTRICT
 );
 
 CREATE TABLE orientadores (
@@ -76,8 +72,6 @@ CREATE TABLE documentos_estagio (
   id_documentos_modelo        INT,
   CONSTRAINT fk_documentos_estagio_modelo
     FOREIGN KEY (id_documentos_modelo) REFERENCES documentos_modelo(id)
-      ON UPDATE CASCADE
-      ON DELETE SET NULL
 );
 
 CREATE TABLE estagios (
@@ -100,25 +94,15 @@ CREATE TABLE estagios (
   id_orientador          INT,
   id_documento           INT,
   CONSTRAINT fk_estagios_alunos
-    FOREIGN KEY (id_aluno) REFERENCES alunos(id)
-      ON UPDATE CASCADE
-      ON DELETE RESTRICT,
+    FOREIGN KEY (id_aluno) REFERENCES alunos(id),
   CONSTRAINT fk_estagios_empresas
-    FOREIGN KEY (id_empresa) REFERENCES empresas(id)
-      ON UPDATE CASCADE
-      ON DELETE RESTRICT,
+    FOREIGN KEY (id_empresa) REFERENCES empresas(id),
   CONSTRAINT fk_estagios_supervisores
-    FOREIGN KEY (id_supervisor) REFERENCES supervisores(id)
-      ON UPDATE CASCADE
-      ON DELETE SET NULL,
+    FOREIGN KEY (id_supervisor) REFERENCES supervisores(id),
   CONSTRAINT fk_estagios_orientadores
-    FOREIGN KEY (id_orientador) REFERENCES orientadores(id)
-      ON UPDATE CASCADE
-      ON DELETE SET NULL,
+    FOREIGN KEY (id_orientador) REFERENCES orientadores(id),
   CONSTRAINT fk_estagios_documentos
     FOREIGN KEY (id_documento) REFERENCES documentos_estagio(id)
-      ON UPDATE CASCADE
-      ON DELETE SET NULL
 );
 
 CREATE TABLE dia_semana_estagio (
@@ -129,6 +113,4 @@ CREATE TABLE dia_semana_estagio (
   dia_semana     ENUM('SEGUNDA','TERCA','QUARTA','QUINTA','SEXTA','SABADO','DOMINGO') NOT NULL,
   CONSTRAINT fk_dia_semana_estagio_estagios
     FOREIGN KEY (id_estagio) REFERENCES estagios(id)
-      ON UPDATE CASCADE
-      ON DELETE CASCADE
 );
