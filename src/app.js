@@ -31,7 +31,24 @@ app.use('/orientadores', orientadorRoutes);
 app.use('/documentos', documentoRoutes);
 app.use('/horarios', horarioRoutes);
 
-// Tratamento de erros
+//rotas responsáveis pela autenticação (login, cadastro, etc.)
+const authRoutes = require('./routes/authRoutes');
+
+// Importa as rotas públicas, que não requerem autenticação
+const publicRoutes = require('./routes/publicRoutes');
+
+// Importa as rotas protegidas, que só podem ser acessadas com um token JWT 
+const protectedRoutes = require('./routes/protectedRoutes');
+
+// Define o prefixo '/auth' para as rotas de autenticação
+app.use('/auth', authRoutes);
+
+// Define o prefixo '/public' para rotas acessíveis sem autenticação
+app.use('/public', publicRoutes);
+
+// Define o prefixo '/protected' para rotas que exigem autenticação com JWT
+app.use('/protected', protectedRoutes);
+
 app.use(errorMiddleware);
 
 module.exports = app;
