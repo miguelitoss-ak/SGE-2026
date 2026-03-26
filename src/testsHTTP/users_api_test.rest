@@ -1,0 +1,39 @@
+### Configurações de Variáveis
+@baseUrl = http://localhost:3000
+@email = teste@exemplo.com
+@senha = 123456
+
+### 1. Registrar um novo usuário
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+    "email": "{{email}}",
+    "password": "{{senha}}"
+}
+
+### 2. Realizar Login (Para obter o Token)
+# @name login
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+    "email": "{{email}}",
+    "password": "{{senha}}"
+}
+
+### Captura o token da resposta do login acima
+@authToken = {{login.response.body.token}}
+
+### 3. Testar Rota Protecionada (Método /me)
+GET {{baseUrl}}/auth/me
+Authorization: Bearer {{authToken}}
+
+### 4. Testar Login com Senha Errada (Deve retornar 401)
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+    "email": "{{email}}",
+    "password": "senha_errada"
+}
