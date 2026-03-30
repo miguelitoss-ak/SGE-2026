@@ -23,6 +23,11 @@ class AuthController {
       return res.status(statusCode).json({ error: error.message });
     }
   }
+
+  static async me(req, res) {
+    // `authenticateToken` popula `req.user` com { id, email, role }
+    return res.status(200).json({ user: req.user });
+  }
 }
 
 module.exports = AuthController;
