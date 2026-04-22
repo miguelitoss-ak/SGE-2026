@@ -2,12 +2,18 @@ const EstagioModel = require('../models/estagioModel');
 
 class EstagioService {
   static async createEstagio(data) {
-    // 1. Regra de Negócio: Validar datas
     const inicio = new Date(data.data_inicio);
-    const fim = new Date(data.data_fim);
-
-    if (fim <= inicio) {
-      throw new Error("A data de término deve ser posterior à data de início.");
+    if (Number.isNaN(inicio.getTime())) {
+      throw new Error('Data de início inválida.');
+    }
+    if (data.data_fim) {
+      const fim = new Date(data.data_fim);
+      if (Number.isNaN(fim.getTime())) {
+        throw new Error('Data de término inválida.');
+      }
+      if (fim <= inicio) {
+        throw new Error("A data de término deve ser posterior à data de início.");
+      }
     }
 
     // 2. Regra de Negócio: Validar se a carga horária semanal não ultrapassa o limite (ex: 30h)

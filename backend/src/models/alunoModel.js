@@ -8,16 +8,24 @@ class AlunoModel {
 
   // Cria um novo aluno usando os campos do seu SQL
   static async create(aluno) {
-    const { matricula, nome, cpf, telefone, email, data_nasc, id_curso } = aluno;
+    const { matricula, nome, cpf, telefone, email, data_nasc, id_curso, id_orientador } = aluno;
+    const oid =
+      id_orientador === '' || id_orientador === undefined || id_orientador === null
+        ? null
+        : Number(id_orientador);
+    const emailNorm =
+      email === undefined || email === null || String(email).trim() === '' ? null : String(email).trim();
+
     const created = await prisma.aluno.create({
       data: {
         matricula,
         nome,
         cpf,
         telefone,
-        email,
+        email: emailNorm,
         data_nasc,
         id_curso,
+        id_orientador: Number.isFinite(oid) ? oid : null,
       },
     });
     return created.id;

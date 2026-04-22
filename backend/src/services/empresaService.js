@@ -1,5 +1,6 @@
 const EmpresaModel = require('../models/empresaModel');
-const validateEmail = require('../utils/validateEmail'); // [cite: 133]
+const UsuarioEmpresaModel = require('../models/usuarioEmpresaModel');
+const validateEmail = require('../utils/validateEmail');
 
 class EmpresaService {
   static async getAllEmpresas() {
@@ -7,9 +8,26 @@ class EmpresaService {
   }
 
   static async createEmpresa(empresaData) {
-    // Validação de e-mail (utilitário reutilizável) [cite: 133]
     if (empresaData.email && !validateEmail(empresaData.email)) {
-      throw new Error("Formato de email da empresa inválido."); // [cite: 133]
+      throw new Error("Formato de email da empresa inválido.");
+    }
+
+    if (empresaData.inscricao_estadual != null && String(empresaData.inscricao_estadual).trim() !== '') {
+      const ie = String(empresaData.inscricao_estadual).trim();
+      if (ie.length < 6 || ie.length > 8) {
+        throw new Error('Inscrição estadual deve ter entre 6 e 8 caracteres.');
+      }
+    }
+
+    if (empresaData.id_usuario_empresa != null && empresaData.id_usuario_empresa !== '') {
+      const uid = Number(empresaData.id_usuario_empresa);
+      if (!Number.isFinite(uid)) {
+        throw new Error('Identificador do usuário empresa inválido.');
+      }
+      const usuario = await UsuarioEmpresaModel.findById(uid);
+      if (!usuario) {
+        throw new Error('Usuário empresa não encontrado.');
+      }
     }
 
     // Regra de Negócio: Validar se o CNPJ já existe

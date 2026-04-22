@@ -11,29 +11,52 @@ CREATE TABLE cursos (
   email_coordenacao VARCHAR(255)
 );
 
+CREATE TABLE orientadores (
+  id        INT AUTO_INCREMENT PRIMARY KEY,
+  nome      VARCHAR(255) NOT NULL,
+  email     VARCHAR(255),
+  telefone  VARCHAR(20)
+);
+
 CREATE TABLE alunos (
-  id         INT AUTO_INCREMENT PRIMARY KEY,
-  matricula  INT NOT NULL UNIQUE,
-  nome       VARCHAR(255) NOT NULL,
-  cpf        VARCHAR(14) NOT NULL UNIQUE,
-  telefone   VARCHAR(20),
-  email      VARCHAR(255),
-  data_nasc  DATE,
-  id_curso   INT NOT NULL,
+  id             INT AUTO_INCREMENT PRIMARY KEY,
+  matricula      INT NOT NULL UNIQUE,
+  nome           VARCHAR(255) NOT NULL,
+  cpf            VARCHAR(14) NOT NULL UNIQUE,
+  telefone       VARCHAR(20),
+  email          VARCHAR(255),
+  data_nasc      DATE,
+  id_curso       INT NOT NULL,
+  id_orientador  INT,
   CONSTRAINT fk_alunos_cursos
-    FOREIGN KEY (id_curso) REFERENCES cursos(id)
+    FOREIGN KEY (id_curso) REFERENCES cursos(id),
+  CONSTRAINT fk_alunos_orientadores
+    FOREIGN KEY (id_orientador) REFERENCES orientadores(id)
+);
+
+CREATE TABLE usuario_empresa (
+  id         INT AUTO_INCREMENT PRIMARY KEY,
+  nome       VARCHAR(255) NOT NULL,
+  email      VARCHAR(255) NOT NULL UNIQUE,
+  senha      VARCHAR(255) NOT NULL,
+  telefone   VARCHAR(20),
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE empresas (
-  id                 INT AUTO_INCREMENT PRIMARY KEY,
-  CNPJ_NibocoProd    CHAR(14) NOT NULL UNIQUE,
-  nome_social        VARCHAR(255) NOT NULL,
-  nome_fantasia      VARCHAR(255),
-  endereco           VARCHAR(255),
-  telefone           VARCHAR(20),
-  email              VARCHAR(255),
-  representante      VARCHAR(255),
-  cargo              VARCHAR(255)
+  id                   INT AUTO_INCREMENT PRIMARY KEY,
+  CNPJ_NibocoProd      CHAR(14) NOT NULL UNIQUE,
+  nome_social          VARCHAR(255) NOT NULL,
+  nome_fantasia        VARCHAR(255),
+  endereco             VARCHAR(255),
+  telefone             VARCHAR(20),
+  email                VARCHAR(255),
+  representante        VARCHAR(255),
+  cargo                VARCHAR(255),
+  inscricao_estadual   VARCHAR(8),
+  id_usuario_empresa   INT,
+  CONSTRAINT fk_empresas_usuario_empresa
+    FOREIGN KEY (id_usuario_empresa) REFERENCES usuario_empresa(id)
 );
 
 CREATE TABLE supervisores (
@@ -42,17 +65,10 @@ CREATE TABLE supervisores (
   cpf         VARCHAR(14) NOT NULL UNIQUE,
   cargo       VARCHAR(255),
   telefone    VARCHAR(20),
-  email       VARCHAR(255),
+  email       VARCHAR(255), 
   id_empresa  INT NOT NULL,
   CONSTRAINT fk_supervisores_empresas
     FOREIGN KEY (id_empresa) REFERENCES empresas(id)
-);
-
-CREATE TABLE orientadores (
-  id        INT AUTO_INCREMENT PRIMARY KEY,
-  nome      VARCHAR(255) NOT NULL,
-  email     VARCHAR(255),
-  telefone  VARCHAR(20)
 );
 
 CREATE TABLE documentos_modelo (
@@ -66,7 +82,6 @@ CREATE TABLE documentos_modelo (
 CREATE TABLE documentos_estagio (
   id                          INT AUTO_INCREMENT PRIMARY KEY,
   termo_de_compromisso        VARCHAR(255),
-  plano_de_estagio            VARCHAR(255),
   ficha_de_avaliacao_empresa  VARCHAR(255),
   ficha_de_avaliacao_aluno    VARCHAR(255),
   id_documentos_modelo        INT,

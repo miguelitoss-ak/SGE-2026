@@ -1,4 +1,5 @@
 const AlunoModel = require('../models/alunoModel');
+const OrientadorModel = require('../models/orientadorModel');
 const validateEmail = require('../utils/validateEmail'); 
 
 class AlunoService {
@@ -7,9 +8,16 @@ class AlunoService {
   }
 
   static async createAluno(alunoData) {
-    // 1. Regra de Negócio: Validar e-mail [cite: 133, 162]
-    if (!validateEmail(alunoData.email)) {
+    const emailStr = alunoData.email != null ? String(alunoData.email).trim() : '';
+    if (emailStr !== '' && !validateEmail(emailStr)) {
       throw new Error("Formato de email inválido."); 
+    }
+
+    if (alunoData.id_orientador != null && alunoData.id_orientador !== '') {
+      const orientador = await OrientadorModel.findById(Number(alunoData.id_orientador));
+      if (!orientador) {
+        throw new Error('Orientador informado não encontrado.');
+      }
     }
 
     // 2. Regra de Negócio: Verificar se o CPF já existe
