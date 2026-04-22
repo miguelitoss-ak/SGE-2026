@@ -38,7 +38,7 @@ class UserService {
       throw new Error('Usuario nao encontrado');
     }
 
-    const passwordIsValid = await bcrypt.compare(password, user.password);
+    const passwordIsValid = await bcrypt.compare(password, user.senha);
     if (!passwordIsValid) {
       throw new Error('Senha invalida');
     }

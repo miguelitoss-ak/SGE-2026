@@ -17,11 +17,10 @@ class DocumentoModel {
 
   // --- Métodos para Documentos do Estágio ---
   static async createDocumentoEstagio(data) {
-    const { termo_de_compromisso, plano_de_estagio, ficha_de_avaliacao_empresa, ficha_de_avaliacao_aluno, id_documentos_modelo } = data;
+    const { termo_de_compromisso, ficha_de_avaliacao_empresa, ficha_de_avaliacao_aluno, id_documentos_modelo } = data;
     const created = await prisma.documentosEstagio.create({
       data: {
         termo_de_compromisso,
-        plano_de_estagio,
         ficha_de_avaliacao_empresa,
         ficha_de_avaliacao_aluno,
         id_documentos_modelo,

@@ -13,7 +13,7 @@ class UserModel {
     return prisma.user.create({
       data: {
         email,
-        password,
+        senha: password,
         role,
       },
       select: {

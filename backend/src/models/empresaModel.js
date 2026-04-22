@@ -24,7 +24,22 @@ class EmpresaModel {
 
   // Cria uma nova empresa conforme seu SQL
   static async create(empresa) {
-    const { CNPJ_NibocoProd, nome_social, nome_fantasia, endereco, telefone, email, representante, cargo } = empresa;
+    const {
+      CNPJ_NibocoProd,
+      nome_social,
+      nome_fantasia,
+      endereco,
+      telefone,
+      email,
+      representante,
+      cargo,
+      inscricao_estadual,
+      id_usuario_empresa,
+    } = empresa;
+    const uid =
+      id_usuario_empresa === '' || id_usuario_empresa === undefined || id_usuario_empresa === null
+        ? null
+        : Number(id_usuario_empresa);
     const created = await prisma.empresa.create({
       data: {
         CNPJ_NibocoProd,
@@ -35,6 +50,8 @@ class EmpresaModel {
         email,
         representante,
         cargo,
+        inscricao_estadual: inscricao_estadual != null ? String(inscricao_estadual).trim() || null : null,
+        id_usuario_empresa: Number.isFinite(uid) ? uid : null,
       },
     });
     return created.id;
