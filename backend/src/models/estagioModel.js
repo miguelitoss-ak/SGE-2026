@@ -58,6 +58,22 @@ class EstagioModel {
 
     return created.id;
   }
+
+  static async updateOrientador(id, id_orientador) {
+    return await prisma.estagio.update({
+      where: { 
+        id: Number(id) 
+      },
+      data: {
+        // O Prisma entende que se id_orientador é uma FK, ele deve atualizar o campo
+        id_orientador: id_orientador ? Number(id_orientador) : null
+      },
+      include: {
+        // Isso retorna os dados do orientador para que o frontend saiba quem foi selecionado
+        orientador: true 
+      }
+    });
+  }
 }
 
 module.exports = EstagioModel;

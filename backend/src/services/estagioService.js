@@ -24,6 +24,24 @@ class EstagioService {
   static async getAll() {
     return await EstagioModel.findAll();
   }
+
+  static async vincularOrientador(idEstagio, id_orientador) {
+    if (!idEstagio) throw new Error("O ID do estágio é obrigatório.");
+    if (!id_orientador) throw new Error("O ID do orientador é obrigatório.");
+
+    // 2. Aqui você poderia adicionar uma regra de negócio extra, ex:
+    // "Um estágio só pode receber orientador se estiver ATIVO"
+    
+    // 3. Chama o model para atualizar o banco
+    const estagioAtualizado = await EstagioModel.updateOrientador(idEstagio, id_orientador);
+
+    if (!estagioAtualizado) {
+      throw new Error("Não foi possível encontrar o estágio para vincular o orientador.");
+    }
+
+    return estagioAtualizado;
+  }
+
 }
 
 module.exports = EstagioService;
