@@ -1,6 +1,22 @@
 const EstagioModel = require('../models/estagioModel');
+const OrientadorModel = require('../models/orientadorModel');
 
 class EstagioService {
+  static async _resolveOrientadorId(id_orientador) {
+    if (id_orientador === undefined || id_orientador === null || id_orientador === '') {
+      throw new Error('Todo estágio deve ter um orientador (id_orientador é obrigatório).');
+    }
+    const id = Number(id_orientador);
+    if (!Number.isFinite(id) || id < 1) {
+      throw new Error('ID do orientador inválido.');
+    }
+    const orientador = await OrientadorModel.findById(id);
+    if (!orientador) {
+      throw new Error('Orientador não encontrado.');
+    }
+    return id;
+  }
+
   static async createEstagio(data) {
     const inicio = new Date(data.data_inicio);
     if (Number.isNaN(inicio.getTime())) {
@@ -16,13 +32,13 @@ class EstagioService {
       }
     }
 
-    // 2. Regra de Negócio: Validar se a carga horária semanal não ultrapassa o limite (ex: 30h)
     if (data.carga_horaria_semanal > 30) {
       throw new Error("A carga horária semanal não pode exceder 30 horas conforme a lei de estágio.");
     }
 
-    // 3. Situacao padrão se não enviada
     if (!data.situacao) data.situacao = 'ATIVO';
+
+    data.id_orientador = await this._resolveOrientadorId(data.id_orientador);
 
     return await EstagioModel.create(data);
   }
@@ -32,20 +48,22 @@ class EstagioService {
   }
 
   static async vincularOrientador(idEstagio, id_orientador) {
-    if (!idEstagio) throw new Error("O ID do estágio é obrigatório.");
-    if (!id_orientador) throw new Error("O ID do orientador é obrigatório.");
-
-    // 2. Aqui você poderia adicionar uma regra de negócio extra, ex:
-    // "Um estágio só pode receber orientador se estiver ATIVO"
-    
-    // 3. Chama o model para atualizar o banco
-    const estagioAtualizado = await EstagioModel.updateOrientador(idEstagio, id_orientador);
-
-    if (!estagioAtualizado) {
-      throw new Error("Não foi possível encontrar o estágio para vincular o orientador.");
+    if (idEstagio === undefined || idEstagio === null || idEstagio === '') {
+      throw new Error('O ID do estágio é obrigatório.');
+    }
+    const idEst = Number(idEstagio);
+    if (!Number.isFinite(idEst) || idEst < 1) {
+      throw new Error('ID do estágio inválido.');
     }
 
-    return estagioAtualizado;
+    const idOrient = await this._resolveOrientadorId(id_orientador);
+
+    const estagioExistente = await EstagioModel.findById(idEst);
+    if (!estagioExistente) {
+      throw new Error('Estágio não encontrado.');
+    }
+
+    return await EstagioModel.updateOrientador(idEst, idOrient);
   }
 
 }

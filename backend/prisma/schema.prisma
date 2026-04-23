@@ -161,13 +161,13 @@ model Estagio {
   id_aluno               Int
   id_empresa             Int
   id_supervisor          Int?
-  id_orientador          Int?
+  id_orientador          Int
   id_documento           Int?
 
   aluno       Aluno @relation(fields: [id_aluno], references: [id], onDelete: Restrict)
   empresa     Empresa @relation(fields: [id_empresa], references: [id], onDelete: Restrict)
   supervisor  Supervisor? @relation(fields: [id_supervisor], references: [id], onDelete: Restrict)
-  orientador  Orientador? @relation("EstagioOrientador", fields: [id_orientador], references: [id], onDelete: Restrict)
+  orientador  Orientador @relation("EstagioOrientador", fields: [id_orientador], references: [id], onDelete: Restrict)
   documento   DocumentosEstagio? @relation(fields: [id_documento], references: [id], onDelete: Restrict)
 
   dias_semana_estagio DiaSemanaEstagio[]
