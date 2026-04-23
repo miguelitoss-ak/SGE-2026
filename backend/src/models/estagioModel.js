@@ -2,6 +2,12 @@ const prisma = require('../prisma/prismaClient');
 const { Prisma } = require('@prisma/client');
 
 class EstagioModel {
+  static async findById(id) {
+    return prisma.estagio.findUnique({
+      where: { id: Number(id) },
+    });
+  }
+
   static async findAll() {
     // Busca estágios trazendo o nome do aluno e da empresa (JOIN opcional, mas recomendado)
     return prisma.$queryRaw`
@@ -33,6 +39,8 @@ class EstagioModel {
       return Boolean(v);
     };
 
+    const idOrientadorNum = Number(id_orientador);
+
     const created = await prisma.estagio.create({
       data: {
         dt_registro,
@@ -51,7 +59,7 @@ class EstagioModel {
         id_aluno,
         id_empresa,
         id_supervisor,
-        id_orientador,
+        id_orientador: idOrientadorNum,
         id_documento,
       },
     });
@@ -65,8 +73,7 @@ class EstagioModel {
         id: Number(id) 
       },
       data: {
-        // O Prisma entende que se id_orientador é uma FK, ele deve atualizar o campo
-        id_orientador: id_orientador ? Number(id_orientador) : null
+        id_orientador: Number(id_orientador),
       },
       include: {
         // Isso retorna os dados do orientador para que o frontend saiba quem foi selecionado

@@ -106,7 +106,7 @@ CREATE TABLE estagios (
   id_aluno               INT NOT NULL,
   id_empresa             INT NOT NULL,
   id_supervisor          INT,
-  id_orientador          INT,
+  id_orientador          INT NOT NULL,
   id_documento           INT,
   CONSTRAINT fk_estagios_alunos
     FOREIGN KEY (id_aluno) REFERENCES alunos(id),
