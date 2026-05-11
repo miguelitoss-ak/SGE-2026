@@ -17,8 +17,13 @@ const horarioRoutes = require('./routes/horarioRoutes');
 const app = express();
 
 // Middlewares
-app.use(cors());
-app.use(helmet());
+app.use(cors()); // Permite todas as origens para eliminar bloqueios de CORS em dev
+
+app.use(helmet({
+    contentSecurityPolicy: false, // Desabilita o CSP para permitir Tailwind CDN e conexões entre portas
+    crossOriginResourcePolicy: false
+}));
+
 app.use(express.json());
 
 // Rotas da API SGE
