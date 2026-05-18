@@ -1,7 +1,7 @@
 const EmpresaService = require('../services/empresaService');
 
 class EmpresaController {
-  // Método para listar todas as empresas [cite: 140]
+  // Método para listar todas as empresas
   static async getAll(req, res) {
     try {
       const empresas = await EmpresaService.getAllEmpresas();
@@ -11,7 +11,7 @@ class EmpresaController {
     }
   }
 
-  // Método para cadastrar empresa [cite: 140]
+  // Método para cadastrar empresa
   static async create(req, res) {
     try {
       const id = await EmpresaService.createEmpresa(req.body);
