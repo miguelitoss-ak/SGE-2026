@@ -111,4 +111,62 @@
     </div>
 
 </body>
+<script>
+    document.getElementById('registerForm').addEventListener('submit', async (e) => {
+        e.preventDefault(); // Impede que a página recarregue
+
+        // 1. Captura os valores de todos os campos do formulário
+        const matricula = document.getElementById('matricula').value;
+        const nome = document.getElementById('nome').value;
+        const cpf = document.getElementById('cpf').value;
+        const telefone = document.getElementById('telefone').value;
+        const email = document.getElementById('email').value;
+        const data_nasc = document.getElementById('data_nasc').value;
+        const senha = document.getElementById('senha').value;
+        const confirmarSenha = document.getElementById('confirmar_senha').value;
+
+        // 2. Validação básica de senha no Frontend
+        if (senha !== confirmarSenha) {
+            alert('As senhas não coincidem. Por favor, verifique.');
+            return; // Interrompe a execução aqui
+        }
+
+        // 3. Monta o objeto com os dados exatamente como o UserService espera receber
+        const dadosCadastro = {
+            matricula,
+            nome,
+            cpf,
+            telefone,
+            email,
+            data_nasc, // Enviado no formato YYYY-MM-DD padrão do input date
+            senha
+        };
+
+        try {
+            // 4. Faz a requisição para a sua rota do Express (/auth/register)
+            const resposta = await fetch('http://localhost:3000/auth/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(dadosCadastro)
+            });
+
+            const dados = await resposta.json();
+
+            // Como seu AuthController retorna status 201 para sucesso:
+            if (resposta.status === 201) {
+                alert('Cadastro de Aluno realizado com sucesso!');
+                window.location.href = 'login.html'; // Redireciona para a tela de login
+            } else {
+                // Exibe mensagens como "Usuario ja existe" tratadas no seu catch do controller
+                alert(dados.error || 'Ocorreu um erro ao realizar o cadastro.');
+            }
+
+        } catch (erro) {
+            console.error('Erro na comunicação com a API:', erro);
+            alert('Não foi possível conectar ao servidor.');
+        }
+    });
+</script>
 </html>

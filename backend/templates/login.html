@@ -74,4 +74,64 @@
     </div>
 
 </body>
+
+<script>
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+        e.preventDefault(); // Impede a página de recarregar e tentar ir para "/login"
+
+        const email = document.getElementById('email').value;
+        const senha = document.getElementById('senha').value;
+
+        try {
+            // Rota correta apontando para o seu backend Express sob o prefixo /auth
+            const resposta = await fetch('http://localhost:3000/auth/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ email, senha })
+            });
+
+            // CORRIGIDO: Agora usando 'resposta' corretamente
+            const dados = await resposta.json(); 
+
+            if (resposta.ok) {
+                // Guarda o token gerado pelo seu UserService no navegador
+                localStorage.setItem('token', dados.token); 
+                
+                if (dados.user && dados.user.role) {
+                    localStorage.setItem('role', dados.user.role);
+                }
+                
+                if (dados.user && dados.user.nome) {
+                    localStorage.setItem('userName', dados.user.nome);
+                }
+
+                if (dados.user && dados.user.matricula) {
+                    localStorage.setItem('userMatricula', dados.user.matricula);
+                }
+
+                if (dados.user && dados.user.id) {
+                    localStorage.setItem('userId', dados.user.id);
+                }
+
+                alert(`Bem-vindo de volta!`);
+                
+                localStorage.setItem('token', dados.token); 
+                localStorage.setItem('role', dados.user.role);
+                localStorage.setItem('userName', dados.user.nome);       
+                localStorage.setItem('userMatricula', dados.user.matricula); 
+                localStorage.setItem('userId', dados.user.id); // 🔥 LINHA ESSENCIAL ADICIONADA
+    
+                 window.location.href = 'home.html';
+            } else {
+                // Exibe o erro do seu backend (ex: "Usuario nao encontrado" ou "Senha invalida")
+                alert(dados.error || 'Erro ao realizar login.');
+            }
+        } catch (erro) {
+            console.error('Erro na comunicação com o servidor:', erro);
+            alert('Não foi possível conectar ao servidor. O backend está ligado?');
+        }
+    });
+</script>
 </html>

@@ -181,6 +181,28 @@
 
     <script>
         lucide.createIcons();
+
+        document.addEventListener('DOMContentLoaded', () => {
+    // 1. Recupera as informações guardadas no navegador
+    const token = localStorage.getItem('token');
+    const userName = localStorage.getItem('userName');
+    const userMatricula = localStorage.getItem('userMatricula');
+    const userId = localStorage.getItem('userId');
+
+    // 2. Barreira de Segurança: Se não estiver logado, expulsa para a tela de login
+    if (!token || !userName || !userId) {
+        window.location.href = 'login.html';
+        return;
+    }
+
+    // 3. Preenche a DIV visual (o aluno verá: Nome do Aluno (Matrícula))
+    const studentDisplay = document.getElementById('studentDisplay');
+    studentDisplay.textContent = `${userName} (${userMatricula || 'Sem Matrícula'})`;
+
+    // 4. Preenche o input hidden com o ID do banco de dados
+    const studentIdInput = document.getElementById('studentIdInput');
+    studentIdInput.value = userId;
+});
     </script>
 </body>
 </html>
