@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SGE-2026 | Cadastro de Aluno</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root {
+            --ifrs-green: #32a041;
+            --ifrs-red: #e41f1a;
+        }
+        .bg-ifrs-green { background-color: var(--ifrs-green); }
+        .text-ifrs-green { color: var(--ifrs-green); }
+        .border-ifrs-green { border-color: var(--ifrs-green); }
+        .focus-ifrs-green:focus { border-color: var(--ifrs-green); ring-color: var(--ifrs-green); }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center font-sans py-12 px-4">
+
+    <div class="bg-white p-8 rounded-lg shadow-xl w-full max-w-md border-t-8 border-ifrs-green">
+        <div class="text-center mb-8">
+            <!-- Logo Placeholder (Pode substituir pelo link oficial do logo do IFRS) -->
+            <div class="flex justify-center mb-4">
+            
+            </div>
+            <h1 class="text-2xl font-bold text-gray-800">Sistema de Gestão de Estágios</h1>
+            <br>
+            <p class="text-gray-500 text-sm">Cadastrar-se</p>
+        </div>
+
+        <form id="registerForm" action="/register" method="POST" class="space-y-6">
+            <div>
+                <label for="matricula" class="block text-sm font-medium text-gray-700">Matrícula</label>
+                <input type="text" id="matricula" name="matricula" required 
+                    class="mt-1 block w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-md text-sm shadow-sm placeholder-gray-400
+                    focus:outline-none focus:border-ifrs-green focus:ring-1 focus:ring-ifrs-green"
+                    placeholder="Ex: 202412345">
+            </div>
+
+            <div>
+                <label for="nome" class="block text-sm font-medium text-gray-700">Nome Completo</label>
+                <input type="text" id="nome" name="nome" required 
+                    class="mt-1 block w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-md text-sm shadow-sm placeholder-gray-400
+                    focus:outline-none focus:border-ifrs-green focus:ring-1 focus:ring-ifrs-green"
+                    placeholder="Seu nome completo">
+            </div>
+
+            <div>
+                <label for="cpf" class="block text-sm font-medium text-gray-700">CPF</label>
+                <input type="text" id="cpf" name="cpf" required 
+                    class="mt-1 block w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-md text-sm shadow-sm placeholder-gray-400
+                    focus:outline-none focus:border-ifrs-green focus:ring-1 focus:ring-ifrs-green"
+                    placeholder="000.000.000-00">
+            </div>
+
+            <div>
+                <label for="telefone" class="block text-sm font-medium text-gray-700">Telefone</label>
+                <input type="tel" id="telefone" name="telefone" required 
+                    class="mt-1 block w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-md text-sm shadow-sm placeholder-gray-400
+                    focus:outline-none focus:border-ifrs-green focus:ring-1 focus:ring-ifrs-green"
+                    placeholder="(00) 90000-0000">
+            </div>
+
+            <div>
+                <label for="email" class="block text-sm font-medium text-gray-700">E-mail</label>
+                <input type="email" id="email" name="email" required 
+                    class="mt-1 block w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-md text-sm shadow-sm placeholder-gray-400
+                    focus:outline-none focus:border-ifrs-green focus:ring-1 focus:ring-ifrs-green"
+                    placeholder="seu.email@aluno.ifrs.edu.br">
+            </div>
+
+            <div>
+                <label for="data_nasc" class="block text-sm font-medium text-gray-700">Data de Nascimento</label>
+                <input type="date" id="data_nasc" name="data_nasc" required 
+                    class="mt-1 block w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-md text-sm shadow-sm placeholder-gray-400
+                    focus:outline-none focus:border-ifrs-green focus:ring-1 focus:ring-ifrs-green">
+            </div>
+
+            <div>
+                <label for="senha" class="block text-sm font-medium text-gray-700">Senha</label>
+                <input type="password" id="senha" name="senha" required 
+                    class="mt-1 block w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-md text-sm shadow-sm placeholder-gray-400
+                    focus:outline-none focus:border-ifrs-green focus:ring-1 focus:ring-ifrs-green"
+                    placeholder="••••••••">
+            </div>
+
+            <div>
+                <label for="confirmar_senha" class="block text-sm font-medium text-gray-700">Confirmar Senha</label>
+                <input type="password" id="confirmar_senha" name="confirmar_senha" required 
+                    class="mt-1 block w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-md text-sm shadow-sm placeholder-gray-400
+                    focus:outline-none focus:border-ifrs-green focus:ring-1 focus:ring-ifrs-green"
+                    placeholder="••••••••">
+            </div>
+
+            <div>
+                <button type="submit" 
+                    class="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-bold text-white bg-ifrs-green hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-ifrs-green transition-colors duration-200">
+                    CADASTRAR
+                </button>
+            </div>
+
+            <div class="text-center text-sm">
+                <span class="text-gray-600">Já tem uma conta?</span>
+                <a href="login.html" class="font-medium text-ifrs-green hover:underline ml-1">
+                    Faça login
+                </a>
+            </div>
+        </form>
+
+    </div>
+
+</body>
+<script>
+    document.getElementById('registerForm').addEventListener('submit', async (e) => {
+        e.preventDefault(); // Impede que a página recarregue
+
+        // 1. Captura os valores de todos os campos do formulário
+        const matricula = document.getElementById('matricula').value;
+        const nome = document.getElementById('nome').value;
+        const cpf = document.getElementById('cpf').value;
+        const telefone = document.getElementById('telefone').value;
+        const email = document.getElementById('email').value;
+        const data_nasc = document.getElementById('data_nasc').value;
+        const senha = document.getElementById('senha').value;
+        const confirmarSenha = document.getElementById('confirmar_senha').value;
+
+        // 2. Validação básica de senha no Frontend
+        if (senha !== confirmarSenha) {
+            alert('As senhas não coincidem. Por favor, verifique.');
+            return; // Interrompe a execução aqui
+        }
+
+        // 3. Monta o objeto com os dados exatamente como o UserService espera receber
+        const dadosCadastro = {
+            matricula,
+            nome,
+            cpf,
+            telefone,
+            email,
+            data_nasc, // Enviado no formato YYYY-MM-DD padrão do input date
+            senha
+        };
+
+        try {
+            // 4. Faz a requisição para a sua rota do Express (/auth/register)
+            const resposta = await fetch('http://localhost:3000/auth/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(dadosCadastro)
+            });
+
+            const dados = await resposta.json();
+
+            // Como seu AuthController retorna status 201 para sucesso:
+            if (resposta.status === 201) {
+                alert('Cadastro de Aluno realizado com sucesso!');
+                window.location.href = 'login.html'; // Redireciona para a tela de login
+            } else {
+                // Exibe mensagens como "Usuario ja existe" tratadas no seu catch do controller
+                alert(dados.error || 'Ocorreu um erro ao realizar o cadastro.');
+            }
+
+        } catch (erro) {
+            console.error('Erro na comunicação com a API:', erro);
+            alert('Não foi possível conectar ao servidor.');
+        }
+    });
+</script>
+</html>
