@@ -32,8 +32,8 @@
                 </div>
             </div>
 
-            <div class="hidden md:flex flex-col items-center">
-                <h2 class="text-lg font-semibold">Bem-vindo, João da Silva!</h2>
+            <div class="hidden md:flex flex-col items-center px-4 min-w-0">
+                <h2 id="welcomeName" class="text-lg font-semibold truncate max-w-[200px] lg:max-w-md w-full text-center">Bem-vindo!</h2>
                 <p class="text-sm opacity-80">Gerencie seus estágios de forma simples e organizada.</p>
             </div>
 
@@ -43,8 +43,8 @@
                     <span class="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full border-2 border-ifrs-green"></span>
                 </button>
                 <div class="flex items-center space-x-3 border-l border-white/20 pl-4">
-                    <div class="text-right hidden sm:block">
-                        <p class="text-sm font-bold">João Silva</p>
+                    <div class="text-right hidden sm:block min-w-0">
+                        <p id="profileName" class="text-sm font-bold truncate max-w-[120px]">Usuário</p>
                         <p class="text-xs opacity-75">Aluno</p>
                     </div>
                     <div class="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center border-2 border-white/30 overflow-hidden hover:scale-105 transition-transform cursor-pointer">
@@ -241,6 +241,24 @@
 
     <script>
         lucide.createIcons();
+
+        // Lógica para carregar os dados do usuário logado
+        document.addEventListener('DOMContentLoaded', () => {
+            const token = localStorage.getItem('token');
+            const userName = localStorage.getItem('userName');
+
+            // Se não houver token, redireciona para o login por segurança
+            if (!token) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            // Atualiza os nomes na tela
+            if (userName) {
+                document.getElementById('welcomeName').textContent = `Bem-vindo, ${userName}!`;
+                document.getElementById('profileName').textContent = userName;
+            }
+        });
 
         let estagioIdParaExcluir = null;
 

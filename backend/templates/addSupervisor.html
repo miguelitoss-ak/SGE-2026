@@ -55,10 +55,8 @@
                     <!-- Seleção de Empresa -->
                     <div>
                         <label class="block text-xs font-bold text-gray-500 mb-1 uppercase tracking-wider">Empresa / Concedente</label>
-                        <select name="id_empresa" required class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-ifrs-green outline-none transition-all">
+                        <select id="id_empresa" name="id_empresa" required class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-ifrs-green outline-none transition-all">
                             <option value="">Selecione a empresa vinculada</option>
-                            <option value="1">Tech Inova S.A.</option>
-                            <option value="2">Agile Sys LTDA</option>
                         </select>
                         <p class="text-[10px] text-gray-400 mt-1 italic">* Caso a empresa não esteja na lista, cadastre-a primeiro.</p>
                     </div>
@@ -72,7 +70,7 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label class="block text-xs font-bold text-gray-500 mb-1 uppercase tracking-wider">CPF</label>
-                            <input type="text" name="cpf" placeholder="000.000.000-00" required 
+                            <input type="text" name="cpf" id="cpf" placeholder="000.000.000-00" required maxlength="14"
                                 class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-ifrs-green outline-none transition-all">
                         </div>
                         <div>
@@ -95,7 +93,7 @@
                             <label class="block text-xs font-bold text-gray-500 mb-1 uppercase tracking-wider">Telefone Comercial</label>
                             <div class="relative">
                                 <i data-lucide="phone" class="absolute left-4 top-3.5 w-5 h-5 text-gray-400"></i>
-                                <input type="text" name="telefone" placeholder="(00) 00000-0000" 
+                                <input type="text" name="telefone" id="telefone" placeholder="(00) 00000-0000" maxlength="15"
                                     class="w-full bg-gray-50 border border-gray-200 rounded-xl pl-12 pr-4 py-3 focus:ring-2 focus:ring-ifrs-green outline-none transition-all">
                             </div>
                         </div>
@@ -117,6 +115,89 @@
 
     <script>
         lucide.createIcons();
+
+        // Seleção dos elementos para aplicação de máscaras
+        const cpfInput = document.getElementById('cpf');
+        const telefoneInput = document.getElementById('telefone');
+
+        // Função de validação matemática de CPF (copiada de cadastro.html)
+        function validarCPF(cpf) {
+            cpf = cpf.replace(/[^\d]+/g, '');
+            if (cpf.length !== 11 || /^(\d)\1+$/.test(cpf)) return false;
+            let soma = 0, resto;
+            for (let i = 1; i <= 9; i++) soma = soma + parseInt(cpf.substring(i - 1, i)) * (11 - i);
+            resto = (soma * 10) % 11;
+            if (resto === 10 || resto === 11) resto = 0;
+            if (resto !== parseInt(cpf.substring(9, 10))) return false;
+            soma = 0;
+            for (let i = 1; i <= 10; i++) soma = soma + parseInt(cpf.substring(i - 1, i)) * (12 - i);
+            resto = (soma * 10) % 11;
+            if (resto === 10 || resto === 11) resto = 0;
+            return resto === parseInt(cpf.substring(10, 11));
+        }
+
+        // Máscara de CPF (000.000.000-00)
+        if (cpfInput) {
+            cpfInput.addEventListener('input', (e) => {
+                let v = e.target.value.replace(/\D/g, "");
+                if (v.length > 11) v = v.slice(0, 11);
+                v = v.replace(/(\d{3})(\d)/, "$1.$2");
+                v = v.replace(/(\d{3})(\d)/, "$1.$2");
+                v = v.replace(/(\d{3})(\d{1,2})$/, "$1-$2");
+                e.target.value = v;
+            });
+        }
+
+        // Máscara de Telefone ((00) 00000-0000)
+        if (telefoneInput) {
+            telefoneInput.addEventListener('input', (e) => {
+                let v = e.target.value.replace(/\D/g, "");
+                if (v.length > 11) v = v.slice(0, 11);
+                v = v.replace(/^(\d{2})(\d)/g, "($1) $2");
+                v = v.replace(/(\d{5})(\d)/, "$1-$2");
+                e.target.value = v;
+            });
+        }
+
+        // Carregar empresas cadastradas do banco de dados
+        window.addEventListener('DOMContentLoaded', async () => {
+            const empresaSelect = document.getElementById('id_empresa');
+            try {
+                const response = await fetch('http://localhost:3000/empresas');
+                const empresas = await response.json();
+                empresas.forEach(empresa => {
+                    const option = document.createElement('option');
+                    option.value = empresa.id;
+                    option.textContent = empresa.nome_fantasia || empresa.nome_social;
+                    empresaSelect.appendChild(option);
+                });
+            } catch (error) {
+                console.error('Erro ao carregar empresas:', error);
+            }
+        });
+
+        // Adicionar validação de CPF e remoção de máscaras no submit do formulário
+        document.querySelector('form').addEventListener('submit', (e) => {
+            if (cpfInput && cpfInput.value) {
+                if (!validarCPF(cpfInput.value)) {
+                    e.preventDefault();
+                    alert('O CPF informado é inválido. Por favor, verifique os números.');
+                    // Adicionar classe de erro visual se necessário
+                    cpfInput.classList.add('border-red-500');
+                } else {
+                    cpfInput.classList.remove('border-red-500');
+                }
+            }
+
+            // Remover máscaras antes de enviar para o backend
+            if (cpfInput) {
+                cpfInput.value = cpfInput.value.replace(/[^\d]+/g, '');
+            }
+            if (telefoneInput) {
+                telefoneInput.value = telefoneInput.value.replace(/[^\d]+/g, '');
+            }
+        });
+
     </script>
 </body>
 </html>

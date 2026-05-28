@@ -121,16 +121,16 @@
                 localStorage.setItem('role', dados.user.role);
                 localStorage.setItem('userName', dados.user.nome);       
                 localStorage.setItem('userMatricula', dados.user.matricula); 
-                localStorage.setItem('userId', dados.user.id); // 🔥 LINHA ESSENCIAL ADICIONADA
+                localStorage.setItem('userId', dados.user.id); 
     
                  window.location.href = 'home.html';
             } else {
-                // Exibe o erro do seu backend (ex: "Usuario nao encontrado" ou "Senha invalida")
+                
                 alert(dados.error || 'Erro ao realizar login.');
             }
         } catch (erro) {
             console.error('Erro na comunicação com o servidor:', erro);
-            alert('Não foi possível conectar ao servidor. O backend está ligado?');
+            alert('Não foi possível conectar ao servidor.');
         }
     });
 </script>

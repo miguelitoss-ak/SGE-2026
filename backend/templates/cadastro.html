@@ -32,10 +32,10 @@
         <form id="registerForm" action="/register" method="POST" class="space-y-6">
             <div>
                 <label for="matricula" class="block text-sm font-medium text-gray-700">Matrícula</label>
-                <input type="text" id="matricula" name="matricula" required 
+                <input type="text" id="matricula" name="matricula" required maxlength="10"
                     class="mt-1 block w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-md text-sm shadow-sm placeholder-gray-400
                     focus:outline-none focus:border-ifrs-green focus:ring-1 focus:ring-ifrs-green"
-                    placeholder="Ex: 202412345">
+                    placeholder="Ex: 2024123456">
             </div>
 
             <div>
@@ -48,7 +48,7 @@
 
             <div>
                 <label for="cpf" class="block text-sm font-medium text-gray-700">CPF</label>
-                <input type="text" id="cpf" name="cpf" required 
+                <input type="text" id="cpf" name="cpf" required maxlength="14"
                     class="mt-1 block w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-md text-sm shadow-sm placeholder-gray-400
                     focus:outline-none focus:border-ifrs-green focus:ring-1 focus:ring-ifrs-green"
                     placeholder="000.000.000-00">
@@ -56,7 +56,7 @@
 
             <div>
                 <label for="telefone" class="block text-sm font-medium text-gray-700">Telefone</label>
-                <input type="tel" id="telefone" name="telefone" required 
+                <input type="tel" id="telefone" name="telefone" required maxlength="15"
                     class="mt-1 block w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-md text-sm shadow-sm placeholder-gray-400
                     focus:outline-none focus:border-ifrs-green focus:ring-1 focus:ring-ifrs-green"
                     placeholder="(00) 90000-0000">
@@ -74,7 +74,18 @@
                 <label for="data_nasc" class="block text-sm font-medium text-gray-700">Data de Nascimento</label>
                 <input type="date" id="data_nasc" name="data_nasc" required 
                     class="mt-1 block w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-md text-sm shadow-sm placeholder-gray-400
+                    focus:outline-none focus:border-ifrs-green focus:ring-1 focus:ring-ifrs-green"
+                    onblur="validarIdade()">
+                <span id="erro-idade" class="text-xs text-red-600 mt-1 hidden">Inscrição permitida apenas para candidatos com 14 anos ou mais.</span>
+            </div>
+
+            <div>
+                <label for="id_curso" class="block text-sm font-medium text-gray-700">Curso</label>
+                <select id="id_curso" name="id_curso" required 
+                    class="mt-1 block w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-md text-sm shadow-sm
                     focus:outline-none focus:border-ifrs-green focus:ring-1 focus:ring-ifrs-green">
+                    <option value="" disabled selected>Selecione seu curso</option>
+                </select>
             </div>
 
             <div>
@@ -112,6 +123,95 @@
 
 </body>
 <script>
+    // Seleção dos elementos para aplicação de máscaras
+    const matriculaInput = document.getElementById('matricula');
+    const cpfInput = document.getElementById('cpf');
+    const telefoneInput = document.getElementById('telefone');
+    const dataNascInput = document.getElementById('data_nasc');
+    const erroIdade = document.getElementById('erro-idade');
+
+    // Função para validar a idade mínima (14 anos)
+    function validarIdade() {
+        const dataNascimento = new Date(dataNascInput.value);
+        if (isNaN(dataNascimento.getTime())) return false;
+
+        const hoje = new Date();
+        let idade = hoje.getFullYear() - dataNascimento.getFullYear();
+        const m = hoje.getMonth() - dataNascimento.getMonth();
+
+        // Ajusta a idade se o aniversário ainda não tiver ocorrido no ano atual
+        if (m < 0 || (m === 0 && hoje.getDate() < dataNascimento.getDate())) {
+            idade--;
+        }
+
+        if (idade < 14) {
+            erroIdade.classList.remove('hidden');
+            dataNascInput.classList.add('border-red-500');
+            return false;
+        } else {
+            erroIdade.classList.add('hidden');
+            dataNascInput.classList.remove('border-red-500');
+            return true;
+        }
+    }
+
+    // Função de validação matemática de CPF
+    function validarCPF(cpf) {
+        cpf = cpf.replace(/[^\d]+/g, '');
+        if (cpf.length !== 11 || /^(\d)\1+$/.test(cpf)) return false;
+        let soma = 0, resto;
+        for (let i = 1; i <= 9; i++) soma = soma + parseInt(cpf.substring(i - 1, i)) * (11 - i);
+        resto = (soma * 10) % 11;
+        if (resto === 10 || resto === 11) resto = 0;
+        if (resto !== parseInt(cpf.substring(9, 10))) return false;
+        soma = 0;
+        for (let i = 1; i <= 10; i++) soma = soma + parseInt(cpf.substring(i - 1, i)) * (12 - i);
+        resto = (soma * 10) % 11;
+        if (resto === 10 || resto === 11) resto = 0;
+        return resto === parseInt(cpf.substring(10, 11));
+    }
+
+    // Carregar cursos do banco de dados ao abrir a página
+    window.addEventListener('DOMContentLoaded', async () => {
+        const cursoSelect = document.getElementById('id_curso');
+        try {
+            const response = await fetch('http://localhost:3000/cursos');
+            const cursos = await response.json();
+            cursos.forEach(curso => {
+                const option = document.createElement('option');
+                option.value = curso.id;
+                option.textContent = curso.nome;
+                cursoSelect.appendChild(option);
+            });
+        } catch (error) {
+            console.error('Erro ao carregar cursos:', error);
+        }
+    });
+
+    // Restrição para Matrícula (apenas números)
+    matriculaInput.addEventListener('input', (e) => {
+        e.target.value = e.target.value.replace(/\D/g, "");
+    });
+
+    // Máscara de CPF (000.000.000-00)
+    cpfInput.addEventListener('input', (e) => {
+        let v = e.target.value.replace(/\D/g, "");
+        if (v.length > 11) v = v.slice(0, 11);
+        v = v.replace(/(\d{3})(\d)/, "$1.$2");
+        v = v.replace(/(\d{3})(\d)/, "$1.$2");
+        v = v.replace(/(\d{3})(\d{1,2})$/, "$1-$2");
+        e.target.value = v;
+    });
+
+    // Máscara de Telefone ((00) 00000-0000)
+    telefoneInput.addEventListener('input', (e) => {
+        let v = e.target.value.replace(/\D/g, "");
+        if (v.length > 11) v = v.slice(0, 11);
+        v = v.replace(/^(\d{2})(\d)/g, "($1) $2");
+        v = v.replace(/(\d{5})(\d)/, "$1-$2");
+        e.target.value = v;
+    });
+
     document.getElementById('registerForm').addEventListener('submit', async (e) => {
         e.preventDefault(); // Impede que a página recarregue
 
@@ -122,8 +222,21 @@
         const telefone = document.getElementById('telefone').value;
         const email = document.getElementById('email').value;
         const data_nasc = document.getElementById('data_nasc').value;
+        const id_curso = document.getElementById('id_curso').value;
         const senha = document.getElementById('senha').value;
         const confirmarSenha = document.getElementById('confirmar_senha').value;
+
+        // Validação de Idade no Frontend
+        if (!validarIdade()) {
+            alert('Candidato não possui a idade mínima de 14 anos para inscrição.');
+            return;
+        }
+
+        // Validação de CPF no Frontend
+        if (!validarCPF(cpf)) {
+            alert('O CPF informado é inválido. Por favor, verifique os números.');
+            return;
+        }
 
         // 2. Validação básica de senha no Frontend
         if (senha !== confirmarSenha) {
@@ -138,6 +251,7 @@
             cpf,
             telefone,
             email,
+            id_curso,
             data_nasc, // Enviado no formato YYYY-MM-DD padrão do input date
             senha
         };

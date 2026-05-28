@@ -60,22 +60,18 @@
                         </h3>
                         <div>
                             <label class="block text-xs font-bold text-gray-500 mb-1">ALUNO (Seu Cadastro)</label>
-                            <!-- Este campo seria preenchido dinamicamente pelo backend com os dados do aluno logado -->
-                            <div class="w-full bg-gray-100 border border-gray-200 rounded-xl px-4 py-3 text-gray-700 font-medium">
-                                <!-- Exemplo: Substitua 'João da Silva (20240001)' pela variável do aluno logado -->
-                                João da Silva (20240001) 
+                            <div id="studentDisplay" class="w-full bg-gray-100 border border-gray-200 rounded-xl px-4 py-3 text-gray-700 font-medium italic">
+                                Carregando dados do aluno...
                             </div>
-                            <!-- Campo oculto para enviar o ID do aluno com o formulário -->
-                            <input type="hidden" name="id_aluno" value="1"> <!-- Substitua '1' pelo ID real do aluno logado -->
+                            <input type="hidden" id="studentIdInput" name="id_aluno" value="">
                         </div>
                         <div>
                             <div class="flex justify-between items-center mb-1">
                                 <label class="block text-xs font-bold text-gray-500">ORIENTADOR IFRS</label>
                                 <a href="addOrientador.html" class="text-[10px] font-bold text-ifrs-green hover:underline">NÃO O ENCONTROU? CADASTRAR NOVO</a>
                             </div>
-                            <select name="id_orientador" required class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-ifrs-green outline-none transition-all">
+                            <select id="id_orientador" name="id_orientador" required class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-ifrs-green outline-none transition-all">
                                 <option value="">Selecione o orientador</option>
-                                <option value="1">Prof. Ricardo Rocha</option>
                             </select>
                         </div>
                     </div>
@@ -89,9 +85,8 @@
                                 <label class="block text-xs font-bold text-gray-500">EMPRESA</label>
                                 <a href="addEmpresa.html" class="text-[10px] font-bold text-ifrs-green hover:underline">NÃO A ENCONTROU? CADASTRAR NOVA</a>
                             </div>
-                            <select name="id_empresa" required class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-ifrs-green outline-none transition-all">
+                            <select id="id_empresa" name="id_empresa" required class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-ifrs-green outline-none transition-all">
                                 <option value="">Selecione a empresa</option>
-                                <option value="1">Tech Inova S.A.</option>
                             </select>
                         </div>
                         <div>
@@ -99,9 +94,8 @@
                                 <label class="block text-xs font-bold text-gray-500">SUPERVISOR NA EMPRESA</label>
                                 <a href="addSupervisor.html" class="text-[10px] font-bold text-ifrs-green hover:underline">NÃO O ENCONTROU? CADASTRAR NOVO</a>
                             </div>
-                            <select name="id_supervisor" required class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-ifrs-green outline-none transition-all">
+                            <select id="id_supervisor" name="id_supervisor" required class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-ifrs-green outline-none transition-all">
                                 <option value="">Selecione o supervisor</option>
-                                <option value="1">Carlos Gerente</option>
                             </select>
                         </div>
                     </div>
@@ -178,31 +172,119 @@
             </form>
         </div>
     </main>
-
-    <script>
+<script>
+        // Inicializa os ícones do Lucide
         lucide.createIcons();
 
-        document.addEventListener('DOMContentLoaded', () => {
-    // 1. Recupera as informações guardadas no navegador
-    const token = localStorage.getItem('token');
-    const userName = localStorage.getItem('userName');
-    const userMatricula = localStorage.getItem('userMatricula');
-    const userId = localStorage.getItem('userId');
+        // 1. Resgata as variáveis de autenticação (ex: do localStorage) para a barreira de segurança funcionar
+        const token = localStorage.getItem('token');
+        const userName = localStorage.getItem('userName');
+        const userId = localStorage.getItem('userId');
+        const userMatricula = localStorage.getItem('userMatricula');
 
-    // 2. Barreira de Segurança: Se não estiver logado, expulsa para a tela de login
-    if (!token || !userName || !userId) {
-        window.location.href = 'login.html';
-        return;
-    }
+        document.addEventListener('DOMContentLoaded', async () => {
+            
+            // 2. Barreira de Segurança: Se não estiver logado, expulsa para a tela de login
+            if (!token || !userName || !userId) {
+                window.location.href = 'login.html';
+                return;
+            }
 
-    // 3. Preenche a DIV visual (o aluno verá: Nome do Aluno (Matrícula))
-    const studentDisplay = document.getElementById('studentDisplay');
-    studentDisplay.textContent = `${userName} (${userMatricula || 'Sem Matrícula'})`;
+            // 3. Preenche os dados do aluno logado na interface e no campo oculto
+            document.getElementById('studentDisplay').textContent = `${userName} (${userMatricula || 'S/M'})`;
+            document.getElementById('studentIdInput').value = userId;
 
-    // 4. Preenche o input hidden com o ID do banco de dados
-    const studentIdInput = document.getElementById('studentIdInput');
-    studentIdInput.value = userId;
-});
+            // 3. Função para carregar opções dinamicamente nos selects
+            const carregarOpcoes = async (url, elementId, textKey) => {
+                try {
+                    const res = await fetch(url);
+                    const items = await res.json();
+                    const select = document.getElementById(elementId);
+                    
+                    // Limpa opções antigas mantendo a opção padrão
+                    select.innerHTML = `<option value="">Selecione...</option>`;
+
+                    items.forEach(item => {
+                        const opt = document.createElement('option');
+                        opt.value = item.id;
+                        opt.textContent = item[textKey];
+                        select.appendChild(opt);
+                    });
+                } catch (err) {
+                    console.error(`Erro ao carregar ${elementId}:`, err);
+                }
+            };
+
+            // Carrega as listas iniciais de Orientadores e Empresas
+            await carregarOpcoes('http://localhost:3000/orientadores', 'id_orientador', 'nome');
+            await carregarOpcoes('http://localhost:3000/empresas', 'id_empresa', 'nome_fantasia');
+
+            // Listener para carregar supervisores baseados na empresa selecionada (Lógica 1:N)
+            document.getElementById('id_empresa').addEventListener('change', async (e) => {
+                const empresaId = e.target.value;
+                const supervisorSelect = document.getElementById('id_supervisor');
+                supervisorSelect.innerHTML = '<option value="">Selecione o supervisor</option>';
+
+                if (empresaId) {
+                    try {
+                        const res = await fetch(`http://localhost:3000/supervisores`);
+                        const data = await res.json();
+                        
+                        // Filtra supervisores que pertencem à empresa selecionada
+                        const filtrados = data.filter(s => s.id_empresa == empresaId);
+                        filtrados.forEach(s => {
+                            const opt = document.createElement('option');
+                            opt.value = s.id;
+                            opt.textContent = `${s.nome} (${s.cargo || 'Supervisor'})`;
+                            supervisorSelect.appendChild(opt);
+                        });
+                    } catch (err) {
+                        console.error('Erro ao carregar supervisores:', err);
+                    }
+                }
+            });
+        });
+
+        // Lógica de envio do formulário via Fetch
+        document.querySelector('form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const data = Object.fromEntries(formData.entries());
+
+            // Conversões de tipo necessárias para o backend (Prisma)
+            const payload = {
+                ...data,
+                id_aluno: Number(data.id_aluno),
+                id_orientador: Number(data.id_orientador),
+                id_empresa: Number(data.id_empresa),
+                id_supervisor: Number(data.id_supervisor),
+                carga_horaria_semanal: Number(data.carga_horaria_semanal),
+                bolsa_auxilio: data.bolsa_auxilio ? parseFloat(data.bolsa_auxilio) : 0,
+                obrigatorio: data.obrigatorio === "1",
+                beneficio_transporte: !!data.beneficio_transporte,
+                beneficio_alimentacao: !!data.beneficio_alimentacao,
+                dt_registro: new Date().toISOString().split('T')[0] // Data atual do registro
+            };
+
+            try {
+                const res = await fetch('http://localhost:3000/estagios', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (res.ok) {
+                    alert('Estágio cadastrado com sucesso!');
+                    window.location.href = 'home.html';
+                } else {
+                    const err = await res.json();
+                    alert(err.error || 'Erro ao salvar estágio.');
+                }
+            } catch (err) {
+                console.error('Erro na requisição:', err);
+                alert('Falha na comunicação com o servidor.');
+            }
+        });
     </script>
 </body>
 </html>

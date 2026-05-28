@@ -1,11 +1,17 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const UsuarioEmpresaModel = require('../models/usuarioEmpresaModel');
+const validateEmail = require('../utils/validateEmail');
 
 class UsuarioEmpresaService {
   static async register({ nome, email, password, telefone }) {
     if (!nome || !email || !password) {
       throw new Error('Nome, email e senha sao obrigatorios');
+    }
+
+    // Validação de formato de e-mail
+    if (!validateEmail(email)) {
+      throw new Error('O e-mail fornecido é inválido.');
     }
 
     const existing = await UsuarioEmpresaModel.findByEmail(email);
