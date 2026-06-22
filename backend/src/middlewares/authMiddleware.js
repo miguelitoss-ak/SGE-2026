@@ -22,8 +22,10 @@ function authenticateToken(req, res, next) {
 }
 
 function authorizeRole(role) {
+  const expectedRole = role.toUpperCase();
+
   return (req, res, next) => {
-    if (!req.user || req.user.role !== role) {
+    if (!req.user || req.user.role?.toUpperCase() !== expectedRole) {
       return res.status(403).json({ error: 'Acesso negado' });
     }
     return next();

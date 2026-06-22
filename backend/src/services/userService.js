@@ -1,48 +1,42 @@
 const bcrypt = require('bcryptjs');
+const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
-const UserModel = require('../models/userModel'); // Verifique se seu model aceita os novos campos
+const UserModel = require('../models/userModel');
 const validateEmail = require('../utils/validateEmail');
 
 class UserService {
   static async registerUser(user) {
-    // 1. Desestruturando todos os campos reais que vêm do seu formulário HTML
     const { matricula, nome, cpf, telefone, email, data_nasc, senha, id_curso } = user;
 
-    // Validação básica de obrigatoriedade
     if (!email || !senha || !matricula || !nome || !id_curso) {
       throw new Error('Campos obrigatórios estão faltando (Matrícula, Nome, Email e Senha)');
     }
 
-    // Validação de formato de e-mail
     if (!validateEmail(email)) {
       throw new Error('O e-mail fornecido é inválido.');
     }
 
-    // Validação matemática do CPF
     if (cpf && !validarCPF(cpf)) {
       throw new Error('O CPF fornecido é inválido.');
     }
 
-    // 2. Verifica se o e-mail ou a matrícula já existem no sistema
     const existingUser = await UserModel.findByEmail(email);
     if (existingUser) {
       throw new Error('Usuario ja existe');
     }
 
-    // 3. Criptografa a senha (usando 'senha' para manter o padrão em português do banco)
     const hashedPassword = await bcrypt.hash(senha, 10);
 
-    // 4. Passa o objeto completo para o seu Model/Prisma salvar
     const createdUser = await UserModel.create({
       matricula,
       nome,
       cpf,
       telefone,
       email,
-      data_nasc: data_nasc ? new Date(data_nasc) : null, // Converte a string do HTML para DateTime do Prisma
+      data_nasc: data_nasc ? new Date(data_nasc) : null,
       senha: hashedPassword,
       id_curso,
-      role: 'ALUNO', // Força o papel como ALUNO por padrão neste cadastro
+      role: 'ALUNO',
     });
 
     return {
@@ -51,7 +45,39 @@ class UserService {
     };
   }
 
-  static async loginUser({ email, senha }) { // Ajustado de 'password' para 'senha'
+  static async registerAdmin({ nome, telefone }) {
+    if (!nome || !telefone) {
+      throw new Error('Nome e telefone sao obrigatorios');
+    }
+
+    let email = generateEmailFromName(nome);
+    let counter = 1;
+
+    while (await UserModel.findByEmail(email)) {
+      email = generateEmailFromName(nome, counter);
+      counter += 1;
+    }
+
+    const senha = generateSecurePassword();
+    const hashedPassword = await bcrypt.hash(senha, 10);
+
+    const createdUser = await UserModel.create({
+      nome,
+      telefone,
+      email,
+      senha: hashedPassword,
+      role: 'ADMIN',
+    });
+
+    return {
+      message: 'Administrador criado com sucesso',
+      email,
+      senha,
+      user: createdUser,
+    };
+  }
+
+  static async loginUser({ email, senha }) {
     if (!email || !senha) {
       throw new Error('Email e senha sao obrigatorios');
     }
@@ -61,7 +87,6 @@ class UserService {
       throw new Error('Usuario nao encontrado');
     }
 
-    // Compara a senha digitada com a criptografada (garantindo que o campo no banco seja 'senha')
     const passwordIsValid = await bcrypt.compare(senha, user.senha);
     if (!passwordIsValid) {
       throw new Error('Senha invalida');
@@ -71,7 +96,6 @@ class UserService {
       throw new Error('JWT_SECRET nao configurado');
     }
 
-    // Gera o token guardando o id, email e o papel do usuário (ALUNO)
     const token = jwt.sign(
       { id: user.id, email: user.email, role: user.role },
       process.env.JWT_SECRET,
@@ -84,14 +108,43 @@ class UserService {
         id: user.id,
         email: user.email,
         role: user.role,
-        nome: user.nome, // Adicionado para dar as boas-vindas no frontend
-        matricula: user.matricula
+        nome: user.nome,
+        matricula: user.matricula,
       },
     };
   }
 }
 
-// Função auxiliar de validação de CPF
+function generateEmailFromName(nome, index = 0) {
+  const normalized = nome
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase();
+
+  const parts = normalized.split(/\s+/).filter(Boolean);
+  if (parts.length === 0) {
+    return `admin@ifrs.edu.br`;
+  }
+
+  const first = parts[0];
+  const last = parts.length > 1 ? parts[parts.length - 1] : first;
+  const suffix = index > 0 ? `${index}` : '';
+
+  return `${first}.${last}${suffix}@ifrs.edu.br`;
+}
+
+function generateSecurePassword() {
+  const length = 16;
+  const charset = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()-_=+';
+  let password = '';
+
+  for (let i = 0; i < length; i += 1) {
+    password += charset.charAt(crypto.randomInt(0, charset.length));
+  }
+
+  return password;
+}
+
 function validarCPF(cpf) {
   cpf = cpf.replace(/[^\d]+/g, '');
   if (cpf.length !== 11 || /^(\d)\1+$/.test(cpf)) return false;

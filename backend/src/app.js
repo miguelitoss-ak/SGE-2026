@@ -8,7 +8,7 @@ const errorMiddleware = require('./middlewares/errorMiddleware');
 const alunoRoutes = require('./routes/alunoRoutes');
 const empresaRoutes = require('./routes/empresaRoutes');
 const supervisorRoutes = require('./routes/supervisorRoutes');
-const cursoRoutes = require('./routes/cursoRoutes'); // Nova rota
+const cursoRoutes = require('./routes/cursoRoutes');
 const estagioRoutes = require('./routes/estagioRoutes');
 const orientadorRoutes = require('./routes/orientadorRoutes');
 const documentoRoutes = require('./routes/documentoRoutes');
@@ -24,24 +24,26 @@ app.use(express.json());
 // Rotas da API SGE
 app.use('/alunos', alunoRoutes);
 app.use('/empresas', empresaRoutes);
-app.use('/cursos', cursoRoutes); // Adicionado cursos
+app.use('/cursos', cursoRoutes);
 app.use('/supervisores', supervisorRoutes);
 app.use('/estagios', estagioRoutes);
 app.use('/orientadores', orientadorRoutes);
 app.use('/documentos', documentoRoutes);
 app.use('/horarios', horarioRoutes);
 
-//rotas responsáveis pela autenticação (login, cadastro, etc.)
+// rotas responsáveis pela autenticação (login, cadastro, etc.)
 const authRoutes = require('./routes/authRoutes');
+const adminRoutes = require('./routes/adminRoutes');
 
 // Importa as rotas públicas, que não requerem autenticação
 const publicRoutes = require('./routes/publicRoutes');
 
-// Importa as rotas protegidas, que só podem ser acessadas com um token JWT 
+// Importa as rotas protegidas, que só podem ser acessadas com um token JWT
 const protectedRoutes = require('./routes/protectedRoutes');
 
 // Define o prefixo '/auth' para as rotas de autenticação
 app.use('/auth', authRoutes);
+app.use('/auth', adminRoutes);
 
 // Define o prefixo '/public' para rotas acessíveis sem autenticação
 app.use('/public', publicRoutes);
