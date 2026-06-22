@@ -70,9 +70,18 @@
                                 <label class="block text-xs font-bold text-gray-500">ORIENTADOR IFRS</label>
                                 <a href="addOrientador.html" class="text-[10px] font-bold text-ifrs-green hover:underline">NÃO O ENCONTROU? CADASTRAR NOVO</a>
                             </div>
-                            <select id="id_orientador" name="id_orientador" required class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-ifrs-green outline-none transition-all">
-                                <option value="">Selecione o orientador</option>
-                            </select>
+                            <div class="relative">
+                                <input
+                                    id="orientadorBusca"
+                                    type="text"
+                                    autocomplete="off"
+                                    placeholder="Digite o nome do orientador"
+                                    class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 pr-10 focus:ring-2 focus:ring-ifrs-green outline-none transition-all"
+                                >
+                                <i data-lucide="search" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4"></i>
+                                <div id="orientadorResultados" class="absolute z-50 left-0 right-0 top-full mt-1 max-h-60 overflow-y-auto rounded-xl border border-gray-200 bg-white shadow-lg hidden"></div>
+                            </div>
+                            <input type="hidden" id="id_orientador" name="id_orientador" required>
                         </div>
                     </div>
 
@@ -85,18 +94,36 @@
                                 <label class="block text-xs font-bold text-gray-500">EMPRESA</label>
                                 <a href="addEmpresa.html" class="text-[10px] font-bold text-ifrs-green hover:underline">NÃO A ENCONTROU? CADASTRAR NOVA</a>
                             </div>
-                            <select id="id_empresa" name="id_empresa" required class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-ifrs-green outline-none transition-all">
-                                <option value="">Selecione a empresa</option>
-                            </select>
+                            <div class="relative">
+                                <input
+                                    id="empresaBusca"
+                                    type="text"
+                                    autocomplete="off"
+                                    placeholder="Digite o nome da empresa"
+                                    class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 pr-10 focus:ring-2 focus:ring-ifrs-green outline-none transition-all"
+                                >
+                                <i data-lucide="search" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4"></i>
+                                <div id="empresaResultados" class="absolute z-50 left-0 right-0 top-full mt-1 max-h-60 overflow-y-auto rounded-xl border border-gray-200 bg-white shadow-lg hidden"></div>
+                            </div>
+                            <input type="hidden" id="id_empresa" name="id_empresa" required>
                         </div>
                         <div>
-                                <div class="flex justify-between items-center mb-1">
+                            <div class="flex justify-between items-center mb-1">
                                 <label class="block text-xs font-bold text-gray-500">SUPERVISOR NA EMPRESA</label>
                                 <a href="addSupervisor.html" class="text-[10px] font-bold text-ifrs-green hover:underline">NÃO O ENCONTROU? CADASTRAR NOVO</a>
                             </div>
-                            <select id="id_supervisor" name="id_supervisor" required class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-ifrs-green outline-none transition-all">
-                                <option value="">Selecione o supervisor</option>
-                            </select>
+                            <div class="relative">
+                                <input
+                                    id="supervisorBusca"
+                                    type="text"
+                                    autocomplete="off"
+                                    placeholder="Digite o nome do supervisor"
+                                    class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 pr-10 focus:ring-2 focus:ring-ifrs-green outline-none transition-all"
+                                >
+                                <i data-lucide="search" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4"></i>
+                                <div id="supervisorResultados" class="absolute z-50 left-0 right-0 top-full mt-1 max-h-60 overflow-y-auto rounded-xl border border-gray-200 bg-white shadow-lg hidden"></div>
+                            </div>
+                            <input type="hidden" id="id_supervisor" name="id_supervisor" required>
                         </div>
                     </div>
                 </div>
@@ -119,7 +146,7 @@
                             <label class="block text-xs font-bold text-gray-500 mb-1">CARGA HORÁRIA SEMANAL (H)</label>
                             <input type="number" name="carga_horaria_semanal" placeholder="Ex: 20" required class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-ifrs-green outline-none transition-all">
                         </div>
-                        <div class="md:col-span-2">
+                        <div id="situacaoContainer" class="md:col-span-2 hidden">
                             <label class="block text-xs font-bold text-gray-500 mb-1">SITUAÇÃO</label>
                             <select name="situacao" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-ifrs-green outline-none transition-all">
                                 <option value="ATIVO">Ativo</option>
@@ -181,6 +208,7 @@
         const userName = localStorage.getItem('userName');
         const userId = localStorage.getItem('userId');
         const userMatricula = localStorage.getItem('userMatricula');
+        const userRole = localStorage.getItem('role');
 
         document.addEventListener('DOMContentLoaded', async () => {
             
@@ -188,6 +216,13 @@
             if (!token || !userName || !userId) {
                 window.location.href = 'login.html';
                 return;
+            }
+
+            const situacaoContainer = document.getElementById('situacaoContainer');
+            if (userRole === 'ADMIN') {
+                situacaoContainer.classList.remove('hidden');
+            } else {
+                situacaoContainer.classList.add('hidden');
             }
 
             // 3. Preenche os dados do aluno logado na interface e no campo oculto
@@ -215,32 +250,157 @@
                 }
             };
 
-            // Carrega as listas iniciais de Orientadores e Empresas
-            await carregarOpcoes('http://localhost:3000/orientadores', 'id_orientador', 'nome');
-            await carregarOpcoes('http://localhost:3000/empresas', 'id_empresa', 'nome_fantasia');
+            let empresas = [];
+            let orientadores = [];
+            let supervisores = [];
 
-            // Listener para carregar supervisores baseados na empresa selecionada (Lógica 1:N)
-            document.getElementById('id_empresa').addEventListener('change', async (e) => {
-                const empresaId = e.target.value;
-                const supervisorSelect = document.getElementById('id_supervisor');
-                supervisorSelect.innerHTML = '<option value="">Selecione o supervisor</option>';
+            try {
+                const resEmpresas = await fetch('http://localhost:3000/empresas');
+                empresas = await resEmpresas.json();
+            } catch (err) {
+                console.error('Erro ao carregar empresas:', err);
+            }
 
-                if (empresaId) {
-                    try {
-                        const res = await fetch(`http://localhost:3000/supervisores`);
-                        const data = await res.json();
-                        
-                        // Filtra supervisores que pertencem à empresa selecionada
-                        const filtrados = data.filter(s => s.id_empresa == empresaId);
-                        filtrados.forEach(s => {
-                            const opt = document.createElement('option');
-                            opt.value = s.id;
-                            opt.textContent = `${s.nome} (${s.cargo || 'Supervisor'})`;
-                            supervisorSelect.appendChild(opt);
-                        });
-                    } catch (err) {
-                        console.error('Erro ao carregar supervisores:', err);
-                    }
+            try {
+                const resOrientadores = await fetch('http://localhost:3000/orientadores');
+                orientadores = await resOrientadores.json();
+            } catch (err) {
+                console.error('Erro ao carregar orientadores:', err);
+            }
+
+            try {
+                const resSupervisores = await fetch('http://localhost:3000/supervisores');
+                supervisores = await resSupervisores.json();
+            } catch (err) {
+                console.error('Erro ao carregar supervisores:', err);
+            }
+
+            const empresaBusca = document.getElementById('empresaBusca');
+            const empresaResultados = document.getElementById('empresaResultados');
+            const empresaInputHidden = document.getElementById('id_empresa');
+            const orientadorBusca = document.getElementById('orientadorBusca');
+            const orientadorResultados = document.getElementById('orientadorResultados');
+            const orientadorInputHidden = document.getElementById('id_orientador');
+            const supervisorBusca = document.getElementById('supervisorBusca');
+            const supervisorResultados = document.getElementById('supervisorResultados');
+            const supervisorInputHidden = document.getElementById('id_supervisor');
+
+            function filtrarPorTexto(lista, campo, termo) {
+                const valor = termo.toLowerCase().trim();
+                if (!valor) return lista.slice(0, 50);
+                return lista.filter(item => {
+                    const texto = `${item[campo] || ''} ${item.cargo || ''} ${item.nome_social || ''} ${item.nome_fantasia || ''}`.toLowerCase();
+                    return texto.includes(valor);
+                }).slice(0, 50);
+            }
+
+            function renderizarResultados(container, itens, onSelect) {
+                container.innerHTML = '';
+
+                if (itens.length === 0) {
+                    const item = document.createElement('div');
+                    item.className = 'px-4 py-3 text-sm text-gray-500';
+                    item.textContent = 'Nenhum resultado encontrado';
+                    container.appendChild(item);
+                } else {
+                    itens.forEach(item => {
+                        const btn = document.createElement('button');
+                        btn.type = 'button';
+                        btn.className = 'w-full text-left px-4 py-3 hover:bg-gray-50 border-b border-gray-100 last:border-b-0';
+                        btn.innerHTML = `
+                            <div class="font-semibold text-gray-800">${item.nome || item.nome_fantasia || item.nome_social || 'Sem nome'}</div>
+                            <div class="text-xs text-gray-500">${item.cargo || item.email || ''}</div>
+                        `;
+                        btn.addEventListener('click', () => onSelect(item));
+                        container.appendChild(btn);
+                    });
+                }
+
+                container.classList.remove('hidden');
+            }
+
+            function atualizarSupervisoresPorEmpresa(empresaId) {
+                const filtrados = supervisores.filter(s => s.id_empresa == empresaId);
+                supervisorResultados.innerHTML = '';
+                supervisorBusca.value = '';
+                supervisorInputHidden.value = '';
+                if (filtrados.length === 0) {
+                    supervisorResultados.innerHTML = '<div class="px-4 py-3 text-sm text-gray-500">Nenhum supervisor encontrado para esta empresa</div>';
+                    supervisorResultados.classList.remove('hidden');
+                    return;
+                }
+                renderizarResultados(supervisorResultados, filtrados, (item) => {
+                    supervisorBusca.value = item.nome;
+                    supervisorInputHidden.value = item.id;
+                    supervisorResultados.classList.add('hidden');
+                });
+            }
+
+            empresaBusca.addEventListener('input', () => {
+                const filtradas = filtrarPorTexto(empresas, 'nome_fantasia', empresaBusca.value);
+                renderizarResultados(empresaResultados, filtradas, (item) => {
+                    empresaBusca.value = item.nome_fantasia || item.nome_social;
+                    empresaInputHidden.value = item.id;
+                    empresaResultados.classList.add('hidden');
+                    atualizarSupervisoresPorEmpresa(item.id);
+                });
+            });
+
+            empresaBusca.addEventListener('focus', () => {
+                const filtradas = filtrarPorTexto(empresas, 'nome_fantasia', empresaBusca.value);
+                renderizarResultados(empresaResultados, filtradas, (item) => {
+                    empresaBusca.value = item.nome_fantasia || item.nome_social;
+                    empresaInputHidden.value = item.id;
+                    empresaResultados.classList.add('hidden');
+                    atualizarSupervisoresPorEmpresa(item.id);
+                });
+            });
+
+            orientadorBusca.addEventListener('input', () => {
+                const filtrados = filtrarPorTexto(orientadores, 'nome', orientadorBusca.value);
+                renderizarResultados(orientadorResultados, filtrados, (item) => {
+                    orientadorBusca.value = item.nome;
+                    orientadorInputHidden.value = item.id;
+                    orientadorResultados.classList.add('hidden');
+                });
+            });
+
+            orientadorBusca.addEventListener('focus', () => {
+                const filtrados = filtrarPorTexto(orientadores, 'nome', orientadorBusca.value);
+                renderizarResultados(orientadorResultados, filtrados, (item) => {
+                    orientadorBusca.value = item.nome;
+                    orientadorInputHidden.value = item.id;
+                    orientadorResultados.classList.add('hidden');
+                });
+            });
+
+            supervisorBusca.addEventListener('input', () => {
+                const filtrados = filtrarPorTexto(supervisores, 'nome', supervisorBusca.value);
+                renderizarResultados(supervisorResultados, filtrados, (item) => {
+                    supervisorBusca.value = item.nome;
+                    supervisorInputHidden.value = item.id;
+                    supervisorResultados.classList.add('hidden');
+                });
+            });
+
+            supervisorBusca.addEventListener('focus', () => {
+                const filtrados = filtrarPorTexto(supervisores, 'nome', supervisorBusca.value);
+                renderizarResultados(supervisorResultados, filtrados, (item) => {
+                    supervisorBusca.value = item.nome;
+                    supervisorInputHidden.value = item.id;
+                    supervisorResultados.classList.add('hidden');
+                });
+            });
+
+            document.addEventListener('click', (e) => {
+                if (!e.target.closest('#empresaBusca') && !e.target.closest('#empresaResultados')) {
+                    empresaResultados.classList.add('hidden');
+                }
+                if (!e.target.closest('#orientadorBusca') && !e.target.closest('#orientadorResultados')) {
+                    orientadorResultados.classList.add('hidden');
+                }
+                if (!e.target.closest('#supervisorBusca') && !e.target.closest('#supervisorResultados')) {
+                    supervisorResultados.classList.add('hidden');
                 }
             });
         });
