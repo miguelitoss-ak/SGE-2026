@@ -236,6 +236,21 @@
     <script>
         lucide.createIcons();
 
+        function isAdminUser() {
+            const role = (localStorage.getItem('role') || '').toString().trim().toUpperCase();
+            return role === 'ADMIN' || role === 'ADMINISTRADOR';
+        }
+
+        function toggleAdminActions() {
+            document.querySelectorAll('.admin-actions').forEach((element) => {
+                if (isAdminUser()) {
+                    element.classList.remove('hidden');
+                } else {
+                    element.classList.add('hidden');
+                }
+            });
+        }
+
         // Lógica para carregar os dados do usuário logado
         document.addEventListener('DOMContentLoaded', () => {
             const token = localStorage.getItem('token');
@@ -253,12 +268,18 @@
                 document.getElementById('welcomeName').textContent = `Bem-vindo, ${userName}!`;
                 document.getElementById('profileName').textContent = userName;
             }
+
+            if (userRole) {
+                document.getElementById('profileRole').textContent = userRole;
+            }
+
+            toggleAdminActions();
         });
 
         let estagioIdParaExcluir = null;
 
         function openDeleteModal(id, empresa, cargo) {
-            if (localStorage.getItem('role') !== 'ADMIN') {
+            if (!isAdminUser()) {
                 return;
             }
 
@@ -274,11 +295,13 @@
         }
 
         document.getElementById('confirmDeleteBtn').addEventListener('click', () => {
-            if (estagioIdParaExcluir) {
-                console.log(`Excluindo estágio ${estagioIdParaExcluir}...`);
-                // Aqui você adicionaria o fetch() para o backend
-                closeDeleteModal();
+            if (!isAdminUser() || !estagioIdParaExcluir) {
+                return;
             }
+
+            console.log(`Excluindo estágio ${estagioIdParaExcluir}...`);
+            // Aqui você adicionaria o fetch() para o backend
+            closeDeleteModal();
         });
     </script>
 </body>
