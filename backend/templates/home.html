@@ -81,7 +81,7 @@
                                 <h4 class="font-bold text-gray-800 group-hover:text-ifrs-green transition-colors">Tech Inova S.A.</h4>
                                 <div class="flex items-center space-x-2">
                                     <!-- Ações do CRUD (Aparecem no Hover) -->
-                                    <div class="flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-all transform translate-x-2 group-hover:translate-x-0 z-10">
+                                    <div class="admin-actions hidden flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-all transform translate-x-2 group-hover:translate-x-0 z-10">
                                         <a href="editEstagio.html?id=1" title="Editar Estágio" class="p-1.5 bg-amber-50 text-amber-600 rounded-lg hover:bg-amber-600 hover:text-white transition-all shadow-sm">
                                             <i data-lucide="pencil" class="w-3.5 h-3.5"></i>
                                         </a>
@@ -108,7 +108,7 @@
                                 <h4 class="font-bold text-gray-800 group-hover:text-ifrs-green transition-colors">Agile Sys LTDA</h4>
                                 <div class="flex items-center space-x-2">
                                     <!-- Ações do CRUD (Aparecem no Hover) -->
-                                    <div class="flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-all transform translate-x-2 group-hover:translate-x-0 z-10">
+                                    <div class="admin-actions hidden flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-all transform translate-x-2 group-hover:translate-x-0 z-10">
                                         <a href="editEstagio.html?id=2" title="Editar Estágio" class="p-1.5 bg-amber-50 text-amber-600 rounded-lg hover:bg-amber-600 hover:text-white transition-all shadow-sm">
                                             <i data-lucide="pencil" class="w-3.5 h-3.5"></i>
                                         </a>
@@ -253,19 +253,15 @@
                 document.getElementById('welcomeName').textContent = `Bem-vindo, ${userName}!`;
                 document.getElementById('profileName').textContent = userName;
             }
-
-            const roleLabel = userRole === 'ADMIN'
-                ? 'Administrador'
-                : userRole === 'ALUNO'
-                    ? 'Aluno'
-                    : 'Usuário';
-
-            document.getElementById('profileRole').textContent = roleLabel;
         });
 
         let estagioIdParaExcluir = null;
 
         function openDeleteModal(id, empresa, cargo) {
+            if (localStorage.getItem('role') !== 'ADMIN') {
+                return;
+            }
+
             estagioIdParaExcluir = id;
             document.getElementById('modalEmpresa').innerText = empresa;
             document.getElementById('modalCargo').innerText = cargo;
