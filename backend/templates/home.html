@@ -45,7 +45,7 @@
                 <div class="flex items-center space-x-3 border-l border-white/20 pl-4">
                     <div class="text-right hidden sm:block min-w-0">
                         <p id="profileName" class="text-sm font-bold truncate max-w-[120px]">Usuário</p>
-                        <p class="text-xs opacity-75">Aluno</p>
+                        <p id="profileRole" class="text-xs opacity-75">Usuário</p>
                     </div>
                     <div class="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center border-2 border-white/30 overflow-hidden hover:scale-105 transition-transform cursor-pointer">
                         <i data-lucide="user" class="w-6 h-6"></i>
@@ -240,6 +240,7 @@
         document.addEventListener('DOMContentLoaded', () => {
             const token = localStorage.getItem('token');
             const userName = localStorage.getItem('userName');
+            const userRole = localStorage.getItem('role');
 
             // Se não houver token, redireciona para o login por segurança
             if (!token) {
@@ -252,6 +253,14 @@
                 document.getElementById('welcomeName').textContent = `Bem-vindo, ${userName}!`;
                 document.getElementById('profileName').textContent = userName;
             }
+
+            const roleLabel = userRole === 'ADMIN'
+                ? 'Administrador'
+                : userRole === 'ALUNO'
+                    ? 'Aluno'
+                    : 'Usuário';
+
+            document.getElementById('profileRole').textContent = roleLabel;
         });
 
         let estagioIdParaExcluir = null;
