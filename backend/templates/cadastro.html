@@ -29,7 +29,7 @@
             <p class="text-gray-500 text-sm">Cadastrar-se</p>
         </div>
 
-        <form id="registerForm" action="/register" method="POST" class="space-y-6">
+        <form id="registerForm" action="/auth/register" method="POST" class="space-y-6">
             <div>
                 <label for="matricula" class="block text-sm font-medium text-gray-700">Matrícula</label>
                 <input type="text" id="matricula" name="matricula" required maxlength="10"
@@ -175,7 +175,7 @@
     window.addEventListener('DOMContentLoaded', async () => {
         const cursoSelect = document.getElementById('id_curso');
         try {
-            const response = await fetch('http://localhost:3000/cursos');
+            const response = await fetch('/cursos');
             const cursos = await response.json();
             cursos.forEach(curso => {
                 const option = document.createElement('option');
@@ -258,7 +258,7 @@
 
         try {
             // 4. Faz a requisição para a sua rota do Express (/auth/register)
-            const resposta = await fetch('http://localhost:3000/auth/register', {
+            const resposta = await fetch('/auth/register', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

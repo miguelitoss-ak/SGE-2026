@@ -9,6 +9,7 @@ router.post('/register', AuthController.register);
 router.post('/login', AuthController.login);
 router.post('/empresa/register', AuthController.registerEmpresaUser);
 router.post('/empresa/login', AuthController.loginEmpresaUser);
+router.post('/forgot-password', AuthController.forgotPassword);
 router.get('/me', authenticateToken, AuthController.me);
 
 module.exports = router;

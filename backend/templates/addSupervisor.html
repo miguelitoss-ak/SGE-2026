@@ -163,7 +163,7 @@
         window.addEventListener('DOMContentLoaded', async () => {
             const empresaSelect = document.getElementById('id_empresa');
             try {
-                const response = await fetch('http://localhost:3000/empresas');
+                const response = await fetch('/empresas');
                 const empresas = await response.json();
                 empresas.forEach(empresa => {
                     const option = document.createElement('option');

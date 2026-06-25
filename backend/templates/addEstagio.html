@@ -255,21 +255,21 @@
             let supervisores = [];
 
             try {
-                const resEmpresas = await fetch('http://localhost:3000/empresas');
+                const resEmpresas = await fetch('/empresas');
                 empresas = await resEmpresas.json();
             } catch (err) {
                 console.error('Erro ao carregar empresas:', err);
             }
 
             try {
-                const resOrientadores = await fetch('http://localhost:3000/orientadores');
+                const resOrientadores = await fetch('/orientadores');
                 orientadores = await resOrientadores.json();
             } catch (err) {
                 console.error('Erro ao carregar orientadores:', err);
             }
 
             try {
-                const resSupervisores = await fetch('http://localhost:3000/supervisores');
+                const resSupervisores = await fetch('/supervisores');
                 supervisores = await resSupervisores.json();
             } catch (err) {
                 console.error('Erro ao carregar supervisores:', err);
@@ -427,7 +427,7 @@
             };
 
             try {
-                const res = await fetch('http://localhost:3000/estagios', {
+                const res = await fetch('/estagios', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload)

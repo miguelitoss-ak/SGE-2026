@@ -52,6 +52,22 @@ class AuthController {
       return res.status(statusCode).json({ error: error.message });
     }
   }
+
+  static async forgotPassword(req, res) {
+    try {
+      const { email } = req.body;
+
+      if (!email) {
+        return res.status(400).json({ error: 'E-mail e obrigatorio' });
+      }
+
+      return res.status(200).json({
+        message: 'Se o e-mail estiver cadastrado, voce recebera as instrucoes de recuperacao.',
+      });
+    } catch (error) {
+      return res.status(500).json({ error: 'Erro ao processar a recuperacao de senha' });
+    }
+  }
 }
 
 module.exports = AuthController;
