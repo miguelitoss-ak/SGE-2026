@@ -162,13 +162,30 @@
         // Carregar empresas cadastradas do banco de dados
         window.addEventListener('DOMContentLoaded', async () => {
             const empresaSelect = document.getElementById('id_empresa');
+
+            function getEmpresaLabel(empresa) {
+                const nomeFantasia = (empresa.nome_fantasia || '').trim();
+                const nomeSocial = (empresa.nome_social || '').trim();
+                const representante = (empresa.representante || '').trim();
+                const cnpj = (empresa.CNPJ_NibocoProd || '').trim();
+                const email = (empresa.email || '').trim();
+
+                if (nomeFantasia) return nomeFantasia;
+                if (nomeSocial) return nomeSocial;
+                if (representante) return representante;
+                if (email) return email;
+                if (cnpj) return `CNPJ ${cnpj}`;
+                return `Empresa ${empresa.id}`;
+            }
+
             try {
                 const response = await fetch('http://localhost:3000/empresas');
                 const empresas = await response.json();
                 empresas.forEach(empresa => {
                     const option = document.createElement('option');
                     option.value = empresa.id;
-                    option.textContent = empresa.nome_fantasia || empresa.nome_social;
+                    option.textContent = getEmpresaLabel(empresa);
+                    option.title = getEmpresaLabel(empresa);
                     empresaSelect.appendChild(option);
                 });
             } catch (error) {

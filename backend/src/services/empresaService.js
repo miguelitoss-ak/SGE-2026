@@ -12,18 +12,32 @@ class EmpresaService {
       throw new Error("Formato de email da empresa inválido.");
     }
 
+    const tipoCadastro = String(empresaData.type_cadastro || '').toLowerCase().trim();
     const normalizedCnpj = EmpresaModel.normalizeCnpj(empresaData.CNPJ_NibocoProd);
-    if (!normalizedCnpj) {
+    const ie = empresaData.inscricao_estadual != null ? String(empresaData.inscricao_estadual).trim() : '';
+
+    const isCnpjCadastro = tipoCadastro === 'cnpj';
+    const isIeCadastro = tipoCadastro === 'ie';
+
+    if (isCnpjCadastro && !normalizedCnpj) {
       throw new Error('CNPJ inválido. Envie apenas os 14 dígitos numéricos do CNPJ.');
+    }
+
+    if (isIeCadastro && !ie) {
+      throw new Error('Inscrição estadual é obrigatória para este tipo de cadastro.');
+    }
+
+    if (!isCnpjCadastro && !isIeCadastro && !normalizedCnpj && !ie) {
+      throw new Error('Informe CNPJ ou Inscrição Estadual para cadastrar a empresa.');
     }
 
     empresaData = {
       ...empresaData,
-      CNPJ_NibocoProd: normalizedCnpj,
+      CNPJ_NibocoProd: isIeCadastro ? null : normalizedCnpj,
+      inscricao_estadual: ie || null,
     };
 
-    if (empresaData.inscricao_estadual != null && String(empresaData.inscricao_estadual).trim() !== '') {
-      const ie = String(empresaData.inscricao_estadual).trim();
+    if (ie) {
       if (ie.length < 6 || ie.length > 8) {
         throw new Error('Inscrição estadual deve ter entre 6 e 8 caracteres.');
       }
@@ -40,10 +54,18 @@ class EmpresaService {
       }
     }
 
-    // Regra de Negócio: Validar se o CNPJ já existe
-    const existingEmpresa = await EmpresaModel.findByCnpj(empresaData.CNPJ_NibocoProd);
-    if (existingEmpresa) {
-      throw new Error("Empresa com este CNPJ já cadastrada.");
+    if (empresaData.CNPJ_NibocoProd) {
+      const existingEmpresa = await EmpresaModel.findByCnpj(empresaData.CNPJ_NibocoProd);
+      if (existingEmpresa) {
+        throw new Error("Empresa com este CNPJ já cadastrada.");
+      }
+    }
+
+    if (ie) {
+      const existingIE = await EmpresaModel.findByInscricaoEstadual(ie);
+      if (existingIE) {
+        throw new Error("Empresa com esta inscrição estadual já cadastrada.");
+      }
     }
 
     try {

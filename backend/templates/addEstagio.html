@@ -288,7 +288,6 @@
         lucide.createIcons();
 
         // 1. Resgata as variáveis de autenticação (ex: do localStorage) para a barreira de segurança funcionar
-        const token = localStorage.getItem('token');
         const userName = localStorage.getItem('userName');
         const userId = localStorage.getItem('userId');
         const userMatricula = localStorage.getItem('userMatricula');
@@ -603,7 +602,9 @@
         document.addEventListener('DOMContentLoaded', async () => {
             
             // 2. Barreira de Segurança: Se não estiver logado, expulsa para a tela de login
-            if (!token || !userName || !userId) {
+            const currentToken = localStorage.getItem('token') || sessionStorage.getItem('token');
+
+            if (!currentToken || !userName || !userId) {
                 window.location.href = 'login.html';
                 return;
             }
@@ -727,22 +728,30 @@
             function getEmpresaDisplayName(item) {
                 const nomeFantasia = (item.nome_fantasia || '').trim();
                 const nomeSocial = (item.nome_social || '').trim();
+                const representante = (item.representante || '').trim();
+                const email = (item.email || '').trim();
+                const cnpj = (item.CNPJ_NibocoProd || '').trim();
 
-                if (nomeFantasia) return nomeFantasia;
                 if (nomeSocial) return nomeSocial;
-                return `Empresa #${item.id}`;
+                if (nomeFantasia) return nomeFantasia;
+                if (representante) return representante;
+                if (email) return email;
+                if (cnpj) return `CNPJ ${cnpj}`;
+                return `Empresa ${item.id}`;
             }
 
             function getEmpresaSubtitle(item) {
                 const nomeSocial = (item.nome_social || '').trim();
+                const nomeFantasia = (item.nome_fantasia || '').trim();
                 const cnpj = (item.CNPJ_NibocoProd || '').trim();
 
                 if (nomeSocial && nomeSocial !== getEmpresaDisplayName(item)) return nomeSocial;
+                if (nomeFantasia && nomeFantasia !== getEmpresaDisplayName(item)) return nomeFantasia;
                 if (cnpj) return `CNPJ ${cnpj}`;
                 return item.email || '';
             }
 
-            function renderizarResultados(container, itens, onSelect) {
+            function renderizarResultados(container, itens, onSelect, getPrimaryText, getSecondaryText) {
                 container.innerHTML = '';
 
                 if (itens.length === 0) {
@@ -753,16 +762,16 @@
                 } else {
                     itens.forEach(item => {
                         const btn = document.createElement('button');
-                        btn.type = 'button';
-                        btn.className = 'w-full text-left px-4 py-3 hover:bg-gray-50 border-b border-gray-100 last:border-b-0';
-                        btn.innerHTML = `
-                            <div class="font-semibold text-gray-800">${getEmpresaDisplayName(item)}</div>
-                            <div class="text-xs text-gray-500">${getEmpresaSubtitle(item)}</div>
+                    btn.type = 'button';
+                    btn.className = 'w-full text-left px-4 py-3 hover:bg-gray-50 border-b border-gray-100 last:border-b-0';
+                    btn.innerHTML = `
+                            <div class="font-semibold text-gray-800">${getPrimaryText ? getPrimaryText(item) : getEmpresaDisplayName(item)}</div>
+                            ${getSecondaryText ? `<div class="text-xs text-gray-500">${getSecondaryText(item)}</div>` : ''}
                         `;
-                        btn.addEventListener('click', () => onSelect(item));
-                        container.appendChild(btn);
-                    });
-                }
+                    btn.addEventListener('click', () => onSelect(item));
+                    container.appendChild(btn);
+                });
+            }
 
                 container.classList.remove('hidden');
             }
@@ -781,7 +790,7 @@
                     supervisorBusca.value = item.nome;
                     supervisorInputHidden.value = item.id;
                     supervisorResultados.classList.add('hidden');
-                });
+                }, (item) => item.nome);
             }
 
             empresaBusca.addEventListener('input', () => {
@@ -812,7 +821,7 @@
                     orientadorBusca.value = item.nome;
                     orientadorInputHidden.value = item.id;
                     orientadorResultados.classList.add('hidden');
-                });
+                }, (item) => item.nome);
             });
 
             orientadorBusca.addEventListener('focus', () => {
@@ -821,7 +830,7 @@
                     orientadorBusca.value = item.nome;
                     orientadorInputHidden.value = item.id;
                     orientadorResultados.classList.add('hidden');
-                });
+                }, (item) => item.nome);
             });
 
             supervisorBusca.addEventListener('input', () => {
@@ -830,7 +839,7 @@
                     supervisorBusca.value = item.nome;
                     supervisorInputHidden.value = item.id;
                     supervisorResultados.classList.add('hidden');
-                });
+                }, (item) => item.nome);
             });
 
             supervisorBusca.addEventListener('focus', () => {
@@ -839,7 +848,7 @@
                     supervisorBusca.value = item.nome;
                     supervisorInputHidden.value = item.id;
                     supervisorResultados.classList.add('hidden');
-                });
+                }, (item) => item.nome);
             });
 
             document.addEventListener('click', (e) => {
@@ -868,6 +877,14 @@
 
         stageForm.addEventListener('submit', async (e) => {
             e.preventDefault();
+            const submitToken = localStorage.getItem('token') || sessionStorage.getItem('token');
+
+            if (!submitToken) {
+                alert('Sua sessão expirou ou o token não foi encontrado. Faça login novamente.');
+                window.location.href = 'login.html';
+                return;
+            }
+
             const formData = new FormData(e.target);
             const data = Object.fromEntries(formData.entries());
 
@@ -893,8 +910,10 @@
             try {
                 const res = await fetch('/estagios', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    ...(token ? { Authorization: `Bearer ${token}` } : {}),
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${submitToken}`,
+                    },
                     body: JSON.stringify(payload)
                 });
 

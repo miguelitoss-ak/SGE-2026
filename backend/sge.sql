@@ -45,7 +45,7 @@ CREATE TABLE usuario_empresa (
 
 CREATE TABLE empresas (
   id                   INT AUTO_INCREMENT PRIMARY KEY,
-  CNPJ_NibocoProd      CHAR(14) NOT NULL UNIQUE,
+  CNPJ_NibocoProd      CHAR(14) UNIQUE,
   nome_social          VARCHAR(255) NOT NULL,
   nome_fantasia        VARCHAR(255),
   endereco             VARCHAR(255),

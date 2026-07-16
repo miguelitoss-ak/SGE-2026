@@ -24,6 +24,16 @@ class EmpresaModel {
     return rows[0];
   }
 
+  static async findByInscricaoEstadual(inscricaoEstadual) {
+    const ie = inscricaoEstadual == null ? '' : String(inscricaoEstadual).trim();
+    if (!ie) return null;
+
+    const rows = await prisma.$queryRaw`
+      SELECT * FROM empresas WHERE inscricao_estadual = ${ie} LIMIT 1
+    `;
+    return rows[0];
+  }
+
   // Busca por ID (útil para validação de supervisores/estágios)
   static async findById(id) {
     const rows = await prisma.$queryRaw`
@@ -48,7 +58,7 @@ class EmpresaModel {
     } = empresa;
 
     const normalizedCnpj = this.normalizeCnpj(CNPJ_NibocoProd);
-    if (!normalizedCnpj) {
+    if (CNPJ_NibocoProd != null && CNPJ_NibocoProd !== '' && !normalizedCnpj) {
       throw new Error('CNPJ inválido. Envie apenas os 14 dígitos numéricos do CNPJ.');
     }
 

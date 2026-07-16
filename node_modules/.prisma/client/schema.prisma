@@ -59,7 +59,7 @@ model UsuarioEmpresa {
 
 model Empresa {
   id                 Int     @id @default(autoincrement())
-  CNPJ_NibocoProd    String  @unique @db.Char(14)
+  CNPJ_NibocoProd    String? @unique @db.Char(14)
   nome_social        String
   nome_fantasia      String?
   endereco           String?

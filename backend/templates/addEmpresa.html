@@ -232,11 +232,11 @@
                 cnpjFields.classList.remove('hidden');
                 formActions.classList.remove('hidden');
                 // Set required fields for CNPJ
-                setRequired(form.querySelector('input[name="CNPJ_NibocoProd"]'), true);
+                setRequired(form.querySelector('#cnpjFields input[name="CNPJ_NibocoProd"]'), true);
                 setRequired(form.querySelector('#cnpjFields input[name="nome_social"]'), true);
                 setRequired(form.querySelector('#cnpjFields input[name="nome_fantasia"]'), true);
-                setRequired(form.querySelector('input[name="representante"]'), true);
-                setRequired(form.querySelector('input[name="cargo"]'), true);
+                setRequired(form.querySelector('#cnpjFields input[name="representante"]'), true);
+                setRequired(form.querySelector('#cnpjFields input[name="cargo"]'), true);
                 setRequired(form.querySelector('#cnpjFields input[name="email"]'), true);
                 setRequired(form.querySelector('#cnpjFields input[name="telefone"]'), true);
                 setRequired(form.querySelector('#cnpjFields input[name="endereco"]'), true);
@@ -252,7 +252,7 @@
                 ieFields.classList.remove('hidden');
                 formActions.classList.remove('hidden');
                 // Set required fields for IE
-                setRequired(form.querySelector('input[name="inscricao_estadual"]'), true);
+                setRequired(form.querySelector('#ieFields input[name="inscricao_estadual"]'), true);
                 setRequired(form.querySelector('#ieFields input[name="nome_social"]'), true);
                 setRequired(form.querySelector('#ieFields input[name="email"]'), true);
                 setRequired(form.querySelector('#ieFields input[name="telefone"]'), true);
