@@ -111,10 +111,37 @@
             });
         }
 
-        document.querySelector('form').addEventListener('submit', (e) => {
-            // Remover máscara antes de enviar para o backend
+        document.querySelector('form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
             if (telefoneInput) {
                 telefoneInput.value = telefoneInput.value.replace(/[^\d]+/g, '');
+            }
+
+            const form = e.currentTarget;
+            const payload = Object.fromEntries(new FormData(form).entries());
+
+            try {
+                const response = await fetch('/orientadores', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    alert('Orientador cadastrado com sucesso!');
+                    window.location.href = 'addEstagio.html';
+                    return;
+                }
+
+                alert(data.error || 'Erro ao salvar orientador.');
+            } catch (error) {
+                console.error('Erro ao salvar orientador:', error);
+                alert('Falha na comunicação com o servidor.');
             }
         });
     </script>

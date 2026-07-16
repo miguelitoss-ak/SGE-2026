@@ -15,6 +15,38 @@
         .text-ifrs-green { color: var(--ifrs-green); }
         .hover-bg-ifrs-green:hover { background-color: var(--ifrs-green-dark); }
         .border-ifrs-green { border-color: var(--ifrs-green); }
+        .field-column {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .field-group {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+        .field-shell {
+            min-height: 52px;
+            display: flex;
+            align-items: center;
+        }
+        .field-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 0.5rem;
+            min-height: 1.25rem;
+        }
+        .field-header-label {
+            flex: 1 1 auto;
+            min-width: 0;
+            line-height: 1.2;
+        }
+        .field-header-link {
+            flex-shrink: 0;
+            white-space: nowrap;
+            line-height: 1.2;
+        }
     </style>
 </head>
 <body class="bg-gray-50 min-h-screen font-sans">
@@ -53,22 +85,24 @@
             <form action="/estagios" method="POST" class="p-8 space-y-10">
                 
                 <!-- Seção 1: Participantes -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <div class="space-y-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
+                    <div class="field-column">
                         <h3 class="font-bold text-gray-800 flex items-center text-sm uppercase tracking-wider">
                             <i data-lucide="users" class="w-4 h-4 mr-2 text-ifrs-green"></i> Vínculos
                         </h3>
-                        <div>
-                            <label class="block text-xs font-bold text-gray-500 mb-1">ALUNO (Seu Cadastro)</label>
-                            <div id="studentDisplay" class="w-full bg-gray-100 border border-gray-200 rounded-xl px-4 py-3 text-gray-700 font-medium italic">
+                        <div class="field-group">
+                            <div class="field-header mb-1">
+                                <label class="field-header-label block text-xs font-bold text-gray-500">ALUNO (Seu Cadastro)</label>
+                            </div>
+                            <div id="studentDisplay" class="w-full bg-gray-100 border border-gray-200 rounded-xl px-4 py-3 text-gray-700 font-medium italic field-shell">
                                 Carregando dados do aluno...
                             </div>
                             <input type="hidden" id="studentIdInput" name="id_aluno" value="">
                         </div>
-                        <div>
-                            <div class="flex justify-between items-center mb-1">
-                                <label class="block text-xs font-bold text-gray-500">ORIENTADOR IFRS</label>
-                                <a href="addOrientador.html" class="text-[10px] font-bold text-ifrs-green hover:underline">NÃO O ENCONTROU? CADASTRAR NOVO</a>
+                        <div class="field-group">
+                            <div class="field-header mb-1">
+                                <label class="field-header-label block text-xs font-bold text-gray-500">ORIENTADOR IFRS</label>
+                                <a href="addOrientador.html" class="field-header-link text-[10px] font-bold text-ifrs-green hover:underline">NÃO O ENCONTROU? CADASTRAR NOVO</a>
                             </div>
                             <div class="relative">
                                 <input
@@ -76,7 +110,7 @@
                                     type="text"
                                     autocomplete="off"
                                     placeholder="Digite o nome do orientador"
-                                    class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 pr-10 focus:ring-2 focus:ring-ifrs-green outline-none transition-all"
+                                    class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 pr-10 focus:ring-2 focus:ring-ifrs-green outline-none transition-all field-shell"
                                 >
                                 <i data-lucide="search" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4"></i>
                                 <div id="orientadorResultados" class="absolute z-50 left-0 right-0 top-full mt-1 max-h-60 overflow-y-auto rounded-xl border border-gray-200 bg-white shadow-lg hidden"></div>
@@ -85,14 +119,14 @@
                         </div>
                     </div>
 
-                    <div class="space-y-4">
+                    <div class="field-column">
                         <h3 class="font-bold text-gray-800 flex items-center text-sm uppercase tracking-wider">
                             <i data-lucide="building" class="w-4 h-4 mr-2 text-ifrs-green"></i> Concedente
                         </h3>
-                        <div>
-                            <div class="flex justify-between items-center mb-1">
-                                <label class="block text-xs font-bold text-gray-500">EMPRESA</label>
-                                <a href="addEmpresa.html" class="text-[10px] font-bold text-ifrs-green hover:underline">NÃO A ENCONTROU? CADASTRAR NOVA</a>
+                        <div class="field-group">
+                            <div class="field-header mb-1">
+                                <label class="field-header-label block text-xs font-bold text-gray-500">EMPRESA</label>
+                                <a href="addEmpresa.html" class="field-header-link text-[10px] font-bold text-ifrs-green hover:underline">NÃO A ENCONTROU? CADASTRAR NOVA</a>
                             </div>
                             <div class="relative">
                                 <input
@@ -100,17 +134,17 @@
                                     type="text"
                                     autocomplete="off"
                                     placeholder="Digite o nome da empresa"
-                                    class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 pr-10 focus:ring-2 focus:ring-ifrs-green outline-none transition-all"
+                                    class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 pr-10 focus:ring-2 focus:ring-ifrs-green outline-none transition-all field-shell"
                                 >
                                 <i data-lucide="search" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4"></i>
                                 <div id="empresaResultados" class="absolute z-50 left-0 right-0 top-full mt-1 max-h-60 overflow-y-auto rounded-xl border border-gray-200 bg-white shadow-lg hidden"></div>
                             </div>
                             <input type="hidden" id="id_empresa" name="id_empresa" required>
                         </div>
-                        <div>
-                            <div class="flex justify-between items-center mb-1">
-                                <label class="block text-xs font-bold text-gray-500">SUPERVISOR NA EMPRESA</label>
-                                <a href="addSupervisor.html" class="text-[10px] font-bold text-ifrs-green hover:underline">NÃO O ENCONTROU? CADASTRAR NOVO</a>
+                        <div class="field-group">
+                            <div class="field-header mb-1">
+                                <label class="field-header-label block text-xs font-bold text-gray-500">SUPERVISOR NA EMPRESA</label>
+                                <a href="addSupervisor.html" class="field-header-link text-[10px] font-bold text-ifrs-green hover:underline">NÃO O ENCONTROU? CADASTRAR NOVO</a>
                             </div>
                             <div class="relative">
                                 <input
@@ -118,7 +152,7 @@
                                     type="text"
                                     autocomplete="off"
                                     placeholder="Digite o nome do supervisor"
-                                    class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 pr-10 focus:ring-2 focus:ring-ifrs-green outline-none transition-all"
+                                    class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 pr-10 focus:ring-2 focus:ring-ifrs-green outline-none transition-all field-shell"
                                 >
                                 <i data-lucide="search" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4"></i>
                                 <div id="supervisorResultados" class="absolute z-50 left-0 right-0 top-full mt-1 max-h-60 overflow-y-auto rounded-xl border border-gray-200 bg-white shadow-lg hidden"></div>
@@ -128,42 +162,77 @@
                     </div>
                 </div>
 
-                <!-- Seção 2: Datas e Carga Horária -->
-                <div class="space-y-4">
+                <!-- Seção 2: Datas, Tipo e Horários -->
+                <div class="space-y-6">
                     <h3 class="font-bold text-gray-800 flex items-center text-sm uppercase tracking-wider">
                         <i data-lucide="calendar" class="w-4 h-4 mr-2 text-ifrs-green"></i> Período e Horas
                     </h3>
-                    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-                        <div class="md:col-span-2">
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
                             <label class="block text-xs font-bold text-gray-500 mb-1">DATA DE INÍCIO</label>
-                            <input type="date" name="data_inicio" required class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-ifrs-green outline-none transition-all">
+                            <input type="date" name="data_inicio" id="data_inicio" required class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-ifrs-green outline-none transition-all">
                         </div>
-                        <div class="md:col-span-2">
+                        <div>
                             <label class="block text-xs font-bold text-gray-500 mb-1">DATA DE TÉRMINO</label>
-                            <input type="date" name="data_fim" required class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-ifrs-green outline-none transition-all">
+                            <input type="date" name="data_fim" id="data_fim" readonly required class="w-full bg-gray-100 border border-gray-200 rounded-xl px-4 py-3 outline-none transition-all text-gray-700">
                         </div>
-                        <div class="md:col-span-2">
+                        <div>
                             <label class="block text-xs font-bold text-gray-500 mb-1">CARGA HORÁRIA SEMANAL (H)</label>
-                            <input type="number" name="carga_horaria_semanal" placeholder="Ex: 20" required class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-ifrs-green outline-none transition-all">
+                            <input type="number" step="0.01" name="carga_horaria_semanal" id="carga_horaria_semanal" placeholder="Ex: 20" readonly required class="w-full bg-gray-100 border border-gray-200 rounded-xl px-4 py-3 outline-none transition-all text-gray-700">
                         </div>
-                        <div id="situacaoContainer" class="md:col-span-2 hidden">
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 mb-1">CARGA HORÁRIA TOTAL DO ESTÁGIO (H)</label>
+                            <input type="number" step="1" min="1" name="carga_horaria_total" id="carga_horaria_total" value="400" required class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-ifrs-green outline-none transition-all">
+                        </div>
+                        <div id="situacaoContainer" class="hidden">
                             <label class="block text-xs font-bold text-gray-500 mb-1">SITUAÇÃO</label>
                             <select name="situacao" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-ifrs-green outline-none transition-all">
                                 <option value="ATIVO">Ativo</option>
                                 <option value="PENDENTE">Pendente</option>
                             </select>
                         </div>
-                        <div class="md:col-span-2">
+                        <div>
                             <label class="block text-xs font-bold text-gray-500 mb-1">TIPO DE ESTÁGIO</label>
-                            <select name="obrigatorio" required class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-ifrs-green outline-none transition-all">
+                            <select name="obrigatorio" id="obrigatorio" required class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-ifrs-green outline-none transition-all">
                                 <option value="1">Obrigatório</option>
                                 <option value="0">Não Obrigatório</option>
                             </select>
                         </div>
-                        <div class="md:col-span-2">
+                        <div>
                             <label class="block text-xs font-bold text-gray-500 mb-1">ÁREA DE ATUAÇÃO</label>
                             <input type="text" name="area" placeholder="Ex: Informática, Agropecuária, Administrativa" required class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-ifrs-green outline-none transition-all">
                         </div>
+                    </div>
+
+                    <div class="rounded-2xl border border-gray-200 bg-gray-50/70 p-4 md:p-5">
+                        <div class="flex flex-col gap-2 md:flex-row md:items-center md:justify-between mb-4">
+                            <div>
+                                <h4 class="font-bold text-gray-800 flex items-center text-sm uppercase tracking-wider">
+                                    <i data-lucide="clock-3" class="w-4 h-4 mr-2 text-ifrs-green"></i> Quadro de Horários
+                                </h4>
+                                <p class="text-xs text-gray-500 mt-1">Preencha as entradas e saídas de cada turno. A carga semanal e a data de término são calculadas automaticamente.</p>
+                            </div>
+                            
+                        </div>
+                        <div id="horariosMount" class="overflow-x-auto"></div>
+                        <div class="mt-4 grid grid-cols-1 md:grid-cols-3 gap-3">
+                            <div class="rounded-xl bg-white border border-gray-200 px-4 py-3">
+                                <p class="text-[11px] font-bold uppercase tracking-wider text-gray-500">Total semanal</p>
+                                <p id="weeklyHoursLabel" class="mt-1 text-sm font-semibold text-gray-800">0h00</p>
+                            </div>
+                            <div class="rounded-xl bg-white border border-gray-200 px-4 py-3">
+                                <p class="text-[11px] font-bold uppercase tracking-wider text-gray-500">Carga total do estágio</p>
+                                <p id="totalStageHoursLabel" class="mt-1 text-sm font-semibold text-gray-800">400h</p>
+                            </div>
+                            <div class="rounded-xl bg-white border border-gray-200 px-4 py-3">
+                                <p class="text-[11px] font-bold uppercase tracking-wider text-gray-500">Validação</p>
+                                <p id="scheduleValidation" class="mt-1 text-sm font-semibold text-gray-800">Preencha ao menos um horário para calcular.</p>
+                            </div>
+                        </div>
+                        <p class="mt-3 text-[11px] leading-snug text-gray-500">
+                            Máximo com aulas: 6h/dia ou 30h/semanais. Máximo sem aulas: 8h/dia ou 40h/semanais.
+                        </p>
                     </div>
                 </div>
 
@@ -188,6 +257,21 @@
                             </label>
                         </div>
                     </div>
+                    <div id="apoliceSection" class="grid grid-cols-1 md:grid-cols-3 gap-6 pt-2">
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 mb-1">NÚMERO DA APÓLICE</label>
+                            <input type="text" name="numero_apolice" placeholder="Ex: AP-2026-001" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-ifrs-green outline-none transition-all">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 mb-1">NOME DA SEGURADORA</label>
+                            <input type="text" name="nome_seguradora" placeholder="Ex: Seguradora X" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-ifrs-green outline-none transition-all">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 mb-1">VALOR DA APÓLICE (R$)</label>
+                            <input type="number" step="0.01" name="valor_apolice" placeholder="0.00" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-ifrs-green outline-none transition-all">
+                        </div>
+                    </div>
+                    <p id="apoliceHelper" class="text-xs text-gray-500"></p>
                 </div>
 
                 <div class="pt-6 flex justify-end space-x-4">
@@ -210,6 +294,312 @@
         const userMatricula = localStorage.getItem('userMatricula');
         const userRole = localStorage.getItem('role');
 
+        const DAYS = [
+            { key: 'SEGUNDA', label: 'Segunda' },
+            { key: 'TERCA', label: 'Terça' },
+            { key: 'QUARTA', label: 'Quarta' },
+            { key: 'QUINTA', label: 'Quinta' },
+            { key: 'SEXTA', label: 'Sexta' },
+            { key: 'SABADO', label: 'Sábado' },
+            { key: 'DOMINGO', label: 'Domingo' },
+        ];
+
+        const SHIFTS = [
+            { key: 'manha', label: 'Manhã' },
+            { key: 'tarde', label: 'Tarde' },
+            { key: 'noite', label: 'Noite' },
+        ];
+
+        const DEFAULT_TOTAL_STAGE_HOURS = 400;
+        const DAILY_LIMIT_WITH_CLASSES = 6 * 60;
+        const WEEKLY_LIMIT_WITH_CLASSES = 30 * 60;
+        const DAILY_LIMIT_WITHOUT_CLASSES = 8 * 60;
+        const WEEKLY_LIMIT_WITHOUT_CLASSES = 40 * 60;
+        const NATIONAL_HOLIDAYS = [
+            '2026-01-01',
+            '2026-04-21',
+            '2026-05-01',
+            '2026-09-07',
+            '2026-10-12',
+            '2026-11-02',
+            '2026-11-15',
+            '2026-12-25',
+        ];
+
+        const DAY_INDEX_TO_KEY = ['DOMINGO', 'SEGUNDA', 'TERCA', 'QUARTA', 'QUINTA', 'SEXTA', 'SABADO'];
+        const HOURS_LABELS = ['h', 'h'];
+
+        function createEmptyScheduleState() {
+            return DAYS.reduce((dayAcc, day) => {
+                dayAcc[day.key] = SHIFTS.reduce((shiftAcc, shift) => {
+                    shiftAcc[shift.key] = { entrada: '', saida: '' };
+                    return shiftAcc;
+                }, {});
+                return dayAcc;
+            }, {});
+        }
+
+        let scheduleState = createEmptyScheduleState();
+
+        function parseDateInput(value) {
+            if (!value) return null;
+            const [year, month, day] = value.split('-').map(Number);
+            if (!year || !month || !day) return null;
+            const date = new Date(year, month - 1, day);
+            return Number.isNaN(date.getTime()) ? null : date;
+        }
+
+        function formatDateInput(date) {
+            if (!(date instanceof Date) || Number.isNaN(date.getTime())) return '';
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+
+        function normalizeTimeValue(value) {
+            return typeof value === 'string' ? value.trim() : '';
+        }
+
+        function timeToMinutes(timeValue) {
+            const normalized = normalizeTimeValue(timeValue);
+            if (!normalized) return null;
+
+            const [hoursPart, minutesPart = '0'] = normalized.split(':');
+            const hours = Number(hoursPart);
+            const minutes = Number(minutesPart);
+
+            if (!Number.isFinite(hours) || !Number.isFinite(minutes)) return null;
+            if (hours < 0 || hours > 23 || minutes < 0 || minutes > 59) return null;
+
+            return hours * 60 + minutes;
+        }
+
+        function calculateIntervalMinutes(entrada, saida) {
+            const entradaMinutos = timeToMinutes(entrada);
+            const saidaMinutos = timeToMinutes(saida);
+            if (entradaMinutos === null || saidaMinutos === null) return 0;
+            if (saidaMinutos === entradaMinutos) return 0;
+
+            let diff = saidaMinutos - entradaMinutos;
+            if (diff < 0) diff += 24 * 60;
+            return diff;
+        }
+
+        function calculateDayMinutes(daySchedule) {
+            return SHIFTS.reduce((total, shift) => {
+                const turno = daySchedule[shift.key];
+                return total + calculateIntervalMinutes(turno.entrada, turno.saida);
+            }, 0);
+        }
+
+        function calculateWeeklyMinutes(state) {
+            return DAYS.reduce((total, day) => total + calculateDayMinutes(state[day.key]), 0);
+        }
+
+        function formatMinutesAsHoursLabel(totalMinutes) {
+            const safeMinutes = Math.max(0, Math.round(totalMinutes));
+            const hours = Math.floor(safeMinutes / 60);
+            const minutes = safeMinutes % 60;
+            return `${hours}h${String(minutes).padStart(2, '0')}`;
+        }
+
+        function isHoliday(dateKey) {
+            return NATIONAL_HOLIDAYS.includes(dateKey);
+        }
+
+        function getTotalStageHours() {
+            const input = document.getElementById('carga_horaria_total');
+            const rawValue = input ? input.value : '';
+            const parsedValue = Number(rawValue);
+            if (!Number.isFinite(parsedValue) || parsedValue <= 0) {
+                return DEFAULT_TOTAL_STAGE_HOURS;
+            }
+            return parsedValue;
+        }
+
+        function calculateEstimatedEndDate(startValue, state, totalStageHours = getTotalStageHours()) {
+            const startDate = parseDateInput(startValue);
+            if (!startDate) return '';
+
+            let remainingMinutes = totalStageHours * 60;
+            const cursor = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate());
+            const limit = 2000;
+
+            for (let step = 0; step < limit && remainingMinutes > 0; step += 1) {
+                const dateKey = formatDateInput(cursor);
+                const dayKey = DAY_INDEX_TO_KEY[cursor.getDay()];
+                const dayMinutes = calculateDayMinutes(state[dayKey]);
+
+                if (!isHoliday(dateKey) && dayMinutes > 0) {
+                    remainingMinutes -= dayMinutes;
+                    if (remainingMinutes <= 0) {
+                        return dateKey;
+                    }
+                }
+
+                cursor.setDate(cursor.getDate() + 1);
+            }
+
+            return '';
+        }
+
+        function buildScheduleRow(day) {
+            const cells = SHIFTS.map((shift) => {
+                const entradaId = `schedule_${day.key}_${shift.key}_entrada`;
+                const saidaId = `schedule_${day.key}_${shift.key}_saida`;
+
+                return `
+                    <td class="px-2 py-2 align-top">
+                        <div class="grid grid-cols-2 gap-2 min-w-[160px]">
+                            <div>
+                                <label class="sr-only" for="${entradaId}">${day.label} ${shift.label} Entrada</label>
+                                <input
+                                    id="${entradaId}"
+                                    type="time"
+                                    step="60"
+                                    data-day="${day.key}"
+                                    data-shift="${shift.key}"
+                                    data-field="entrada"
+                                    class="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ifrs-green"
+                                    value="${scheduleState[day.key][shift.key].entrada}"
+                                >
+                            </div>
+                            <div>
+                                <label class="sr-only" for="${saidaId}">${day.label} ${shift.label} Saída</label>
+                                <input
+                                    id="${saidaId}"
+                                    type="time"
+                                    step="60"
+                                    data-day="${day.key}"
+                                    data-shift="${shift.key}"
+                                    data-field="saida"
+                                    class="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ifrs-green"
+                                    value="${scheduleState[day.key][shift.key].saida}"
+                                >
+                            </div>
+                        </div>
+                    </td>
+                `;
+            }).join('');
+
+            return `
+                <tr class="border-b border-gray-200 last:border-b-0">
+                    <th scope="row" class="sticky left-0 z-10 bg-gray-50 px-3 py-4 text-left text-sm font-bold text-gray-700 whitespace-nowrap border-r border-gray-200">
+                        ${day.label}
+                    </th>
+                    ${cells}
+                </tr>
+            `;
+        }
+
+        function renderScheduleTable() {
+            const mount = document.getElementById('horariosMount');
+            if (!mount) return;
+
+            mount.innerHTML = `
+                <table class="w-full border-separate border-spacing-0 min-w-[1100px]">
+                    <thead>
+                        <tr>
+                            <th class="sticky left-0 z-20 bg-gray-50 px-3 py-3 text-left text-xs font-bold uppercase tracking-wider text-gray-500 border-b border-gray-200 border-r border-gray-200">
+                                Dia
+                            </th>
+                            ${SHIFTS.map((shift) => `
+                                <th class="px-2 py-3 text-center text-xs font-bold uppercase tracking-wider text-gray-500 border-b border-gray-200" colspan="1">
+                                    ${shift.label}
+                                </th>
+                            `).join('')}
+                        </tr>
+                        <tr>
+                            <th class="sticky left-0 z-20 bg-gray-50 px-3 py-2 border-r border-gray-200 border-b border-gray-200"></th>
+                            ${SHIFTS.map(() => `
+                                <th class="px-2 pb-3 text-center text-[11px] font-semibold uppercase tracking-wider text-gray-400 border-b border-gray-200">
+                                    Entrada / Saída
+                                </th>
+                            `).join('')}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${DAYS.map(buildScheduleRow).join('')}
+                    </tbody>
+                </table>
+            `;
+        }
+
+        function updateScheduleStateFromInput(input) {
+            const { day, shift, field } = input.dataset;
+            if (!day || !shift || !field) return;
+            scheduleState[day][shift][field] = normalizeTimeValue(input.value);
+        }
+
+        function updateComputedFields() {
+            const weeklyMinutes = calculateWeeklyMinutes(scheduleState);
+            const weeklyHours = weeklyMinutes / 60;
+            const weeklyInput = document.getElementById('carga_horaria_semanal');
+            const endDateInput = document.getElementById('data_fim');
+            const startDateInput = document.getElementById('data_inicio');
+            const weeklyLabel = document.getElementById('weeklyHoursLabel');
+            const validationLabel = document.getElementById('scheduleValidation');
+            const totalStageHoursLabel = document.getElementById('totalStageHoursLabel');
+            const totalStageHours = getTotalStageHours();
+
+            if (weeklyInput) {
+                weeklyInput.value = weeklyMinutes > 0 ? weeklyHours.toFixed(2) : '';
+            }
+
+            if (weeklyLabel) {
+                weeklyLabel.textContent = weeklyMinutes > 0 ? formatMinutesAsHoursLabel(weeklyMinutes) : '0h00';
+            }
+
+            if (totalStageHoursLabel) {
+                totalStageHoursLabel.textContent = `${totalStageHours}h`;
+            }
+
+            const dailyMinutes = DAYS.map((day) => calculateDayMinutes(scheduleState[day.key]));
+            const exceedsWithClasses = dailyMinutes.some((minutes) => minutes > DAILY_LIMIT_WITH_CLASSES) || weeklyMinutes > WEEKLY_LIMIT_WITH_CLASSES;
+            const exceedsWithoutClasses = dailyMinutes.some((minutes) => minutes > DAILY_LIMIT_WITHOUT_CLASSES) || weeklyMinutes > WEEKLY_LIMIT_WITHOUT_CLASSES;
+
+            if (validationLabel) {
+                if (weeklyMinutes === 0) {
+                    validationLabel.textContent = 'Preencha ao menos um horário para calcular.';
+                    validationLabel.className = 'mt-1 text-sm font-semibold text-gray-800';
+                } else if (exceedsWithoutClasses) {
+                    validationLabel.textContent = 'Ultrapassa o limite de 8h/dia ou 40h/semanais.';
+                    validationLabel.className = 'mt-1 text-sm font-semibold text-red-600';
+                } else if (exceedsWithClasses) {
+                    validationLabel.textContent = 'Ultrapassa o limite de 6h/dia ou 30h/semanais.';
+                    validationLabel.className = 'mt-1 text-sm font-semibold text-amber-600';
+                } else {
+                    validationLabel.textContent = 'Dentro dos limites principais.';
+                    validationLabel.className = 'mt-1 text-sm font-semibold text-emerald-600';
+                }
+            }
+
+            if (endDateInput && startDateInput) {
+                endDateInput.value = calculateEstimatedEndDate(startDateInput.value, scheduleState, totalStageHours);
+            }
+        }
+
+        function bindScheduleListeners() {
+            const mount = document.getElementById('horariosMount');
+            const startDateInput = document.getElementById('data_inicio');
+            const totalStageHoursInput = document.getElementById('carga_horaria_total');
+            if (!mount || !startDateInput) return;
+
+            mount.addEventListener('input', (event) => {
+                const input = event.target.closest('input[data-day][data-shift][data-field]');
+                if (!input) return;
+                updateScheduleStateFromInput(input);
+                updateComputedFields();
+            });
+
+            startDateInput.addEventListener('change', updateComputedFields);
+            if (totalStageHoursInput) {
+                totalStageHoursInput.addEventListener('input', updateComputedFields);
+                totalStageHoursInput.addEventListener('change', updateComputedFields);
+            }
+        }
+
         document.addEventListener('DOMContentLoaded', async () => {
             
             // 2. Barreira de Segurança: Se não estiver logado, expulsa para a tela de login
@@ -219,11 +609,51 @@
             }
 
             const situacaoContainer = document.getElementById('situacaoContainer');
+            const apoliceSection = document.getElementById('apoliceSection');
+            const apoliceHelper = document.getElementById('apoliceHelper');
+            const apoliceInputs = [
+                document.querySelector('input[name="numero_apolice"]'),
+                document.querySelector('input[name="nome_seguradora"]'),
+                document.querySelector('input[name="valor_apolice"]'),
+            ];
+            const obrigatorioSelect = document.querySelector('select[name="obrigatorio"]');
+
             if (userRole === 'ADMIN') {
                 situacaoContainer.classList.remove('hidden');
             } else {
                 situacaoContainer.classList.add('hidden');
             }
+
+            renderScheduleTable();
+            bindScheduleListeners();
+            updateComputedFields();
+
+            function atualizarApoliceAccess() {
+                const obrigatorio = obrigatorioSelect.value === '1';
+                const podeEditar = userRole === 'ADMIN' || !obrigatorio;
+
+                apoliceInputs.forEach((input) => {
+                    input.disabled = !podeEditar;
+                    input.classList.toggle('opacity-60', !podeEditar);
+                    input.classList.toggle('cursor-not-allowed', !podeEditar);
+                });
+
+                apoliceSection.classList.toggle('opacity-70', !podeEditar);
+
+                if (podeEditar) {
+                    apoliceHelper.textContent = obrigatorio
+                        ? 'Dados de apólice liberados apenas para ADMIN neste estágio obrigatório.'
+                        : 'Dados de apólice liberados para preenchimento neste estágio não obrigatório.';
+                } else {
+                    apoliceHelper.textContent = 'Somente ADMIN pode preencher os dados de apólice em estágio obrigatório.';
+                    apoliceInputs.forEach((input) => {
+                        input.value = '';
+                    });
+                }
+            }
+
+            obrigatorioSelect.addEventListener('change', atualizarApoliceAccess);
+            atualizarApoliceAccess();
 
             // 3. Preenche os dados do aluno logado na interface e no campo oculto
             document.getElementById('studentDisplay').textContent = `${userName} (${userMatricula || 'S/M'})`;
@@ -289,9 +719,27 @@
                 const valor = termo.toLowerCase().trim();
                 if (!valor) return lista.slice(0, 50);
                 return lista.filter(item => {
-                    const texto = `${item[campo] || ''} ${item.cargo || ''} ${item.nome_social || ''} ${item.nome_fantasia || ''}`.toLowerCase();
+                    const texto = `${item[campo] || ''} ${item.cargo || ''} ${getEmpresaDisplayName(item)} ${getEmpresaSubtitle(item)}`.toLowerCase();
                     return texto.includes(valor);
                 }).slice(0, 50);
+            }
+
+            function getEmpresaDisplayName(item) {
+                const nomeFantasia = (item.nome_fantasia || '').trim();
+                const nomeSocial = (item.nome_social || '').trim();
+
+                if (nomeFantasia) return nomeFantasia;
+                if (nomeSocial) return nomeSocial;
+                return `Empresa #${item.id}`;
+            }
+
+            function getEmpresaSubtitle(item) {
+                const nomeSocial = (item.nome_social || '').trim();
+                const cnpj = (item.CNPJ_NibocoProd || '').trim();
+
+                if (nomeSocial && nomeSocial !== getEmpresaDisplayName(item)) return nomeSocial;
+                if (cnpj) return `CNPJ ${cnpj}`;
+                return item.email || '';
             }
 
             function renderizarResultados(container, itens, onSelect) {
@@ -308,8 +756,8 @@
                         btn.type = 'button';
                         btn.className = 'w-full text-left px-4 py-3 hover:bg-gray-50 border-b border-gray-100 last:border-b-0';
                         btn.innerHTML = `
-                            <div class="font-semibold text-gray-800">${item.nome || item.nome_fantasia || item.nome_social || 'Sem nome'}</div>
-                            <div class="text-xs text-gray-500">${item.cargo || item.email || ''}</div>
+                            <div class="font-semibold text-gray-800">${getEmpresaDisplayName(item)}</div>
+                            <div class="text-xs text-gray-500">${getEmpresaSubtitle(item)}</div>
                         `;
                         btn.addEventListener('click', () => onSelect(item));
                         container.appendChild(btn);
@@ -324,9 +772,9 @@
                 supervisorResultados.innerHTML = '';
                 supervisorBusca.value = '';
                 supervisorInputHidden.value = '';
+                supervisorResultados.classList.remove('hidden');
                 if (filtrados.length === 0) {
                     supervisorResultados.innerHTML = '<div class="px-4 py-3 text-sm text-gray-500">Nenhum supervisor encontrado para esta empresa</div>';
-                    supervisorResultados.classList.remove('hidden');
                     return;
                 }
                 renderizarResultados(supervisorResultados, filtrados, (item) => {
@@ -339,20 +787,22 @@
             empresaBusca.addEventListener('input', () => {
                 const filtradas = filtrarPorTexto(empresas, 'nome_fantasia', empresaBusca.value);
                 renderizarResultados(empresaResultados, filtradas, (item) => {
-                    empresaBusca.value = item.nome_fantasia || item.nome_social;
+                    empresaBusca.value = getEmpresaDisplayName(item);
                     empresaInputHidden.value = item.id;
                     empresaResultados.classList.add('hidden');
                     atualizarSupervisoresPorEmpresa(item.id);
+                    supervisorBusca.focus();
                 });
             });
 
             empresaBusca.addEventListener('focus', () => {
                 const filtradas = filtrarPorTexto(empresas, 'nome_fantasia', empresaBusca.value);
                 renderizarResultados(empresaResultados, filtradas, (item) => {
-                    empresaBusca.value = item.nome_fantasia || item.nome_social;
+                    empresaBusca.value = getEmpresaDisplayName(item);
                     empresaInputHidden.value = item.id;
                     empresaResultados.classList.add('hidden');
                     atualizarSupervisoresPorEmpresa(item.id);
+                    supervisorBusca.focus();
                 });
             });
 
@@ -406,30 +856,45 @@
         });
 
         // Lógica de envio do formulário via Fetch
-        document.querySelector('form').addEventListener('submit', async (e) => {
+        const stageForm = document.querySelector('form');
+
+        stageForm.addEventListener('reset', () => {
+            scheduleState = createEmptyScheduleState();
+            setTimeout(() => {
+                renderScheduleTable();
+                updateComputedFields();
+            }, 0);
+        });
+
+        stageForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const formData = new FormData(e.target);
             const data = Object.fromEntries(formData.entries());
 
             // Conversões de tipo necessárias para o backend (Prisma)
-            const payload = {
-                ...data,
-                id_aluno: Number(data.id_aluno),
-                id_orientador: Number(data.id_orientador),
-                id_empresa: Number(data.id_empresa),
-                id_supervisor: Number(data.id_supervisor),
-                carga_horaria_semanal: Number(data.carga_horaria_semanal),
-                bolsa_auxilio: data.bolsa_auxilio ? parseFloat(data.bolsa_auxilio) : 0,
-                obrigatorio: data.obrigatorio === "1",
-                beneficio_transporte: !!data.beneficio_transporte,
-                beneficio_alimentacao: !!data.beneficio_alimentacao,
-                dt_registro: new Date().toISOString().split('T')[0] // Data atual do registro
-            };
+                const payload = {
+                    ...data,
+                    id_aluno: Number(data.id_aluno),
+                    id_orientador: Number(data.id_orientador),
+                    id_empresa: Number(data.id_empresa),
+                    id_supervisor: Number(data.id_supervisor),
+                    carga_horaria_total: Number(data.carga_horaria_total || 0),
+                    carga_horaria_semanal: Number(data.carga_horaria_semanal),
+                    bolsa_auxilio: data.bolsa_auxilio ? parseFloat(data.bolsa_auxilio) : 0,
+                    obrigatorio: data.obrigatorio === "1",
+                    beneficio_transporte: !!data.beneficio_transporte,
+                    beneficio_alimentacao: !!data.beneficio_alimentacao,
+                    numero_apolice: data.numero_apolice?.trim() || null,
+                    nome_seguradora: data.nome_seguradora?.trim() || null,
+                    valor_apolice: data.valor_apolice ? parseFloat(data.valor_apolice) : null,
+                    dt_registro: new Date().toISOString().split('T')[0] // Data atual do registro
+                };
 
             try {
-                const res = await fetch('http://localhost:3000/estagios', {
+                const res = await fetch('/estagios', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
+                    ...(token ? { Authorization: `Bearer ${token}` } : {}),
                     body: JSON.stringify(payload)
                 });
 

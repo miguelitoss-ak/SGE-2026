@@ -20,10 +20,7 @@
 
     <div class="bg-white p-8 rounded-lg shadow-xl w-full max-w-md border-t-8 border-ifrs-green">
         <div class="text-center mb-8">
-            <!-- Logo Placeholder (Pode substituir pelo link oficial do logo do IFRS) -->
-            <div class="flex justify-center mb-4">
-            
-            </div>
+            <div class="flex justify-center mb-4"></div>
             <h1 class="text-2xl font-bold text-gray-800">Sistema de Gestão de Estágios</h1>
             <br>
             <p class="text-gray-500 text-sm">Cadastrar-se</p>
@@ -40,7 +37,7 @@
 
             <div>
                 <label for="nome" class="block text-sm font-medium text-gray-700">Nome Completo</label>
-                <input type="text" id="nome" name="nome" required 
+                <input type="text" id="nome" name="nome" required
                     class="mt-1 block w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-md text-sm shadow-sm placeholder-gray-400
                     focus:outline-none focus:border-ifrs-green focus:ring-1 focus:ring-ifrs-green"
                     placeholder="Seu nome completo">
@@ -64,7 +61,7 @@
 
             <div>
                 <label for="email" class="block text-sm font-medium text-gray-700">E-mail</label>
-                <input type="email" id="email" name="email" required 
+                <input type="email" id="email" name="email" required
                     class="mt-1 block w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-md text-sm shadow-sm placeholder-gray-400
                     focus:outline-none focus:border-ifrs-green focus:ring-1 focus:ring-ifrs-green"
                     placeholder="seu.email@aluno.ifrs.edu.br">
@@ -72,7 +69,7 @@
 
             <div>
                 <label for="data_nasc" class="block text-sm font-medium text-gray-700">Data de Nascimento</label>
-                <input type="date" id="data_nasc" name="data_nasc" required 
+                <input type="date" id="data_nasc" name="data_nasc" required
                     class="mt-1 block w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-md text-sm shadow-sm placeholder-gray-400
                     focus:outline-none focus:border-ifrs-green focus:ring-1 focus:ring-ifrs-green"
                     onblur="validarIdade()">
@@ -81,7 +78,7 @@
 
             <div>
                 <label for="id_curso" class="block text-sm font-medium text-gray-700">Curso</label>
-                <select id="id_curso" name="id_curso" required 
+                <select id="id_curso" name="id_curso" required
                     class="mt-1 block w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-md text-sm shadow-sm
                     focus:outline-none focus:border-ifrs-green focus:ring-1 focus:ring-ifrs-green">
                     <option value="" disabled selected>Selecione seu curso</option>
@@ -90,7 +87,7 @@
 
             <div>
                 <label for="senha" class="block text-sm font-medium text-gray-700">Senha</label>
-                <input type="password" id="senha" name="senha" required 
+                <input type="password" id="senha" name="senha" required
                     class="mt-1 block w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-md text-sm shadow-sm placeholder-gray-400
                     focus:outline-none focus:border-ifrs-green focus:ring-1 focus:ring-ifrs-green"
                     placeholder="••••••••">
@@ -98,14 +95,14 @@
 
             <div>
                 <label for="confirmar_senha" class="block text-sm font-medium text-gray-700">Confirmar Senha</label>
-                <input type="password" id="confirmar_senha" name="confirmar_senha" required 
+                <input type="password" id="confirmar_senha" name="confirmar_senha" required
                     class="mt-1 block w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-md text-sm shadow-sm placeholder-gray-400
                     focus:outline-none focus:border-ifrs-green focus:ring-1 focus:ring-ifrs-green"
                     placeholder="••••••••">
             </div>
 
             <div>
-                <button type="submit" 
+                <button type="submit"
                     class="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-bold text-white bg-ifrs-green hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-ifrs-green transition-colors duration-200">
                     CADASTRAR
                 </button>
@@ -118,19 +115,16 @@
                 </a>
             </div>
         </form>
-
     </div>
 
 </body>
 <script>
-    // Seleção dos elementos para aplicação de máscaras
     const matriculaInput = document.getElementById('matricula');
     const cpfInput = document.getElementById('cpf');
     const telefoneInput = document.getElementById('telefone');
     const dataNascInput = document.getElementById('data_nasc');
     const erroIdade = document.getElementById('erro-idade');
 
-    // Função para validar a idade mínima (14 anos)
     function validarIdade() {
         const dataNascimento = new Date(dataNascInput.value);
         if (isNaN(dataNascimento.getTime())) return false;
@@ -139,7 +133,6 @@
         let idade = hoje.getFullYear() - dataNascimento.getFullYear();
         const m = hoje.getMonth() - dataNascimento.getMonth();
 
-        // Ajusta a idade se o aniversário ainda não tiver ocorrido no ano atual
         if (m < 0 || (m === 0 && hoje.getDate() < dataNascimento.getDate())) {
             idade--;
         }
@@ -155,7 +148,6 @@
         }
     }
 
-    // Função de validação matemática de CPF
     function validarCPF(cpf) {
         cpf = cpf.replace(/[^\d]+/g, '');
         if (cpf.length !== 11 || /^(\d)\1+$/.test(cpf)) return false;
@@ -171,7 +163,6 @@
         return resto === parseInt(cpf.substring(10, 11));
     }
 
-    // Carregar cursos do banco de dados ao abrir a página
     window.addEventListener('DOMContentLoaded', async () => {
         const cursoSelect = document.getElementById('id_curso');
         try {
@@ -188,12 +179,10 @@
         }
     });
 
-    // Restrição para Matrícula (apenas números)
     matriculaInput.addEventListener('input', (e) => {
         e.target.value = e.target.value.replace(/\D/g, "");
     });
 
-    // Máscara de CPF (000.000.000-00)
     cpfInput.addEventListener('input', (e) => {
         let v = e.target.value.replace(/\D/g, "");
         if (v.length > 11) v = v.slice(0, 11);
@@ -203,7 +192,6 @@
         e.target.value = v;
     });
 
-    // Máscara de Telefone ((00) 00000-0000)
     telefoneInput.addEventListener('input', (e) => {
         let v = e.target.value.replace(/\D/g, "");
         if (v.length > 11) v = v.slice(0, 11);
@@ -213,9 +201,8 @@
     });
 
     document.getElementById('registerForm').addEventListener('submit', async (e) => {
-        e.preventDefault(); // Impede que a página recarregue
+        e.preventDefault();
 
-        // 1. Captura os valores de todos os campos do formulário
         const matricula = document.getElementById('matricula').value;
         const nome = document.getElementById('nome').value;
         const cpf = document.getElementById('cpf').value;
@@ -226,25 +213,21 @@
         const senha = document.getElementById('senha').value;
         const confirmarSenha = document.getElementById('confirmar_senha').value;
 
-        // Validação de Idade no Frontend
         if (!validarIdade()) {
             alert('Candidato não possui a idade mínima de 14 anos para inscrição.');
             return;
         }
 
-        // Validação de CPF no Frontend
         if (!validarCPF(cpf)) {
             alert('O CPF informado é inválido. Por favor, verifique os números.');
             return;
         }
 
-        // 2. Validação básica de senha no Frontend
         if (senha !== confirmarSenha) {
             alert('As senhas não coincidem. Por favor, verifique.');
-            return; // Interrompe a execução aqui
+            return;
         }
 
-        // 3. Monta o objeto com os dados exatamente como o UserService espera receber
         const dadosCadastro = {
             matricula,
             nome,
@@ -252,13 +235,17 @@
             telefone,
             email,
             id_curso,
-            data_nasc, // Enviado no formato YYYY-MM-DD padrão do input date
+            data_nasc,
             senha
         };
 
         try {
+<<<<<<< Updated upstream
             // 4. Faz a requisição para a sua rota do Express (/auth/register)
             const resposta = await fetch('http://localhost:3000/auth/register', {
+=======
+            const resposta = await fetch('/auth/register', {
+>>>>>>> Stashed changes
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -268,15 +255,12 @@
 
             const dados = await resposta.json();
 
-            // Como seu AuthController retorna status 201 para sucesso:
             if (resposta.status === 201) {
                 alert('Cadastro de Aluno realizado com sucesso!');
-                window.location.href = 'login.html'; // Redireciona para a tela de login
+                window.location.href = 'login.html';
             } else {
-                // Exibe mensagens como "Usuario ja existe" tratadas no seu catch do controller
                 alert(dados.error || 'Ocorreu um erro ao realizar o cadastro.');
             }
-
         } catch (erro) {
             console.error('Erro na comunicação com a API:', erro);
             alert('Não foi possível conectar ao servidor.');

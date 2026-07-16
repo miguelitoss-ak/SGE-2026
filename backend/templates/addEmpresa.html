@@ -295,17 +295,47 @@
             if (telefoneIeInput) telefoneIeInput.value = telefoneIeInput.value.replace(/[^\d]+/g, '');
         }
 
-        // Handle form submission to ensure only relevant fields are sent
-        form.addEventListener('submit', (event) => {
-            // Remove 'required' from hidden fields to prevent browser validation issues
+        // Envia via fetch e volta para addEstagio.html ao concluir
+        form.addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            if (!typeCadastro.value) {
+                alert('Selecione o tipo de cadastro antes de salvar.');
+                return;
+            }
+
             if (typeCadastro.value === 'cnpj') {
                 ieFields.querySelectorAll('input').forEach(input => setRequired(input, false));
             } else if (typeCadastro.value === 'ie') {
                 cnpjFields.querySelectorAll('input').forEach(input => setRequired(input, false));
             }
 
-            // Remover máscaras antes de enviar
             removeMasks();
+
+            const payload = Object.fromEntries(new FormData(form).entries());
+
+            try {
+                const response = await fetch('/empresas', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    alert('Empresa cadastrada com sucesso!');
+                    window.location.href = 'addEstagio.html';
+                    return;
+                }
+
+                alert(data.error || 'Erro ao salvar empresa.');
+            } catch (error) {
+                console.error('Erro ao salvar empresa:', error);
+                alert('Falha na comunicação com o servidor.');
+            }
         });
     </script>
 </body>

@@ -22,7 +22,8 @@ class EstagioModel {
     const {
       dt_registro, beneficio_alimentacao, beneficio_transporte, beneficio_impresso,
       bolsa_auxilio, data_inicio, data_fim, carga_horaria_total, carga_horaria_semanal,
-      situacao, id_aluno, id_empresa, id_supervisor, id_orientador, id_documento
+      situacao, id_aluno, id_empresa, id_supervisor, id_orientador, id_documento,
+      obrigatorio, numero_apolice, nome_seguradora, valor_apolice
     } = data;
 
     const toNullableBool = (v) => {
@@ -54,13 +55,23 @@ class EstagioModel {
         data_inicio,
         data_fim,
         carga_horaria_total,
-        carga_horaria_semanal,
+        carga_horaria_semanal:
+          carga_horaria_semanal === null || carga_horaria_semanal === undefined || carga_horaria_semanal === ''
+            ? null
+            : new Prisma.Decimal(carga_horaria_semanal),
         situacao,
+        obrigatorio: obrigatorio === true || obrigatorio === 'true' || obrigatorio === 1 || obrigatorio === '1',
         id_aluno,
         id_empresa,
         id_supervisor,
         id_orientador: idOrientadorNum,
         id_documento,
+        numero_apolice: numero_apolice || null,
+        nome_seguradora: nome_seguradora || null,
+        valor_apolice:
+          valor_apolice === null || valor_apolice === undefined || valor_apolice === ''
+            ? null
+            : new Prisma.Decimal(valor_apolice),
       },
     });
 

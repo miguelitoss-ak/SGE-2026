@@ -12,7 +12,7 @@ class EstagioController {
 
   static async create(req, res) {
     try {
-      const id = await EstagioService.createEstagio(req.body);
+      const id = await EstagioService.createEstagio(req.body, req.user);
       res.status(201).json({ 
         message: 'Contrato de estágio registrado com sucesso.', 
         id 

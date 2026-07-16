@@ -4,8 +4,10 @@ const UsuarioEmpresaModel = require('../models/usuarioEmpresaModel');
 const validateEmail = require('../utils/validateEmail');
 
 class UsuarioEmpresaService {
-  static async register({ nome, email, password, telefone }) {
-    if (!nome || !email || !password) {
+  static async register({ nome, email, password, senha, telefone }) {
+    const rawSenha = password || senha;
+
+    if (!nome || !email || !rawSenha) {
       throw new Error('Nome, email e senha sao obrigatorios');
     }
 
@@ -19,11 +21,11 @@ class UsuarioEmpresaService {
       throw new Error('Usuario empresa ja existe');
     }
 
-    const senha = await bcrypt.hash(password, 10);
+    const senhaHash = await bcrypt.hash(rawSenha, 10);
     const user = await UsuarioEmpresaModel.create({
       nome,
       email,
-      senha,
+      senha: senhaHash,
       telefone: telefone || null,
     });
 
@@ -33,8 +35,10 @@ class UsuarioEmpresaService {
     };
   }
 
-  static async login({ email, password }) {
-    if (!email || !password) {
+  static async login({ email, password, senha }) {
+    const rawSenha = password || senha;
+
+    if (!email || !rawSenha) {
       throw new Error('Email e senha sao obrigatorios');
     }
 
@@ -43,7 +47,7 @@ class UsuarioEmpresaService {
       throw new Error('Usuario nao encontrado');
     }
 
-    const passwordIsValid = await bcrypt.compare(password, user.senha);
+    const passwordIsValid = await bcrypt.compare(rawSenha, user.senha);
     if (!passwordIsValid) {
       throw new Error('Senha invalida');
     }

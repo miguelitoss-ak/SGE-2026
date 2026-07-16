@@ -1,6 +1,13 @@
 const prisma = require('../prisma/prismaClient');
 
 class EmpresaModel {
+  static normalizeCnpj(cnpj) {
+    if (cnpj === null || cnpj === undefined) return null;
+
+    const normalized = String(cnpj).replace(/\D/g, '').trim();
+    return normalized.length === 14 ? normalized : null;
+  }
+
   // Lista todas as empresas
   static async findAll() {
     return prisma.$queryRaw`SELECT * FROM empresas`;
@@ -8,8 +15,11 @@ class EmpresaModel {
 
   // Busca por CNPJ para validação
   static async findByCnpj(cnpj) {
+    const normalizedCnpj = this.normalizeCnpj(cnpj);
+    if (!normalizedCnpj) return null;
+
     const rows = await prisma.$queryRaw`
-      SELECT * FROM empresas WHERE CNPJ_NibocoProd = ${cnpj} LIMIT 1
+      SELECT * FROM empresas WHERE CNPJ_NibocoProd = ${normalizedCnpj} LIMIT 1
     `;
     return rows[0];
   }
@@ -36,13 +46,19 @@ class EmpresaModel {
       inscricao_estadual,
       id_usuario_empresa,
     } = empresa;
+
+    const normalizedCnpj = this.normalizeCnpj(CNPJ_NibocoProd);
+    if (!normalizedCnpj) {
+      throw new Error('CNPJ inválido. Envie apenas os 14 dígitos numéricos do CNPJ.');
+    }
+
     const uid =
       id_usuario_empresa === '' || id_usuario_empresa === undefined || id_usuario_empresa === null
         ? null
         : Number(id_usuario_empresa);
     const created = await prisma.empresa.create({
       data: {
-        CNPJ_NibocoProd,
+        CNPJ_NibocoProd: normalizedCnpj,
         nome_social,
         nome_fantasia,
         endereco,

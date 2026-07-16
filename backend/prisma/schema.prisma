@@ -159,8 +159,12 @@ model Estagio {
   dt_rescisao           DateTime? @db.Date
   dt_renovacao          DateTime? @db.Date
   carga_horaria_total   Int?
-  carga_horaria_semanal  Int?
+  carga_horaria_semanal  Decimal? @db.Decimal(10, 2)
   situacao              String
+  obrigatorio           Boolean  @default(true)
+  numero_apolice        String?
+  nome_seguradora       String?
+  valor_apolice         Decimal? @db.Decimal(10, 2)
   id_aluno               Int
   id_empresa             Int
   id_supervisor          Int?

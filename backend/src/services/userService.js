@@ -6,10 +6,21 @@ const validateEmail = require('../utils/validateEmail');
 class UserService {
   static async registerUser(user) {
     // 1. Desestruturando todos os campos reais que vêm do seu formulário HTML
-    const { matricula, nome, cpf, telefone, email, data_nasc, senha, id_curso } = user;
+    const {
+      matricula,
+      nome,
+      cpf,
+      telefone,
+      email,
+      data_nasc,
+      senha,
+      password,
+      id_curso,
+    } = user;
+    const rawSenha = senha || password;
 
     // Validação básica de obrigatoriedade
-    if (!email || !senha || !matricula || !nome || !id_curso) {
+    if (!email || !rawSenha || !matricula || !nome || !id_curso) {
       throw new Error('Campos obrigatórios estão faltando (Matrícula, Nome, Email e Senha)');
     }
 
@@ -30,7 +41,7 @@ class UserService {
     }
 
     // 3. Criptografa a senha (usando 'senha' para manter o padrão em português do banco)
-    const hashedPassword = await bcrypt.hash(senha, 10);
+    const hashedPassword = await bcrypt.hash(rawSenha, 10);
 
     // 4. Passa o objeto completo para o seu Model/Prisma salvar
     const createdUser = await UserModel.create({
@@ -51,8 +62,10 @@ class UserService {
     };
   }
 
-  static async loginUser({ email, senha }) { // Ajustado de 'password' para 'senha'
-    if (!email || !senha) {
+  static async loginUser({ email, senha, password }) {
+    const rawSenha = senha || password;
+
+    if (!email || !rawSenha) {
       throw new Error('Email e senha sao obrigatorios');
     }
 
@@ -62,7 +75,7 @@ class UserService {
     }
 
     // Compara a senha digitada com a criptografada (garantindo que o campo no banco seja 'senha')
-    const passwordIsValid = await bcrypt.compare(senha, user.senha);
+    const passwordIsValid = await bcrypt.compare(rawSenha, user.senha);
     if (!passwordIsValid) {
       throw new Error('Senha invalida');
     }

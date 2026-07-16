@@ -176,25 +176,51 @@
             }
         });
 
-        // Adicionar validação de CPF e remoção de máscaras no submit do formulário
-        document.querySelector('form').addEventListener('submit', (e) => {
+        // Adicionar validação de CPF, envio via fetch e retorno para addEstagio.html
+        document.querySelector('form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
             if (cpfInput && cpfInput.value) {
                 if (!validarCPF(cpfInput.value)) {
-                    e.preventDefault();
                     alert('O CPF informado é inválido. Por favor, verifique os números.');
-                    // Adicionar classe de erro visual se necessário
                     cpfInput.classList.add('border-red-500');
-                } else {
-                    cpfInput.classList.remove('border-red-500');
+                    return;
                 }
+
+                cpfInput.classList.remove('border-red-500');
             }
 
-            // Remover máscaras antes de enviar para o backend
             if (cpfInput) {
                 cpfInput.value = cpfInput.value.replace(/[^\d]+/g, '');
             }
             if (telefoneInput) {
                 telefoneInput.value = telefoneInput.value.replace(/[^\d]+/g, '');
+            }
+
+            const form = e.currentTarget;
+            const payload = Object.fromEntries(new FormData(form).entries());
+
+            try {
+                const response = await fetch('/supervisores', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    alert('Supervisor cadastrado com sucesso!');
+                    window.location.href = 'addEstagio.html';
+                    return;
+                }
+
+                alert(data.error || 'Erro ao salvar supervisor.');
+            } catch (error) {
+                console.error('Erro ao salvar supervisor:', error);
+                alert('Falha na comunicação com o servidor.');
             }
         });
 

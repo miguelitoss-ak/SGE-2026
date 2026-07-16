@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
+const path = require('path');
 
 const errorMiddleware = require('./middlewares/errorMiddleware');
 
@@ -18,8 +19,34 @@ const app = express();
 
 // Middlewares
 app.use(cors());
-app.use(helmet());
+app.use(
+  helmet({
+    contentSecurityPolicy: false,
+  })
+);
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(express.static(path.join(__dirname, '..', 'templates')));
+
+app.get('/', (req, res) => {
+  return res.redirect('/login.html');
+});
+
+const pageRedirects = {
+  '/login': '/login.html',
+  '/cadastro': '/cadastro.html',
+  '/forgot-password': '/forgot-password.html',
+  '/home': '/home.html',
+  '/addEstagio': '/addEstagio.html',
+  '/addEmpresa': '/addEmpresa.html',
+  '/addOrientador': '/addOrientador.html',
+  '/addSupervisor': '/addSupervisor.html',
+  '/editEstagio': '/editEstagio.html',
+};
+
+Object.entries(pageRedirects).forEach(([from, to]) => {
+  app.get(from, (req, res) => res.redirect(to));
+});
 
 // Rotas da API SGE
 app.use('/alunos', alunoRoutes);

@@ -12,6 +12,16 @@ class EmpresaService {
       throw new Error("Formato de email da empresa inválido.");
     }
 
+    const normalizedCnpj = EmpresaModel.normalizeCnpj(empresaData.CNPJ_NibocoProd);
+    if (!normalizedCnpj) {
+      throw new Error('CNPJ inválido. Envie apenas os 14 dígitos numéricos do CNPJ.');
+    }
+
+    empresaData = {
+      ...empresaData,
+      CNPJ_NibocoProd: normalizedCnpj,
+    };
+
     if (empresaData.inscricao_estadual != null && String(empresaData.inscricao_estadual).trim() !== '') {
       const ie = String(empresaData.inscricao_estadual).trim();
       if (ie.length < 6 || ie.length > 8) {
@@ -36,7 +46,14 @@ class EmpresaService {
       throw new Error("Empresa com este CNPJ já cadastrada.");
     }
 
-    return await EmpresaModel.create(empresaData);
+    try {
+      return await EmpresaModel.create(empresaData);
+    } catch (error) {
+      if (error?.code === 'P2002') {
+        throw new Error('Empresa com este CNPJ já cadastrada.');
+      }
+      throw error;
+    }
   }
 }
 

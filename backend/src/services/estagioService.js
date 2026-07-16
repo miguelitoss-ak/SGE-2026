@@ -2,6 +2,12 @@ const EstagioModel = require('../models/estagioModel');
 const OrientadorModel = require('../models/orientadorModel');
 
 class EstagioService {
+  static _parseBoolean(value) {
+    if (value === true || value === 'true' || value === 1 || value === '1') return true;
+    if (value === false || value === 'false' || value === 0 || value === '0') return false;
+    return Boolean(value);
+  }
+
   static async _resolveOrientadorId(id_orientador) {
     if (id_orientador === undefined || id_orientador === null || id_orientador === '') {
       throw new Error('Todo estágio deve ter um orientador (id_orientador é obrigatório).');
@@ -17,7 +23,7 @@ class EstagioService {
     return id;
   }
 
-  static async createEstagio(data) {
+  static async createEstagio(data, user = null) {
     const inicio = new Date(data.data_inicio);
     if (Number.isNaN(inicio.getTime())) {
       throw new Error('Data de início inválida.');
@@ -32,9 +38,21 @@ class EstagioService {
       }
     }
 
-    if (data.carga_horaria_semanal > 30) {
+    if (Number(data.carga_horaria_semanal) > 30) {
       throw new Error("A carga horária semanal não pode exceder 30 horas conforme a lei de estágio.");
     }
+
+    const obrigatorio = this._parseBoolean(data.obrigatorio);
+    const isAdmin = user?.role === 'ADMIN';
+    const apoliceFieldsFilled = [data.numero_apolice, data.nome_seguradora, data.valor_apolice].some(
+      (value) => value !== undefined && value !== null && String(value).trim() !== ''
+    );
+
+    if (obrigatorio && !isAdmin && apoliceFieldsFilled) {
+      throw new Error('Somente ADMIN pode preencher os dados de apólice em estágio obrigatório.');
+    }
+
+    data.obrigatorio = obrigatorio;
 
     if (!data.situacao) data.situacao = 'ATIVO';
 
