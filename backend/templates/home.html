@@ -67,65 +67,34 @@
                     <span>ADICIONAR ESTÁGIO</span>
                 </a>
 
-                <!-- Listagem de Estágios -->
+                <!-- Atividades Recentes -->
                 <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-                    <div class="p-5 border-b border-gray-50 flex justify-between items-center">
-                        <h3 class="font-bold text-gray-700 uppercase text-xs tracking-wider">Meus Estágios</h3>
-                        <span class="bg-gray-100 text-gray-500 text-[10px] px-2 py-1 rounded-full">2 Ativos</span>
-                    </div>
-                    
-                    <div class="divide-y divide-gray-50">
-                        <!-- Card Estágio Individual -->
-                        <div class="p-5 hover:bg-gray-50 transition-colors group relative cursor-default">
-                            <div class="flex justify-between items-start mb-2">
-                                <h4 class="font-bold text-gray-800 group-hover:text-ifrs-green transition-colors">Tech Inova S.A.</h4>
-                                <div class="flex items-center space-x-2">
-                                    <!-- Ações do CRUD (Aparecem no Hover) -->
-                                    <div class="admin-actions hidden flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-all transform translate-x-2 group-hover:translate-x-0 z-10">
-                                        <a href="editEstagio.html?id=1" title="Editar Estágio" class="p-1.5 bg-amber-50 text-amber-600 rounded-lg hover:bg-amber-600 hover:text-white transition-all shadow-sm">
-                                            <i data-lucide="pencil" class="w-3.5 h-3.5"></i>
-                                        </a>
-                                        <button title="Excluir Estágio" onclick="openDeleteModal(1, 'Tech Inova S.A.', 'Desenvolvedor Backend')" class="p-1.5 bg-red-50 text-red-600 rounded-lg hover:bg-red-600 hover:text-white transition-all shadow-sm">
-                                            <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
-                                        </button>
-                                    </div>
-                                    <span class="flex h-2 w-2 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]"></span>
-                                </div>
-                            </div>
-                            <p class="text-sm text-gray-600 mb-3">Desenvolvedor Backend</p>
-                            <div class="flex justify-between items-center">
-                                <div class="flex items-center text-[11px] text-gray-400">
-                                    <i data-lucide="calendar" class="w-3 h-3 mr-1"></i>
-                                    Início: 10/03/2026
-                                </div>
-                                <span class="text-[10px] font-bold px-2 py-1 rounded-md bg-green-50 text-green-700 uppercase">Em andamento</span>
-                            </div>
+                    <div class="p-5 border-b border-gray-50">
+                        <div class="flex items-center justify-between gap-3">
+                            <h3 class="text-lg font-bold text-gray-800">Atividades Recentes</h3>
+                            <span class="bg-gray-100 text-gray-500 text-[10px] px-2 py-1 rounded-full">Hoje</span>
                         </div>
-
-                        <!-- Card Estágio 2 -->
-                        <div class="p-5 hover:bg-gray-50 transition-colors group relative cursor-default">
-                            <div class="flex justify-between items-start mb-2">
-                                <h4 class="font-bold text-gray-800 group-hover:text-ifrs-green transition-colors">Agile Sys LTDA</h4>
-                                <div class="flex items-center space-x-2">
-                                    <!-- Ações do CRUD (Aparecem no Hover) -->
-                                    <div class="admin-actions hidden flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-all transform translate-x-2 group-hover:translate-x-0 z-10">
-                                        <a href="editEstagio.html?id=2" title="Editar Estágio" class="p-1.5 bg-amber-50 text-amber-600 rounded-lg hover:bg-amber-600 hover:text-white transition-all shadow-sm">
-                                            <i data-lucide="pencil" class="w-3.5 h-3.5"></i>
-                                        </a>
-                                        <button title="Excluir Estágio" onclick="openDeleteModal(2, 'Agile Sys LTDA', 'Suporte Técnico')" class="p-1.5 bg-red-50 text-red-600 rounded-lg hover:bg-red-600 hover:text-white transition-all shadow-sm">
-                                            <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
-                                        </button>
-                                    </div>
-                                    <span class="flex h-2 w-2 rounded-full bg-blue-500"></span>
+                    </div>
+                    <div class="p-5">
+                        <div class="space-y-5">
+                            <!-- Item de Atividade -->
+                            <div class="flex items-start space-x-4">
+                                <div class="bg-green-100 p-2 rounded-full mt-0.5 shrink-0">
+                                    <i data-lucide="file-plus" class="text-green-600 w-4 h-4"></i>
+                                </div>
+                                <div>
+                                    <p class="text-sm text-gray-800 font-medium">Novo estágio adicionado em <span class="font-bold">Tech Inova S.A.</span></p>
+                                    <p class="text-xs text-gray-400">há 2 horas atrás</p>
                                 </div>
                             </div>
-                            <p class="text-sm text-gray-600 mb-3">Suporte Técnico</p>
-                            <div class="flex justify-between items-center">
-                                <div class="flex items-center text-[11px] text-gray-400">
-                                    <i data-lucide="calendar" class="w-3 h-3 mr-1"></i>
-                                    Início: 01/01/2025
+                            <div class="flex items-start space-x-4">
+                                <div class="bg-blue-100 p-2 rounded-full mt-0.5 shrink-0">
+                                    <i data-lucide="refresh-cw" class="text-blue-600 w-4 h-4"></i>
                                 </div>
-                                <span class="text-[10px] font-bold px-2 py-1 rounded-md bg-blue-50 text-blue-700 uppercase">Concluído</span>
+                                <div>
+                                    <p class="text-sm text-gray-800 font-medium">Status do estágio <span class="font-bold">Agile Sys</span> alterado para "Concluído"</p>
+                                    <p class="text-xs text-gray-400">ontem às 15:30</p>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -137,55 +106,116 @@
                 
                 <!-- Resumo Rápido (Mini-Cards) -->
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                    <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center justify-center text-center hover:shadow-md transition-shadow">
-                        <div class="w-10 h-10 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center mb-3">
-                            <i data-lucide="layers" class="w-5 h-5"></i>
+                    <div class="bg-white px-5 py-4 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center justify-center text-center hover:shadow-md transition-shadow">
+                        <div class="w-9 h-9 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center mb-2.5">
+                            <i data-lucide="layers" class="w-4 h-4"></i>
                         </div>
-                        <span class="text-2xl font-black text-gray-800">03</span>
+                        <span class="text-xl font-black text-gray-800 leading-none">03</span>
                         <span class="text-xs text-gray-500 font-medium">Total</span>
                     </div>
-                    <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center justify-center text-center hover:shadow-md transition-shadow">
-                        <div class="w-10 h-10 bg-green-50 text-green-600 rounded-xl flex items-center justify-center mb-3">
-                            <i data-lucide="activity" class="w-5 h-5"></i>
+                    <div class="bg-white px-5 py-4 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center justify-center text-center hover:shadow-md transition-shadow">
+                        <div class="w-9 h-9 bg-green-50 text-green-600 rounded-xl flex items-center justify-center mb-2.5">
+                            <i data-lucide="activity" class="w-4 h-4"></i>
                         </div>
-                        <span class="text-2xl font-black text-gray-800">01</span>
+                        <span class="text-xl font-black text-gray-800 leading-none">01</span>
                         <span class="text-xs text-gray-500 font-medium">Ativos</span>
                     </div>
-                    <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center justify-center text-center hover:shadow-md transition-shadow">
-                        <div class="w-10 h-10 bg-purple-50 text-purple-600 rounded-xl flex items-center justify-center mb-3">
-                            <i data-lucide="check-circle" class="w-5 h-5"></i>
+                    <div class="bg-white px-5 py-4 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center justify-center text-center hover:shadow-md transition-shadow">
+                        <div class="w-9 h-9 bg-purple-50 text-purple-600 rounded-xl flex items-center justify-center mb-2.5">
+                            <i data-lucide="check-circle" class="w-4 h-4"></i>
                         </div>
-                        <span class="text-2xl font-black text-gray-800">02</span>
+                        <span class="text-xl font-black text-gray-800 leading-none">02</span>
                         <span class="text-xs text-gray-500 font-medium">Concluídos</span>
                     </div>
 
                 </div>
 
-                <!-- Atividades Recentes -->
+                <!-- Meus Estágios -->
                 <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-                    <div class="p-6 border-b border-gray-50">
-                        <h3 class="text-lg font-bold text-gray-800">Atividades Recentes</h3>
+                    <div class="p-6 border-b border-gray-50 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                        <div>
+                            <h3 class="text-lg font-bold text-gray-800">Meus Estágios</h3>
+                            <p class="text-sm text-gray-500 mt-1">Gerencie e encontre seus vínculos rapidamente.</p>
+                        </div>
+                        <span class="bg-gray-100 text-gray-500 text-[10px] px-2 py-1 rounded-full self-start sm:self-auto">2 Ativos</span>
                     </div>
-                    <div class="p-6">
-                        <div class="space-y-6">
-                            <!-- Item de Atividade -->
-                            <div class="flex items-start space-x-4">
-                                <div class="bg-green-100 p-2 rounded-full mt-1">
-                                    <i data-lucide="file-plus" class="text-green-600 w-4 h-4"></i>
+
+                    <div class="p-6 space-y-5">
+                        <div class="relative">
+                            <i data-lucide="search" class="w-4 h-4 text-gray-400 absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none"></i>
+                            <input
+                                id="searchEstagios"
+                                type="text"
+                                placeholder="Buscar estágio pelo nome..."
+                                class="w-full pl-11 pr-4 py-3 rounded-2xl border border-gray-200 bg-gray-50 text-gray-700 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-green-100 focus:border-ifrs-green transition-colors"
+                            />
+                        </div>
+
+                        <div id="estagiosGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                            <!-- Card Estágio Individual -->
+                            <article
+                                class="p-5 bg-gray-50 border border-gray-100 rounded-2xl hover:bg-white hover:shadow-md transition-all group relative cursor-default"
+                                data-estagio-item
+                                data-search="tech inova s.a. desenvolvedor backend"
+                            >
+                                <div class="flex justify-between items-start mb-2">
+                                    <h4 class="font-bold text-gray-800 group-hover:text-ifrs-green transition-colors">Tech Inova S.A.</h4>
+                                    <div class="flex items-center space-x-2">
+                                        <!-- Ações do CRUD (Aparecem no Hover) -->
+                                        <div class="admin-actions hidden flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-all transform translate-x-2 group-hover:translate-x-0 z-10">
+                                            <a href="editEstagio.html?id=1" title="Editar Estágio" class="p-1.5 bg-amber-50 text-amber-600 rounded-lg hover:bg-amber-600 hover:text-white transition-all shadow-sm">
+                                                <i data-lucide="pencil" class="w-3.5 h-3.5"></i>
+                                            </a>
+                                            <button title="Excluir Estágio" onclick="openDeleteModal(1, 'Tech Inova S.A.', 'Desenvolvedor Backend')" class="p-1.5 bg-red-50 text-red-600 rounded-lg hover:bg-red-600 hover:text-white transition-all shadow-sm">
+                                                <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                                            </button>
+                                        </div>
+                                        <span class="flex h-2 w-2 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]"></span>
+                                    </div>
                                 </div>
-                                <div>
-                                    <p class="text-sm text-gray-800 font-medium">Novo estágio adicionado em <span class="font-bold">Tech Inova S.A.</span></p>
-                                    <p class="text-xs text-gray-400">há 2 horas atrás</p>
+                                <p class="text-sm text-gray-600 mb-3">Desenvolvedor Backend</p>
+                                <div class="flex justify-between items-center">
+                                    <div class="flex items-center text-[11px] text-gray-400">
+                                        <i data-lucide="calendar" class="w-3 h-3 mr-1"></i>
+                                        Início: 10/03/2026
+                                    </div>
+                                    <span class="text-[10px] font-bold px-2 py-1 rounded-md bg-green-50 text-green-700 uppercase">Em andamento</span>
                                 </div>
-                            </div>
-                            <div class="flex items-start space-x-4">
-                                <div class="bg-blue-100 p-2 rounded-full mt-1">
-                                    <i data-lucide="refresh-cw" class="text-blue-600 w-4 h-4"></i>
+                            </article>
+
+                            <!-- Card Estágio 2 -->
+                            <article
+                                class="p-5 bg-gray-50 border border-gray-100 rounded-2xl hover:bg-white hover:shadow-md transition-all group relative cursor-default"
+                                data-estagio-item
+                                data-search="agile sys ltda suporte tecnico"
+                            >
+                                <div class="flex justify-between items-start mb-2">
+                                    <h4 class="font-bold text-gray-800 group-hover:text-ifrs-green transition-colors">Agile Sys LTDA</h4>
+                                    <div class="flex items-center space-x-2">
+                                        <!-- Ações do CRUD (Aparecem no Hover) -->
+                                        <div class="admin-actions hidden flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-all transform translate-x-2 group-hover:translate-x-0 z-10">
+                                            <a href="editEstagio.html?id=2" title="Editar Estágio" class="p-1.5 bg-amber-50 text-amber-600 rounded-lg hover:bg-amber-600 hover:text-white transition-all shadow-sm">
+                                                <i data-lucide="pencil" class="w-3.5 h-3.5"></i>
+                                            </a>
+                                            <button title="Excluir Estágio" onclick="openDeleteModal(2, 'Agile Sys LTDA', 'Suporte Técnico')" class="p-1.5 bg-red-50 text-red-600 rounded-lg hover:bg-red-600 hover:text-white transition-all shadow-sm">
+                                                <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                                            </button>
+                                        </div>
+                                        <span class="flex h-2 w-2 rounded-full bg-blue-500"></span>
+                                    </div>
                                 </div>
-                                <div>
-                                    <p class="text-sm text-gray-800 font-medium">Status do estágio <span class="font-bold">Agile Sys</span> alterado para "Concluído"</p>
-                                    <p class="text-xs text-gray-400">ontem às 15:30</p>
+                                <p class="text-sm text-gray-600 mb-3">Suporte Técnico</p>
+                                <div class="flex justify-between items-center">
+                                    <div class="flex items-center text-[11px] text-gray-400">
+                                        <i data-lucide="calendar" class="w-3 h-3 mr-1"></i>
+                                        Início: 01/01/2025
+                                    </div>
+                                    <span class="text-[10px] font-bold px-2 py-1 rounded-md bg-blue-50 text-blue-700 uppercase">Concluído</span>
                                 </div>
+                            </article>
+                            <div id="noEstagiosMessage" class="hidden col-span-full rounded-2xl border border-dashed border-gray-200 bg-gray-50 px-6 py-10 text-center">
+                                <p class="text-sm font-semibold text-gray-700">Nenhum estágio encontrado.</p>
+                                <p class="mt-1 text-sm text-gray-500">Tente buscar por outro nome de empresa ou cargo.</p>
                             </div>
                         </div>
                     </div>
@@ -274,7 +304,48 @@
             }
 
             toggleAdminActions();
+            setupEstagioSearch();
         });
+
+        function normalizeText(value) {
+            return (value || '')
+                .toString()
+                .normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, '')
+                .toLowerCase()
+                .trim();
+        }
+
+        function setupEstagioSearch() {
+            const searchInput = document.getElementById('searchEstagios');
+            const estagios = Array.from(document.querySelectorAll('[data-estagio-item]'));
+            const emptyState = document.getElementById('noEstagiosMessage');
+
+            if (!searchInput || !emptyState || !estagios.length) {
+                return;
+            }
+
+            const applyFilter = () => {
+                const query = normalizeText(searchInput.value);
+                let visibleCount = 0;
+
+                estagios.forEach((card) => {
+                    const searchableText = normalizeText(card.getAttribute('data-search') || card.textContent);
+                    const isMatch = searchableText.includes(query);
+
+                    card.classList.toggle('hidden', !isMatch);
+
+                    if (isMatch) {
+                        visibleCount += 1;
+                    }
+                });
+
+                emptyState.classList.toggle('hidden', visibleCount !== 0);
+            };
+
+            searchInput.addEventListener('input', applyFilter);
+            applyFilter();
+        }
 
         let estagioIdParaExcluir = null;
 
