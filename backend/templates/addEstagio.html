@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -305,8 +305,7 @@
 
         const SHIFTS = [
             { key: 'manha', label: 'Manhã' },
-            { key: 'tarde', label: 'Tarde' },
-            { key: 'noite', label: 'Noite' },
+            { key: 'tardeNoite', label: 'Tarde/Noite' },
         ];
 
         const DEFAULT_TOTAL_STAGE_HOURS = 400;
@@ -314,6 +313,7 @@
         const WEEKLY_LIMIT_WITH_CLASSES = 30 * 60;
         const DAILY_LIMIT_WITHOUT_CLASSES = 8 * 60;
         const WEEKLY_LIMIT_WITHOUT_CLASSES = 40 * 60;
+        const MAX_EXIT_TIME_MINUTES = 22 * 60;
         const NATIONAL_HOLIDAYS = [
             '2026-01-01',
             '2026-04-21',
@@ -457,6 +457,7 @@
                                     id="${entradaId}"
                                     type="time"
                                     step="60"
+                                    lang="pt-BR"
                                     data-day="${day.key}"
                                     data-shift="${shift.key}"
                                     data-field="entrada"
@@ -470,6 +471,8 @@
                                     id="${saidaId}"
                                     type="time"
                                     step="60"
+                                    max="22:00"
+                                    lang="pt-BR"
                                     data-day="${day.key}"
                                     data-shift="${shift.key}"
                                     data-field="saida"
@@ -528,7 +531,22 @@
         function updateScheduleStateFromInput(input) {
             const { day, shift, field } = input.dataset;
             if (!day || !shift || !field) return;
-            scheduleState[day][shift][field] = normalizeTimeValue(input.value);
+
+            const value = normalizeTimeValue(input.value);
+            const minutes = timeToMinutes(value);
+            const invalidFormat = value && minutes === null;
+            const exceedsExitLimit = field === 'saida' && minutes !== null && minutes > MAX_EXIT_TIME_MINUTES;
+
+            input.setCustomValidity(
+                invalidFormat
+                    ? 'Use o formato de 24 horas HH:mm.'
+                    : exceedsExitLimit
+                        ? 'O horário de saída não pode passar de 22:00.'
+                        : ''
+            );
+            input.classList.toggle('border-red-500', Boolean(invalidFormat || exceedsExitLimit));
+
+            scheduleState[day][shift][field] = invalidFormat || exceedsExitLimit ? '' : value;
         }
 
         function updateComputedFields() {
