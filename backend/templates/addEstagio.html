@@ -637,7 +637,9 @@
             ];
             const obrigatorioSelect = document.querySelector('select[name="obrigatorio"]');
 
-            if (userRole === 'ADMIN') {
+            const isAdminRole = ['ADMIN', 'ADMINISTRADOR'].includes((userRole || '').toString().trim().toUpperCase());
+
+            if (isAdminRole) {
                 situacaoContainer.classList.remove('hidden');
             } else {
                 situacaoContainer.classList.add('hidden');
@@ -649,7 +651,7 @@
 
             function atualizarApoliceAccess() {
                 const obrigatorio = obrigatorioSelect.value === '1';
-                const podeEditar = userRole === 'ADMIN' || !obrigatorio;
+                const podeEditar = isAdminRole || !obrigatorio;
 
                 apoliceInputs.forEach((input) => {
                     input.disabled = !podeEditar;

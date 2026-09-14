@@ -1,7 +1,13 @@
 const EstagioModel = require('../models/estagioModel');
+const AlunoModel = require('../models/alunoModel');
 const OrientadorModel = require('../models/orientadorModel');
 
 class EstagioService {
+  static _isAdminUser(user) {
+    const role = String(user?.role || '').toUpperCase();
+    return role === 'ADMIN' || role === 'ADMINISTRADOR';
+  }
+
   static _parseBoolean(value) {
     if (value === true || value === 'true' || value === 1 || value === '1') return true;
     if (value === false || value === 'false' || value === 0 || value === '0') return false;
@@ -21,6 +27,53 @@ class EstagioService {
       throw new Error('Orientador não encontrado.');
     }
     return id;
+  }
+
+  static async _resolveAlunoId(id_aluno, user = null) {
+    if (id_aluno !== undefined && id_aluno !== null && id_aluno !== '') {
+      const id = Number(id_aluno);
+      if (!Number.isFinite(id) || id < 1) {
+        throw new Error('ID do aluno inválido.');
+      }
+
+      const aluno = await AlunoModel.findById(id);
+      if (!aluno) {
+        throw new Error('Aluno não encontrado.');
+      }
+
+      return id;
+    }
+
+    if (user?.id_aluno !== undefined || user?.alunoId !== undefined || user?.aluno_id !== undefined) {
+      const fallbackId = user.id_aluno ?? user.alunoId ?? user.aluno_id;
+      const id = Number(fallbackId);
+      if (!Number.isFinite(id) || id < 1) {
+        throw new Error('ID do aluno inválido.');
+      }
+
+      const aluno = await AlunoModel.findById(id);
+      if (!aluno) {
+        throw new Error('Aluno não encontrado.');
+      }
+
+      return id;
+    }
+
+    if (user?.email) {
+      const alunoPorEmail = await AlunoModel.findByEmail(user.email);
+      if (alunoPorEmail) {
+        return alunoPorEmail.id;
+      }
+    }
+
+    if (user?.matricula) {
+      const alunoPorMatricula = await AlunoModel.findByMatricula(user.matricula);
+      if (alunoPorMatricula) {
+        return alunoPorMatricula.id;
+      }
+    }
+
+    throw new Error('id_aluno é obrigatório para criar o estágio.');
   }
 
   static async createEstagio(data, user = null) {
@@ -43,7 +96,7 @@ class EstagioService {
     }
 
     const obrigatorio = this._parseBoolean(data.obrigatorio);
-    const isAdmin = user?.role === 'ADMIN';
+    const isAdmin = this._isAdminUser(user);
     const apoliceFieldsFilled = [data.numero_apolice, data.nome_seguradora, data.valor_apolice].some(
       (value) => value !== undefined && value !== null && String(value).trim() !== ''
     );
@@ -56,6 +109,7 @@ class EstagioService {
 
     if (!data.situacao) data.situacao = 'ATIVO';
 
+    data.id_aluno = await this._resolveAlunoId(data.id_aluno, user);
     data.id_orientador = await this._resolveOrientadorId(data.id_orientador);
 
     return await EstagioModel.create(data);
@@ -63,6 +117,36 @@ class EstagioService {
 
   static async getAll() {
     return await EstagioModel.findAll();
+  }
+
+  static async getMeusEstagios(user) {
+    if (!user) {
+      throw new Error('Usuário não autenticado.');
+    }
+
+    if (this._isAdminUser(user)) {
+      return await EstagioModel.findAll();
+    }
+
+    let aluno = null;
+
+    if (user.id_aluno !== undefined && user.id_aluno !== null && user.id_aluno !== '') {
+      aluno = await AlunoModel.findById(user.id_aluno);
+    }
+
+    if (!aluno && user.email) {
+      aluno = await AlunoModel.findByEmail(user.email);
+    }
+
+    if (!aluno && user.matricula) {
+      aluno = await AlunoModel.findByMatricula(user.matricula);
+    }
+
+    if (!aluno) {
+      throw new Error('Aluno não encontrado.');
+    }
+
+    return await EstagioModel.findByAlunoId(aluno.id);
   }
 
   static async vincularOrientador(idEstagio, id_orientador) {

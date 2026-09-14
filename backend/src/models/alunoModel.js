@@ -6,6 +6,42 @@ class AlunoModel {
     return prisma.$queryRaw`SELECT * FROM alunos`;
   }
 
+  static async findById(id) {
+    const alunoId = Number(id);
+    if (!Number.isFinite(alunoId) || alunoId < 1) {
+      return null;
+    }
+
+    return prisma.aluno.findUnique({
+      where: { id: alunoId },
+    });
+  }
+
+  static async findByEmail(email) {
+    if (!email || String(email).trim() === '') {
+      return null;
+    }
+
+    return prisma.aluno.findFirst({
+      where: { email: String(email).trim() },
+    });
+  }
+
+  static async findByMatricula(matricula) {
+    if (matricula === null || matricula === undefined || String(matricula).trim() === '') {
+      return null;
+    }
+
+    const value = Number(matricula);
+    if (!Number.isFinite(value)) {
+      return null;
+    }
+
+    return prisma.aluno.findUnique({
+      where: { matricula: value },
+    });
+  }
+
   // Cria um novo aluno usando os campos do seu SQL
   static async create(aluno) {
     const { matricula, nome, cpf, telefone, email, data_nasc, id_curso, id_orientador } = aluno;

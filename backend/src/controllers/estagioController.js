@@ -10,6 +10,23 @@ class EstagioController {
     }
   }
 
+  static async getMeusEstagios(req, res) {
+    try {
+      const estagios = await EstagioService.getMeusEstagios(req.user);
+      return res.status(200).json(estagios);
+    } catch (error) {
+      if (error.message === 'Aluno não encontrado.') {
+        return res.status(404).json({ error: error.message });
+      }
+
+      if (error.message === 'Usuário não autenticado.') {
+        return res.status(401).json({ error: error.message });
+      }
+
+      return res.status(400).json({ error: error.message });
+    }
+  }
+
   static async create(req, res) {
     try {
       const id = await EstagioService.createEstagio(req.body, req.user);
@@ -18,7 +35,28 @@ class EstagioController {
         id 
       });
     } catch (error) {
-      res.status(400).json({ error: error.message });
+      if (error?.code === 'P2003') {
+        return res.status(400).json({
+          error: 'Falha de integridade referencial ao criar o estágio. Verifique os IDs informados.',
+        });
+      }
+
+      if (error.message === 'Aluno não encontrado.') {
+        return res.status(404).json({ error: error.message });
+      }
+
+      if (
+        error.message === 'id_aluno é obrigatório para criar o estágio.' ||
+        error.message === 'ID do aluno inválido.' ||
+        error.message === 'id_orientador inválido.' ||
+        error.message === 'Orientador não encontrado.' ||
+        error.message === 'Data de início inválida.' ||
+        error.message === 'Data de término inválida.'
+      ) {
+        return res.status(400).json({ error: error.message });
+      }
+
+      return res.status(400).json({ error: error.message });
     }
   }
 

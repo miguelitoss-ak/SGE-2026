@@ -25,21 +25,58 @@ class EstagioModel {
   }
 
   static async findAll() {
-    // Busca estágios trazendo o nome do aluno e da empresa (JOIN opcional, mas recomendado)
-    return prisma.$queryRaw`
-      SELECT e.*, a.nome as aluno_nome, emp.nome_social as empresa_nome 
-      FROM estagios e
-      JOIN alunos a ON e.id_aluno = a.id
-      JOIN empresas emp ON e.id_empresa = emp.id
-    `;
+    return prisma.estagio.findMany({
+      orderBy: { id: 'desc' },
+      include: {
+        aluno: true,
+        empresa: true,
+        supervisor: true,
+        orientador: true,
+        documento: true,
+      },
+    });
+  }
+
+  static async findByAlunoId(idAluno) {
+    const alunoId = Number(idAluno);
+    if (!Number.isFinite(alunoId) || alunoId < 1) {
+      return [];
+    }
+
+    return prisma.estagio.findMany({
+      where: { id_aluno: alunoId },
+      orderBy: { dt_registro: 'desc' },
+      include: {
+        aluno: true,
+        empresa: true,
+        supervisor: true,
+        orientador: true,
+        documento: true,
+      },
+    });
   }
 
   static async create(data) {
     const {
-      dt_registro, beneficio_alimentacao, beneficio_transporte, beneficio_impresso,
-      bolsa_auxilio, data_inicio, data_fim, carga_horaria_total, carga_horaria_semanal,
-      situacao, id_aluno, id_empresa, id_supervisor, id_orientador, id_documento,
-      obrigatorio, numero_apolice, nome_seguradora, valor_apolice
+      dt_registro,
+      beneficio_alimentacao,
+      beneficio_transporte,
+      beneficio_impresso,
+      bolsa_auxilio,
+      data_inicio,
+      data_fim,
+      carga_horaria_total,
+      carga_horaria_semanal,
+      situacao,
+      id_aluno,
+      id_empresa,
+      id_supervisor,
+      id_orientador,
+      id_documento,
+      obrigatorio,
+      numero_apolice,
+      nome_seguradora,
+      valor_apolice,
     } = data;
 
     const toNullableBool = (v) => {
@@ -83,58 +120,74 @@ class EstagioModel {
     if (!dataInicio) {
       throw new Error('Data de início inválida.');
     }
+
     if (data_fim && !dataFim) {
       throw new Error('Data de término inválida.');
     }
 
-    const created = await prisma.estagio.create({
-      data: {
-        dt_registro: dtRegistro,
-        beneficio_alimentacao: toNullableBool(beneficio_alimentacao),
-        beneficio_transporte: toNullableBool(beneficio_transporte),
-        beneficio_impresso: toNullableBool(beneficio_impresso),
-        bolsa_auxilio:
-          bolsa_auxilio === null || bolsa_auxilio === undefined || bolsa_auxilio === ''
-            ? null
-            : new Prisma.Decimal(bolsa_auxilio),
-        data_inicio: dataInicio,
-        data_fim: dataFim,
-        carga_horaria_total: cargaHorariaTotalNum,
-        carga_horaria_semanal:
-          carga_horaria_semanal === null || carga_horaria_semanal === undefined || carga_horaria_semanal === ''
-            ? null
-            : new Prisma.Decimal(carga_horaria_semanal),
-        situacao,
-        obrigatorio: obrigatorio === true || obrigatorio === 'true' || obrigatorio === 1 || obrigatorio === '1',
-        id_aluno: idAlunoNum,
-        id_empresa: idEmpresaNum,
-        id_supervisor: idSupervisorNum,
-        id_orientador: idOrientadorNum,
-        id_documento: idDocumentoNum,
-        numero_apolice: numero_apolice || null,
-        nome_seguradora: nome_seguradora || null,
-        valor_apolice:
-          valor_apolice === null || valor_apolice === undefined || valor_apolice === ''
-            ? null
-            : new Prisma.Decimal(valor_apolice),
-      },
+    const alunoExistente = await prisma.aluno.findUnique({
+      where: { id: idAlunoNum },
+      select: { id: true },
     });
 
-    return created.id;
+    if (!alunoExistente) {
+      throw new Error('Aluno não encontrado.');
+    }
+
+    try {
+      const created = await prisma.estagio.create({
+        data: {
+          dt_registro: dtRegistro,
+          beneficio_alimentacao: toNullableBool(beneficio_alimentacao),
+          beneficio_transporte: toNullableBool(beneficio_transporte),
+          beneficio_impresso: toNullableBool(beneficio_impresso),
+          bolsa_auxilio:
+            bolsa_auxilio === null || bolsa_auxilio === undefined || bolsa_auxilio === ''
+              ? null
+              : new Prisma.Decimal(bolsa_auxilio),
+          data_inicio: dataInicio,
+          data_fim: dataFim,
+          carga_horaria_total: cargaHorariaTotalNum,
+          carga_horaria_semanal:
+            carga_horaria_semanal === null || carga_horaria_semanal === undefined || carga_horaria_semanal === ''
+              ? null
+              : new Prisma.Decimal(carga_horaria_semanal),
+          situacao,
+          obrigatorio: obrigatorio === true || obrigatorio === 'true' || obrigatorio === 1 || obrigatorio === '1',
+          id_aluno: idAlunoNum,
+          id_empresa: idEmpresaNum,
+          id_supervisor: idSupervisorNum,
+          id_orientador: idOrientadorNum,
+          id_documento: idDocumentoNum,
+          numero_apolice: numero_apolice || null,
+          nome_seguradora: nome_seguradora || null,
+          valor_apolice:
+            valor_apolice === null || valor_apolice === undefined || valor_apolice === ''
+              ? null
+              : new Prisma.Decimal(valor_apolice),
+        },
+      });
+
+      return created.id;
+    } catch (error) {
+      if (error?.code === 'P2003') {
+        throw new Error('Falha de integridade referencial ao criar o estágio. Verifique os IDs informados.');
+      }
+      throw error;
+    }
   }
 
   static async updateOrientador(id, id_orientador) {
     return await prisma.estagio.update({
-      where: { 
-        id: Number(id) 
+      where: {
+        id: Number(id),
       },
       data: {
         id_orientador: Number(id_orientador),
       },
       include: {
-        // Isso retorna os dados do orientador para que o frontend saiba quem foi selecionado
-        orientador: true 
-      }
+        orientador: true,
+      },
     });
   }
 }

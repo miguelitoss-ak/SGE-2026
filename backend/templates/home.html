@@ -10,38 +10,43 @@
         :root {
             --ifrs-green: #32a041;
             --ifrs-green-dark: #267a32;
+            --bg-ink: #0f172a;
+        }
+        body {
+            background:
+                radial-gradient(circle at top left, rgba(50, 160, 65, 0.14), transparent 30%),
+                radial-gradient(circle at top right, rgba(34, 197, 94, 0.10), transparent 28%),
+                linear-gradient(180deg, #f8fafc 0%, #eef6f1 100%);
         }
         .bg-ifrs-green { background-color: var(--ifrs-green); }
         .text-ifrs-green { color: var(--ifrs-green); }
         .hover-bg-ifrs-green:hover { background-color: var(--ifrs-green-dark); }
         .border-ifrs-green { border-color: var(--ifrs-green); }
+        .glass {
+            backdrop-filter: blur(14px);
+            background: rgba(255, 255, 255, 0.78);
+        }
     </style>
 </head>
-<body class="bg-gray-50 min-h-screen font-sans">
-
-    <!-- Header Superior -->
-    <header class="bg-ifrs-green text-white shadow-md sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+<body class="min-h-screen text-slate-800">
+    <header class="bg-ifrs-green text-white shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center gap-4">
             <div class="flex items-center space-x-4">
-                <div class="bg-white p-2 rounded-lg">
+                <div class="bg-white p-2 rounded-2xl shadow-sm">
                     <i data-lucide="graduation-cap" class="text-ifrs-green w-8 h-8"></i>
                 </div>
                 <div>
-                    <h1 class="text-xl font-bold leading-tight tracking-tight">SGE-2026</h1>
+                    <h1 class="text-xl font-extrabold leading-tight tracking-tight">SGE-2026</h1>
                     <p class="text-xs font-light opacity-90">Gestão de Estágios IFRS</p>
                 </div>
             </div>
 
             <div class="hidden md:flex flex-col items-center px-4 min-w-0">
-                <h2 id="welcomeName" class="text-lg font-semibold truncate max-w-[200px] lg:max-w-md w-full text-center">Bem-vindo!</h2>
-                <p class="text-sm opacity-80">Gerencie seus estágios de forma simples e organizada.</p>
+                <h2 id="welcomeName" class="text-lg font-semibold truncate max-w-[240px] lg:max-w-md w-full text-center">Bem-vindo!</h2>
+                <p id="welcomeSubtitle" class="text-sm opacity-80 text-center">Acompanhe seus estágios em tempo real.</p>
             </div>
 
             <div class="flex items-center space-x-4">
-                <button class="p-2 hover:bg-white/10 rounded-full transition-colors relative">
-                    <i data-lucide="bell" class="w-6 h-6"></i>
-                    <span class="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full border-2 border-ifrs-green"></span>
-                </button>
                 <div class="flex items-center space-x-3 border-l border-white/20 pl-4">
                     <div class="text-right hidden sm:block min-w-0">
                         <p id="profileName" class="text-sm font-bold truncate max-w-[120px]">Usuário</p>
@@ -55,168 +60,95 @@
         </div>
     </header>
 
-    <!-- Área Principal Dashboard -->
     <main class="max-w-7xl mx-auto px-6 py-8">
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
-            
-            <!-- Sidebar Esquerda (Col 4) -->
             <aside class="lg:col-span-4 space-y-6">
-                <!-- Botão Adicionar -->
-                <a href="addEstagio.html" class="w-full bg-ifrs-green hover-bg-ifrs-green text-white py-4 px-6 rounded-2xl shadow-lg shadow-green-200 flex items-center justify-center space-x-3 transition-all transform hover:-translate-y-1 active:scale-95 group font-bold">
+                <a href="addEstagio.html" class="w-full bg-ifrs-green hover-bg-ifrs-green text-white py-4 px-6 rounded-3xl shadow-xl shadow-green-200 flex items-center justify-center space-x-3 transition-all transform hover:-translate-y-1 active:scale-95 group font-bold">
                     <i data-lucide="plus-circle" class="group-hover:rotate-90 transition-transform duration-300"></i>
                     <span>ADICIONAR ESTÁGIO</span>
                 </a>
 
-                <!-- Atividades Recentes -->
-                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-                    <div class="p-5 border-b border-gray-50">
+                <div class="glass rounded-3xl shadow-sm border border-white/70 overflow-hidden">
+                    <div class="p-5 border-b border-slate-200/80">
                         <div class="flex items-center justify-between gap-3">
-                            <h3 class="text-lg font-bold text-gray-800">Atividades Recentes</h3>
-                            <span class="bg-gray-100 text-gray-500 text-[10px] px-2 py-1 rounded-full">Hoje</span>
+                            <h3 class="text-lg font-bold text-slate-800">Resumo do painel</h3>
+                            <span id="lastUpdateBadge" class="bg-slate-100 text-slate-500 text-[10px] px-2 py-1 rounded-full">Carregando</span>
                         </div>
                     </div>
-                    <div class="p-5">
-                        <div class="space-y-5">
-                            <!-- Item de Atividade -->
-                            <div class="flex items-start space-x-4">
-                                <div class="bg-green-100 p-2 rounded-full mt-0.5 shrink-0">
-                                    <i data-lucide="file-plus" class="text-green-600 w-4 h-4"></i>
-                                </div>
-                                <div>
-                                    <p class="text-sm text-gray-800 font-medium">Novo estágio adicionado em <span class="font-bold">Tech Inova S.A.</span></p>
-                                    <p class="text-xs text-gray-400">há 2 horas atrás</p>
-                                </div>
-                            </div>
-                            <div class="flex items-start space-x-4">
-                                <div class="bg-blue-100 p-2 rounded-full mt-0.5 shrink-0">
-                                    <i data-lucide="refresh-cw" class="text-blue-600 w-4 h-4"></i>
-                                </div>
-                                <div>
-                                    <p class="text-sm text-gray-800 font-medium">Status do estágio <span class="font-bold">Agile Sys</span> alterado para "Concluído"</p>
-                                    <p class="text-xs text-gray-400">ontem às 15:30</p>
-                                </div>
-                            </div>
+                    <div class="p-5 space-y-4">
+                        <div class="rounded-2xl bg-slate-50 border border-slate-200 p-4">
+                            <p class="text-xs font-bold uppercase tracking-widest text-slate-500">Última atualização</p>
+                            <p id="lastUpdateText" class="mt-2 text-sm font-semibold text-slate-700">Aguardando dados...</p>
+                        </div>
+                        <div >
+                          
                         </div>
                     </div>
                 </div>
             </aside>
 
-            <!-- Área Principal Direita (Col 8) -->
             <section class="lg:col-span-8 space-y-8">
-                
-                <!-- Resumo Rápido (Mini-Cards) -->
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                    <div class="bg-white px-5 py-4 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center justify-center text-center hover:shadow-md transition-shadow">
-                        <div class="w-9 h-9 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center mb-2.5">
-                            <i data-lucide="layers" class="w-4 h-4"></i>
-                        </div>
-                        <span class="text-xl font-black text-gray-800 leading-none">03</span>
-                        <span class="text-xs text-gray-500 font-medium">Total</span>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4" id="statsGrid">
+                    <div class="bg-white/80 backdrop-blur rounded-3xl shadow-sm border border-white p-5">
+                        <div class="h-4 w-20 bg-slate-200 rounded animate-pulse"></div>
+                        <div class="mt-4 h-8 w-16 bg-slate-200 rounded animate-pulse"></div>
+                        <div class="mt-2 h-3 w-24 bg-slate-200 rounded animate-pulse"></div>
                     </div>
-                    <div class="bg-white px-5 py-4 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center justify-center text-center hover:shadow-md transition-shadow">
-                        <div class="w-9 h-9 bg-green-50 text-green-600 rounded-xl flex items-center justify-center mb-2.5">
-                            <i data-lucide="activity" class="w-4 h-4"></i>
-                        </div>
-                        <span class="text-xl font-black text-gray-800 leading-none">01</span>
-                        <span class="text-xs text-gray-500 font-medium">Ativos</span>
+                    <div class="bg-white/80 backdrop-blur rounded-3xl shadow-sm border border-white p-5">
+                        <div class="h-4 w-20 bg-slate-200 rounded animate-pulse"></div>
+                        <div class="mt-4 h-8 w-16 bg-slate-200 rounded animate-pulse"></div>
+                        <div class="mt-2 h-3 w-24 bg-slate-200 rounded animate-pulse"></div>
                     </div>
-                    <div class="bg-white px-5 py-4 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center justify-center text-center hover:shadow-md transition-shadow">
-                        <div class="w-9 h-9 bg-purple-50 text-purple-600 rounded-xl flex items-center justify-center mb-2.5">
-                            <i data-lucide="check-circle" class="w-4 h-4"></i>
-                        </div>
-                        <span class="text-xl font-black text-gray-800 leading-none">02</span>
-                        <span class="text-xs text-gray-500 font-medium">Concluídos</span>
+                    <div class="bg-white/80 backdrop-blur rounded-3xl shadow-sm border border-white p-5">
+                        <div class="h-4 w-20 bg-slate-200 rounded animate-pulse"></div>
+                        <div class="mt-4 h-8 w-16 bg-slate-200 rounded animate-pulse"></div>
+                        <div class="mt-2 h-3 w-24 bg-slate-200 rounded animate-pulse"></div>
                     </div>
-
                 </div>
 
-                <!-- Meus Estágios -->
-                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-                    <div class="p-6 border-b border-gray-50 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                <div class="bg-white/85 backdrop-blur rounded-3xl shadow-sm border border-white overflow-hidden">
+                    <div class="p-6 border-b border-slate-100 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                         <div>
-                            <h3 class="text-lg font-bold text-gray-800">Meus Estágios</h3>
-                            <p class="text-sm text-gray-500 mt-1">Gerencie e encontre seus vínculos rapidamente.</p>
+                            <h3 class="text-lg font-bold text-slate-800">Meus Estágios</h3>
+                            <p id="subtitleStages" class="text-sm text-slate-500 mt-1">Busque e acompanhe todos os estágios cadastrados.</p>
                         </div>
-                        <span class="bg-gray-100 text-gray-500 text-[10px] px-2 py-1 rounded-full self-start sm:self-auto">2 Ativos</span>
+                        <span id="stageCountBadge" class="bg-slate-100 text-slate-600 text-[10px] px-2 py-1 rounded-full self-start sm:self-auto">0 encontrados</span>
                     </div>
 
                     <div class="p-6 space-y-5">
                         <div class="relative">
-                            <i data-lucide="search" class="w-4 h-4 text-gray-400 absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none"></i>
+                            <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none"></i>
                             <input
                                 id="searchEstagios"
                                 type="text"
-                                placeholder="Buscar estágio pelo nome..."
-                                class="w-full pl-11 pr-4 py-3 rounded-2xl border border-gray-200 bg-gray-50 text-gray-700 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-green-100 focus:border-ifrs-green transition-colors"
+                                placeholder="Buscar estágio por empresa, aluno, orientador ou situação..."
+                                class="w-full pl-11 pr-4 py-3 rounded-2xl border border-slate-200 bg-slate-50 text-slate-700 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-green-100 focus:border-ifrs-green transition-colors"
                             />
                         </div>
 
-                        <div id="estagiosGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                            <!-- Card Estágio Individual -->
-                            <article
-                                class="p-5 bg-gray-50 border border-gray-100 rounded-2xl hover:bg-white hover:shadow-md transition-all group relative cursor-default"
-                                data-estagio-item
-                                data-search="tech inova s.a. desenvolvedor backend"
-                            >
-                                <div class="flex justify-between items-start mb-2">
-                                    <h4 class="font-bold text-gray-800 group-hover:text-ifrs-green transition-colors">Tech Inova S.A.</h4>
-                                    <div class="flex items-center space-x-2">
-                                        <!-- Ações do CRUD (Aparecem no Hover) -->
-                                        <div class="admin-actions hidden flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-all transform translate-x-2 group-hover:translate-x-0 z-10">
-                                            <a href="editEstagio.html?id=1" title="Editar Estágio" class="p-1.5 bg-amber-50 text-amber-600 rounded-lg hover:bg-amber-600 hover:text-white transition-all shadow-sm">
-                                                <i data-lucide="pencil" class="w-3.5 h-3.5"></i>
-                                            </a>
-                                            <button title="Excluir Estágio" onclick="openDeleteModal(1, 'Tech Inova S.A.', 'Desenvolvedor Backend')" class="p-1.5 bg-red-50 text-red-600 rounded-lg hover:bg-red-600 hover:text-white transition-all shadow-sm">
-                                                <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
-                                            </button>
-                                        </div>
-                                        <span class="flex h-2 w-2 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]"></span>
-                                    </div>
-                                </div>
-                                <p class="text-sm text-gray-600 mb-3">Desenvolvedor Backend</p>
-                                <div class="flex justify-between items-center">
-                                    <div class="flex items-center text-[11px] text-gray-400">
-                                        <i data-lucide="calendar" class="w-3 h-3 mr-1"></i>
-                                        Início: 10/03/2026
-                                    </div>
-                                    <span class="text-[10px] font-bold px-2 py-1 rounded-md bg-green-50 text-green-700 uppercase">Em andamento</span>
-                                </div>
-                            </article>
-
-                            <!-- Card Estágio 2 -->
-                            <article
-                                class="p-5 bg-gray-50 border border-gray-100 rounded-2xl hover:bg-white hover:shadow-md transition-all group relative cursor-default"
-                                data-estagio-item
-                                data-search="agile sys ltda suporte tecnico"
-                            >
-                                <div class="flex justify-between items-start mb-2">
-                                    <h4 class="font-bold text-gray-800 group-hover:text-ifrs-green transition-colors">Agile Sys LTDA</h4>
-                                    <div class="flex items-center space-x-2">
-                                        <!-- Ações do CRUD (Aparecem no Hover) -->
-                                        <div class="admin-actions hidden flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-all transform translate-x-2 group-hover:translate-x-0 z-10">
-                                            <a href="editEstagio.html?id=2" title="Editar Estágio" class="p-1.5 bg-amber-50 text-amber-600 rounded-lg hover:bg-amber-600 hover:text-white transition-all shadow-sm">
-                                                <i data-lucide="pencil" class="w-3.5 h-3.5"></i>
-                                            </a>
-                                            <button title="Excluir Estágio" onclick="openDeleteModal(2, 'Agile Sys LTDA', 'Suporte Técnico')" class="p-1.5 bg-red-50 text-red-600 rounded-lg hover:bg-red-600 hover:text-white transition-all shadow-sm">
-                                                <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
-                                            </button>
-                                        </div>
-                                        <span class="flex h-2 w-2 rounded-full bg-blue-500"></span>
-                                    </div>
-                                </div>
-                                <p class="text-sm text-gray-600 mb-3">Suporte Técnico</p>
-                                <div class="flex justify-between items-center">
-                                    <div class="flex items-center text-[11px] text-gray-400">
-                                        <i data-lucide="calendar" class="w-3 h-3 mr-1"></i>
-                                        Início: 01/01/2025
-                                    </div>
-                                    <span class="text-[10px] font-bold px-2 py-1 rounded-md bg-blue-50 text-blue-700 uppercase">Concluído</span>
-                                </div>
-                            </article>
-                            <div id="noEstagiosMessage" class="hidden col-span-full rounded-2xl border border-dashed border-gray-200 bg-gray-50 px-6 py-10 text-center">
-                                <p class="text-sm font-semibold text-gray-700">Nenhum estágio encontrado.</p>
-                                <p class="mt-1 text-sm text-gray-500">Tente buscar por outro nome de empresa ou cargo.</p>
+                        <div id="loadingState" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="rounded-3xl border border-slate-200 bg-slate-50 p-5 animate-pulse">
+                                <div class="h-5 w-40 bg-slate-200 rounded"></div>
+                                <div class="mt-4 h-4 w-32 bg-slate-200 rounded"></div>
+                                <div class="mt-6 h-3 w-24 bg-slate-200 rounded"></div>
                             </div>
+                            <div class="rounded-3xl border border-slate-200 bg-slate-50 p-5 animate-pulse">
+                                <div class="h-5 w-40 bg-slate-200 rounded"></div>
+                                <div class="mt-4 h-4 w-32 bg-slate-200 rounded"></div>
+                                <div class="mt-6 h-3 w-24 bg-slate-200 rounded"></div>
+                            </div>
+                        </div>
+
+                        <div id="estagiosGrid" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+
+                        <div id="emptyState" class="hidden rounded-3xl border border-dashed border-slate-200 bg-slate-50 px-6 py-12 text-center">
+                            <p class="text-sm font-semibold text-slate-700">Nenhum estágio encontrado.</p>
+                            <p id="emptyStateText" class="mt-1 text-sm text-slate-500">Cadastre um estágio para começar a acompanhar seus vínculos.</p>
+                        </div>
+
+                        <div id="errorState" class="hidden rounded-3xl border border-red-200 bg-red-50 px-6 py-12 text-center">
+                            <p class="text-sm font-semibold text-red-700">Não foi possível carregar os estágios.</p>
+                            <p id="errorStateText" class="mt-1 text-sm text-red-600">Tente recarregar a página.</p>
                         </div>
                     </div>
                 </div>
@@ -224,88 +156,16 @@
         </div>
     </main>
 
-    <!-- Modal de Confirmação de Exclusão -->
-    <div id="deleteModal" class="hidden fixed inset-0 z-[100] flex items-center justify-center px-4">
-        <!-- Backdrop com Blur -->
-        <div class="absolute inset-0 bg-gray-900/60 backdrop-blur-sm transition-opacity"></div>
-        
-        <!-- Card do Modal -->
-        <div class="bg-white rounded-3xl shadow-2xl max-w-md w-full relative z-10 overflow-hidden transform transition-all scale-100">
-            <div class="bg-red-50 p-6 flex items-center space-x-4 border-b border-red-100">
-                <div class="bg-red-100 p-3 rounded-2xl text-red-600">
-                    <i data-lucide="alert-triangle" class="w-8 h-8"></i>
-                </div>
-                <div>
-                    <h3 class="text-xl font-bold text-gray-900">Excluir Estágio?</h3>
-                    <p class="text-sm text-red-600 font-medium tracking-tight">Esta ação não pode ser desfeita</p>
-                </div>
-            </div>
-            
-            <div class="p-8">
-                <div class="bg-gray-50 rounded-2xl p-4 mb-6 border border-gray-100">
-                    <p class="text-xs font-bold text-gray-400 uppercase mb-2">Empresa e Cargo</p>
-                    <p id="modalEmpresa" class="text-lg font-bold text-gray-800"></p>
-                    <p id="modalCargo" class="text-sm text-gray-600"></p>
-                </div>
-                <p class="text-gray-500 text-sm leading-relaxed text-center">
-                    Você tem certeza que deseja remover este registro? Todos os dados vinculados a este estágio serão deletados.
-                </p>
-            </div>
-            
-            <div class="p-6 bg-gray-50 flex space-x-3">
-                <button onclick="closeDeleteModal()" class="flex-1 px-6 py-3 bg-white border border-gray-200 text-gray-600 rounded-xl font-bold hover:bg-gray-100 transition-colors uppercase text-xs tracking-widest">
-                    Cancelar
-                </button>
-                <button id="confirmDeleteBtn" class="flex-1 px-6 py-3 bg-red-600 text-white rounded-xl font-bold hover:bg-red-700 shadow-lg shadow-red-200 transition-all transform active:scale-95 uppercase text-xs tracking-widest">
-                    Confirmar
-                </button>
-            </div>
-        </div>
-    </div>
-
     <script>
-        lucide.createIcons();
+        const state = {
+            user: null,
+            estagios: [],
+            filtered: [],
+        };
 
-        function isAdminUser() {
-            const role = (localStorage.getItem('role') || '').toString().trim().toUpperCase();
-            return role === 'ADMIN' || role === 'ADMINISTRADOR';
-        }
-
-        function toggleAdminActions() {
-            document.querySelectorAll('.admin-actions').forEach((element) => {
-                if (isAdminUser()) {
-                    element.classList.remove('hidden');
-                } else {
-                    element.classList.add('hidden');
-                }
-            });
-        }
-
-        // Lógica para carregar os dados do usuário logado
-        document.addEventListener('DOMContentLoaded', () => {
-            const token = localStorage.getItem('token');
-            const userName = localStorage.getItem('userName');
-            const userRole = localStorage.getItem('role');
-
-            // Se não houver token, redireciona para o login por segurança
-            if (!token) {
-                window.location.href = 'login.html';
-                return;
-            }
-
-            // Atualiza os nomes na tela
-            if (userName) {
-                document.getElementById('welcomeName').textContent = `Bem-vindo, ${userName}!`;
-                document.getElementById('profileName').textContent = userName;
-            }
-
-            if (userRole) {
-                document.getElementById('profileRole').textContent = userRole;
-            }
-
-            toggleAdminActions();
-            setupEstagioSearch();
-        });
+        const token = localStorage.getItem('token');
+        const fallbackName = localStorage.getItem('userName') || 'Usuário';
+        const fallbackRole = localStorage.getItem('role') || 'Usuário';
 
         function normalizeText(value) {
             return (value || '')
@@ -316,63 +176,281 @@
                 .trim();
         }
 
-        function setupEstagioSearch() {
-            const searchInput = document.getElementById('searchEstagios');
-            const estagios = Array.from(document.querySelectorAll('[data-estagio-item]'));
-            const emptyState = document.getElementById('noEstagiosMessage');
+        function formatDate(value) {
+            if (!value) return '-';
+            const date = new Date(value);
+            if (Number.isNaN(date.getTime())) return '-';
+            return new Intl.DateTimeFormat('pt-BR').format(date);
+        }
 
-            if (!searchInput || !emptyState || !estagios.length) {
-                return;
+        function formatRelativeDate(value) {
+            if (!value) return 'Sem data';
+            const date = new Date(value);
+            if (Number.isNaN(date.getTime())) return 'Sem data';
+
+            const diffMs = Date.now() - date.getTime();
+            const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+
+            if (diffDays <= 0) return 'Hoje';
+            if (diffDays === 1) return 'Há 1 dia';
+            if (diffDays < 7) return `Há ${diffDays} dias`;
+            return formatDate(date);
+        }
+
+        function escapeHtml(value) {
+            return (value ?? '')
+                .toString()
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+
+        function statusMeta(situacao) {
+            const normalized = normalizeText(situacao);
+
+            if (normalized.includes('concl')) {
+                return {
+                    label: situacao || 'Concluído',
+                    classes: 'bg-blue-50 text-blue-700 border-blue-100',
+                    dot: 'bg-blue-500',
+                };
             }
 
-            const applyFilter = () => {
-                const query = normalizeText(searchInput.value);
-                let visibleCount = 0;
+            if (normalized.includes('pend')) {
+                return {
+                    label: situacao || 'Pendente',
+                    classes: 'bg-amber-50 text-amber-700 border-amber-100',
+                    dot: 'bg-amber-500',
+                };
+            }
 
-                estagios.forEach((card) => {
-                    const searchableText = normalizeText(card.getAttribute('data-search') || card.textContent);
-                    const isMatch = searchableText.includes(query);
-
-                    card.classList.toggle('hidden', !isMatch);
-
-                    if (isMatch) {
-                        visibleCount += 1;
-                    }
-                });
-
-                emptyState.classList.toggle('hidden', visibleCount !== 0);
+            return {
+                label: situacao || 'Ativo',
+                classes: 'bg-green-50 text-green-700 border-green-100',
+                dot: 'bg-green-500',
             };
-
-            searchInput.addEventListener('input', applyFilter);
-            applyFilter();
         }
 
-        let estagioIdParaExcluir = null;
+        function getStageSearchText(stage) {
+            const empresa = stage.empresa?.nome_social || stage.empresa?.nome_fantasia || '';
+            const aluno = stage.aluno?.nome || '';
+            const orientador = stage.orientador?.nome || '';
+            const situacao = stage.situacao || '';
+            return normalizeText([empresa, aluno, orientador, situacao].join(' '));
+        }
 
-        function openDeleteModal(id, empresa, cargo) {
-            if (!isAdminUser()) {
+        function isAdminRole(role) {
+            const normalized = normalizeText(role).toUpperCase();
+            return normalized === 'ADMIN' || normalized === 'ADMINISTRADOR';
+        }
+
+        function renderStats() {
+            const total = state.estagios.length;
+            const concluidos = state.estagios.filter((stage) => normalizeText(stage.situacao).includes('concl')).length;
+            const pendentes = state.estagios.filter((stage) => normalizeText(stage.situacao).includes('pend')).length;
+            const ativos = Math.max(total - concluidos - pendentes, 0);
+
+            const stats = [
+                {
+                    label: 'Total',
+                    value: total,
+                    icon: 'layers',
+                    accent: 'text-blue-600 bg-blue-50',
+                },
+                {
+                    label: 'Ativos',
+                    value: ativos,
+                    icon: 'activity',
+                    accent: 'text-green-600 bg-green-50',
+                },
+                {
+                    label: 'Concluídos',
+                    value: concluidos,
+                    icon: 'check-circle',
+                    accent: 'text-purple-600 bg-purple-50',
+                },
+            ];
+
+            const statsGrid = document.getElementById('statsGrid');
+            statsGrid.innerHTML = stats.map((item) => `
+                <div class="bg-white/85 backdrop-blur rounded-3xl shadow-sm border border-white p-5">
+                    <div class="w-10 h-10 rounded-2xl ${item.accent} flex items-center justify-center mb-3">
+                        <i data-lucide="${item.icon}" class="w-4 h-4"></i>
+                    </div>
+                    <div class="text-3xl font-black text-slate-800 leading-none">${item.value}</div>
+                    <div class="text-sm font-medium text-slate-500 mt-1">${item.label}</div>
+                </div>
+            `).join('');
+        }
+
+        function renderStages() {
+            const grid = document.getElementById('estagiosGrid');
+            const emptyState = document.getElementById('emptyState');
+            const loadingState = document.getElementById('loadingState');
+            const badge = document.getElementById('stageCountBadge');
+            const subtitle = document.getElementById('subtitleStages');
+            const query = normalizeText(document.getElementById('searchEstagios').value);
+
+            state.filtered = state.estagios.filter((stage) => getStageSearchText(stage).includes(query));
+            badge.textContent = `${state.filtered.length} encontrado${state.filtered.length === 1 ? '' : 's'}`;
+            subtitle.textContent = isAdminRole(state.user?.role)
+                ? 'Visualização geral dos estágios cadastrados no sistema.'
+                : 'Aqui aparecem apenas os estágios vinculados ao seu cadastro.';
+
+            loadingState.classList.add('hidden');
+            grid.innerHTML = '';
+
+            if (!state.filtered.length) {
+                emptyState.classList.remove('hidden');
+                grid.classList.add('hidden');
+                document.getElementById('emptyStateText').textContent = query
+                    ? 'Não encontramos estágios com esse filtro.'
+                    : 'Cadastre um estágio para começar a acompanhar seus vínculos.';
                 return;
             }
 
-            estagioIdParaExcluir = id;
-            document.getElementById('modalEmpresa').innerText = empresa;
-            document.getElementById('modalCargo').innerText = cargo;
-            document.getElementById('deleteModal').classList.remove('hidden');
+            emptyState.classList.add('hidden');
+            grid.classList.remove('hidden');
+            grid.innerHTML = state.filtered.map((stage) => {
+                const empresaNome = stage.empresa?.nome_social || stage.empresa?.nome_fantasia || 'Empresa sem nome';
+                const alunoNome = stage.aluno?.nome || 'Aluno não identificado';
+                const orientadorNome = stage.orientador?.nome || 'Sem orientador';
+                const status = statusMeta(stage.situacao);
+                const dataInicio = formatDate(stage.data_inicio);
+                const dataFim = formatDate(stage.data_fim);
+                const id = stage.id;
+                const canEdit = isAdminRole(state.user?.role);
+
+                return `
+                    <article class="p-5 bg-slate-50 border border-slate-100 rounded-3xl hover:bg-white hover:shadow-md transition-all group relative">
+                        <div class="flex justify-between items-start gap-3 mb-3">
+                            <div>
+                                <h4 class="font-bold text-slate-800 group-hover:text-ifrs-green transition-colors text-base">${escapeHtml(empresaNome)}</h4>
+                                <p class="text-xs text-slate-500 mt-1">${escapeHtml(alunoNome)}</p>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                ${canEdit ? `
+                                    <a href="editEstagio.html?id=${id}" title="Editar estágio" class="p-2 bg-amber-50 text-amber-600 rounded-xl hover:bg-amber-600 hover:text-white transition-all shadow-sm">
+                                        <i data-lucide="pencil" class="w-3.5 h-3.5"></i>
+                                    </a>
+                                ` : ''}
+                                <span class="flex h-2.5 w-2.5 rounded-full ${status.dot} shadow-[0_0_8px_rgba(34,197,94,0.5)]"></span>
+                            </div>
+                        </div>
+
+                        <div class="space-y-2 text-sm text-slate-600">
+                            <p class="font-medium">${escapeHtml(orientadorNome)}</p>
+                            <div class="flex items-center justify-between text-[11px] text-slate-400">
+                                <span class="flex items-center"><i data-lucide="calendar" class="w-3 h-3 mr-1"></i> Início: ${dataInicio}</span>
+                                <span class="flex items-center"><i data-lucide="calendar-range" class="w-3 h-3 mr-1"></i> Fim: ${dataFim}</span>
+                            </div>
+                        </div>
+
+                        <div class="mt-4 flex items-center justify-between gap-2">
+                            <span class="text-[10px] font-bold px-2.5 py-1.5 rounded-full border ${status.classes} uppercase tracking-widest">
+                                ${escapeHtml(status.label)}
+                            </span>
+                            <span class="text-[10px] text-slate-400 uppercase tracking-widest">
+                                Registro ${formatRelativeDate(stage.dt_registro)}
+                            </span>
+                        </div>
+                    </article>
+                `;
+            }).join('');
+            lucide.createIcons();
         }
 
-        function closeDeleteModal() {
-            document.getElementById('deleteModal').classList.add('hidden');
-            estagioIdParaExcluir = null;
-        }
+        async function fetchJson(url) {
+            const response = await fetch(url, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
 
-        document.getElementById('confirmDeleteBtn').addEventListener('click', () => {
-            if (!isAdminUser() || !estagioIdParaExcluir) {
-                return;
+            const contentType = response.headers.get('content-type') || '';
+            const payload = contentType.includes('application/json')
+                ? await response.json()
+                : null;
+
+            if (!response.ok) {
+                const error = new Error(payload?.error || `Falha ao carregar ${url}`);
+                error.status = response.status;
+                throw error;
             }
 
-            console.log(`Excluindo estágio ${estagioIdParaExcluir}...`);
-            // Aqui você adicionaria o fetch() para o backend
-            closeDeleteModal();
+            return payload;
+        }
+
+        async function loadDashboard() {
+            const loadingState = document.getElementById('loadingState');
+            const errorState = document.getElementById('errorState');
+
+            try {
+                if (!token) {
+                    window.location.href = 'login.html';
+                    return;
+                }
+
+                const [me, estagios] = await Promise.all([
+                    fetchJson('/auth/me'),
+                    fetchJson('/estagios/meus'),
+                ]);
+
+                state.user = me.user || {};
+                state.estagios = Array.isArray(estagios) ? estagios : [];
+
+                const userName = state.user.nome || fallbackName || state.user.email;
+                const role = state.user.role || fallbackRole;
+
+                document.getElementById('welcomeName').textContent = `Bem-vindo, ${userName}!`;
+                document.getElementById('profileName').textContent = userName;
+                document.getElementById('profileRole').textContent = role;
+                document.getElementById('welcomeSubtitle').textContent =
+                    isAdminRole(role)
+                        ? 'Você está vendo todos os estágios cadastrados.'
+                        : 'Acompanhe apenas seus estágios cadastrados.';
+
+                document.getElementById('lastUpdateBadge').textContent = `${state.estagios.length} registros`;
+                document.getElementById('lastUpdateText').textContent = state.estagios.length
+                    ? `Último registro: ${formatDate(state.estagios[0].dt_registro)}`
+                    : 'Nenhum estágio cadastrado ainda.';
+
+                loadingState.classList.add('hidden');
+                errorState.classList.add('hidden');
+                renderStats();
+                renderStages();
+                document.getElementById('searchEstagios').addEventListener('input', renderStages);
+                lucide.createIcons();
+            } catch (error) {
+                if (error.status === 401 || error.status === 403) {
+                    window.location.href = 'login.html';
+                    return;
+                }
+
+                loadingState.classList.add('hidden');
+                errorState.classList.remove('hidden');
+                document.getElementById('errorStateText').textContent = error.message || 'Tente recarregar a página.';
+                console.error(error);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const userName = localStorage.getItem('userName');
+            const userRole = localStorage.getItem('role');
+
+            if (userName) {
+                document.getElementById('welcomeName').textContent = `Bem-vindo, ${userName}!`;
+                document.getElementById('profileName').textContent = userName;
+            }
+
+            if (userRole) {
+                document.getElementById('profileRole').textContent = userRole;
+            }
+
+            lucide.createIcons();
+            loadDashboard();
         });
     </script>
 </body>

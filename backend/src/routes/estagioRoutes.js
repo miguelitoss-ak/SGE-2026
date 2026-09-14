@@ -4,6 +4,7 @@ const { authenticateToken } = require('../middlewares/authMiddleware');
 const router = express.Router();
 
 router.get('/', EstagioController.getAll);
+router.get('/meus', authenticateToken, EstagioController.getMeusEstagios);
 router.post('/', authenticateToken, EstagioController.create);
 
 router.patch('/:idEstagio/orientador', EstagioController.vincularOrientador);
