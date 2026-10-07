@@ -1,0 +1,304 @@
+<!doctype html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="utf-8">
+    <title>Termo de estágio</title>
+    <style>
+        body {
+            font: 10pt Arial, sans-serif;
+            color: #111;
+            line-height: 1.4
+        }
+
+        header {
+            text-align: center;
+            font-size: 9pt
+        }
+
+        h1 {
+            font-size: 15pt;
+            text-align: center;
+            margin: 22px 0 8px
+        }
+
+        h2 {
+            font-size: 10pt;
+            background: #e9eeea;
+            border: 1px solid #999;
+            padding: 7px;
+            break-after: avoid
+        }
+
+        p {
+            margin: 7px 0;
+            overflow-wrap: anywhere
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 10px 0;
+            table-layout: fixed
+        }
+
+        td,
+        th {
+            border: 1px solid #999;
+            padding: 6px;
+            overflow-wrap: anywhere
+        }
+
+        th {
+            background: #eee
+        }
+
+        thead {
+            display: table-header-group
+        }
+
+        tr {
+            break-inside: avoid
+        }
+
+        li {
+            margin: 5px 0
+        }
+
+        .aviso {
+            border: 1px solid #999;
+            padding: 8px;
+            font-size: 9pt
+        }
+
+        .clausula p {
+            text-align: justify
+        }
+
+        .assinaturas {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 35px 20px;
+            margin-top: 40px
+        }
+
+        .assinatura {
+            border-top: 1px solid #333;
+            text-align: center;
+            padding-top: 8px;
+            break-inside: avoid
+        }
+
+        .nova-pagina {
+            break-before: page
+        }
+
+        @media screen {
+            body {
+                max-width: 800px;
+                margin: 40px auto;
+                padding: 30px;
+                border: 1px solid #ddd
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>MINISTÉRIO DA EDUCAÇÃO<br>SECRETARIA DE EDUCAÇÃO PROFISSIONAL E TECNOLÓGICA<br>{{instituicao.nome}}</header>
+    <h1>TERMO DE COMPROMISSO DE ESTÁGIO OBRIGATÓRIO</h1>
+    <p style="text-align:center">{{estudante.curso}}</p>
+    <p class="aviso">TERMO DE ESTÁGIO {{#if estagio.obrigatorio}}OBRIGATÓRIO{{else}}NÃO OBRIGATÓRIO{{/if}}</p>
+    <h2>DADOS DA INSTITUIÇÃO</h2>
+    <table>
+        <tr>
+            <td style="width:35%"><strong>Nome</strong></td>
+            <td>{{instituicao.nome}}</td>
+        </tr>
+        <tr>
+            <td style="width:35%"><strong>CNPJ</strong></td>
+            <td>{{instituicao.cnpj}}</td>
+        </tr>
+        <tr>
+            <td style="width:35%"><strong>Endereço</strong></td>
+            <td>{{instituicao.endereco}}</td>
+        </tr>
+        <tr>
+            <td style="width:35%"><strong>Telefone</strong></td>
+            <td>{{instituicao.telefone}}</td>
+        </tr>
+        <tr>
+            <td style="width:35%"><strong>E-mail</strong></td>
+            <td>{{instituicao.email}}</td>
+        </tr>
+        <tr>
+            <td style="width:35%"><strong>Representante</strong></td>
+            <td>{{instituicao.representante}}</td>
+        </tr>
+        <tr>
+            <td style="width:35%"><strong>Cargo</strong></td>
+            <td>{{instituicao.cargo}}</td>
+        </tr>
+    </table>
+    <h2>DADOS DA CONCEDENTE</h2>
+    <table>
+        <tr>
+            <td style="width:35%"><strong>Razão social</strong></td>
+            <td>{{concedente.razaoSocial}}</td>
+        </tr>
+        <tr>
+            <td style="width:35%"><strong>CNPJ</strong></td>
+            <td>{{concedente.cnpj}}</td>
+        </tr>
+        <tr>
+            <td style="width:35%"><strong>Endereço</strong></td>
+            <td>{{concedente.endereco}}</td>
+        </tr>
+        <tr>
+            <td style="width:35%"><strong>Cidade/Estado</strong></td>
+            <td>{{concedente.cidadeEstado}}</td>
+        </tr>
+        <tr>
+            <td style="width:35%"><strong>Telefone</strong></td>
+            <td>{{concedente.telefone}}</td>
+        </tr>
+        <tr>
+            <td style="width:35%"><strong>E-mail</strong></td>
+            <td>{{concedente.email}}</td>
+        </tr>
+        <tr>
+            <td style="width:35%"><strong>Representante legal</strong></td>
+            <td>{{concedente.representante}}</td>
+        </tr>
+        <tr>
+            <td style="width:35%"><strong>CPF</strong></td>
+            <td>{{concedente.cpf}}</td>
+        </tr>
+        <tr>
+            <td style="width:35%"><strong>Cargo</strong></td>
+            <td>{{concedente.cargo}}</td>
+        </tr>
+        <tr>
+            <td style="width:35%"><strong>Supervisor(a)</strong></td>
+            <td>{{concedente.supervisor}}</td>
+        </tr>
+        <tr>
+            <td style="width:35%"><strong>Cargo do supervisor</strong></td>
+            <td>{{concedente.cargoSupervisor}}</td>
+        </tr>
+        <tr>
+            <td style="width:35%"><strong>Formação/experiência</strong></td>
+            <td>{{concedente.formacaoSupervisor}}</td>
+        </tr>
+        <tr>
+            <td style="width:35%"><strong>E-mail do supervisor</strong></td>
+            <td>{{concedente.emailSupervisor}}</td>
+        </tr>
+        <tr>
+            <td style="width:35%"><strong>Telefone do supervisor</strong></td>
+            <td>{{concedente.telefoneSupervisor}}</td>
+        </tr>
+    </table>
+    <h2>DADOS DO/A ESTAGIÁRIO/A</h2>
+    <table>
+        <tr>
+            <td style="width:35%"><strong>Nome</strong></td>
+            <td>{{estudante.nome}}</td>
+        </tr>
+        <tr>
+            <td style="width:35%"><strong>Curso</strong></td>
+            <td>{{estudante.curso}}</td>
+        </tr>
+        <tr>
+            <td style="width:35%"><strong>CPF</strong></td>
+            <td>{{estudante.cpf}}</td>
+        </tr>
+        <tr>
+            <td style="width:35%"><strong>Telefone</strong></td>
+            <td>{{estudante.telefone}}</td>
+        </tr>
+        <tr>
+            <td style="width:35%"><strong>E-mail</strong></td>
+            <td>{{estudante.email}}</td>
+        </tr>
+        <tr>
+            <td style="width:35%"><strong>Professor(a) orientador(a)</strong></td>
+            <td>{{estudante.orientador}}</td>
+        </tr>
+    </table>
+    <section class="nova-pagina">
+        <h2>CLÁUSULA PRIMEIRA — CONDIÇÕES E PLANO DE ATIVIDADES</h2>
+        <p>As partes qualificadas celebram este termo de estágio curricular supervisionado obrigatório. As condições e
+            atividades estão descritas a seguir.</p>
+        <ol>{{#each estagio.atividades}}<li>{{this}}</li>{{/each}}</ol>
+        <table>
+            <tr>
+                <td>Período</td>
+                <td>{{data estagio.inicio}} a {{data estagio.termino}}</td>
+            </tr>
+            <tr>
+                <td>Carga horária total / semanal</td>
+                <td>{{estagio.cargaHorariaTotal}}h / {{estagio.cargaHorariaSemanal}}h</td>
+            </tr>
+            <tr>
+                <td>Bolsa auxílio</td>
+                <td>{{moeda estagio.bolsa}}</td>
+            </tr>
+            <tr>
+                <td>Área de atuação</td>
+                <td>{{estagio.area}}</td>
+            </tr>
+            <tr>
+                <td>Benefícios</td>
+                <td>Alimentação: {{simNao estagio.alimentacao}}<br>Transporte: {{simNao estagio.transporte}}<br>Moradia:
+                    {{simNao estagio.moradia}}</td>
+            </tr>
+            <tr>
+                <td>Seguro</td>
+                <td>{{estagio.seguro.seguradora}}<br>Apólice: {{estagio.seguro.apolice}}<br>Contrato:
+                    {{estagio.seguro.contrato}}<br>Capital: {{moeda estagio.seguro.capital}}</td>
+            </tr>
+        </table>
+        <h2>HORÁRIOS DO ESTÁGIO</h2>
+        <table style="font-size:8pt">
+            <thead>
+                <tr>
+                    <th rowspan="2">Dia</th>
+                    <th colspan="2">Manhã</th>
+                    <th colspan="2">Tarde</th>
+                    <th colspan="2">Noite</th>
+                </tr>
+                <tr>
+                    <th>Entrada</th>
+                    <th>Saída</th>
+                    <th>Entrada</th>
+                    <th>Saída</th>
+                    <th>Entrada</th>
+                    <th>Saída</th>
+                </tr>
+            </thead>
+            <tbody>{{#each horarios}}<tr>
+                    <td>{{dia}}</td>
+                    <td>{{manhaEntrada}}</td>
+                    <td>{{manhaSaida}}</td>
+                    <td>{{tardeEntrada}}</td>
+                    <td>{{tardeSaida}}</td>
+                    <td>{{noiteEntrada}}</td>
+                    <td>{{noiteSaida}}</td>
+                </tr>{{/each}}</tbody>
+        </table>
+    </section>{{#each clausulas}}<section class="clausula">
+        <h2>{{titulo}}</h2>
+        <p>{{texto}}</p>
+    </section>{{/each}}<h2>ASSINATURAS</h2>
+    <p>{{localAssinatura}}, {{data dataAssinatura}}.</p>
+    <div class="assinaturas">
+        <div class="assinatura">{{estudante.nome}}<br>Estagiário(a)</div>
+        <div class="assinatura">{{concedente.representante}}<br>Representante legal da concedente</div>
+        <div class="assinatura">{{instituicao.representante}}<br>Instituição de ensino</div>
+        <div class="assinatura">{{concedente.supervisor}}<br>Supervisor(a) da concedente</div>
+        <div class="assinatura">{{estudante.orientador}}<br>Professor(a) orientador(a)</div>
+    </div>
+</body>
+
+</html>

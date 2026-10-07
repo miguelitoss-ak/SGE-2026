@@ -1,0 +1,5 @@
+ALTER TABLE `estagios`
+    ADD COLUMN `area` VARCHAR(255) NULL;
+
+ALTER TABLE `dia_semana_estagio`
+    ADD COLUMN `turno` ENUM('MANHA', 'TARDE_NOITE') NOT NULL DEFAULT 'MANHA';

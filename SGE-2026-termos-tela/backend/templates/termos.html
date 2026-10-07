@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SGE-2026 | Termo de estágio</title>
+  <style>
+    /* Mantém as cores, cartões arredondados e espaçamentos das telas do SGE. */
+    :root { --green:#32a041; --green-dark:#267a32; }
+    * { box-sizing:border-box; }
+    body { margin:0; font-family:Arial,sans-serif; color:#1e293b; background:radial-gradient(circle at top left,rgba(50,160,65,.14),transparent 40%),#f8fafc; }
+    header { background:var(--green); color:white; box-shadow:0 4px 12px #0001; }
+    .header-inner { max-width:1200px; margin:auto; padding:20px 24px; display:flex; align-items:center; justify-content:space-between; gap:16px; }
+    .brand { font-size:21px; font-weight:800; text-decoration:none; color:white; }
+    .brand small { display:block; margin-top:5px; font-size:12px; font-weight:400; }
+    .back { color:white; text-decoration:none; padding:12px 18px; border-radius:12px; background:#ffffff20; font-weight:700; font-size:13px; }
+    main { max-width:1200px; margin:auto; padding:32px 24px; }
+    .card { background:white; border:1px solid #e2e8f0; border-radius:24px; box-shadow:0 8px 24px #00000006; overflow:hidden; margin-bottom:24px; }
+    .card-head { padding:28px; border-bottom:1px solid #f1f5f9; }
+    h1 { font-size:25px; margin:0 0 10px; } h2 { font-size:18px; margin:0; }
+    p { line-height:1.6; margin:8px 0; } .muted { color:#64748b; font-size:14px; }
+    .content { padding:24px 28px; }
+    .badge { display:inline-block; color:var(--green-dark); background:#edf8ef; border-radius:20px; padding:7px 12px; font-size:12px; font-weight:700; margin-bottom:14px; }
+    .actions { display:flex; flex-wrap:wrap; gap:12px; margin-top:20px; }
+    button { font:700 14px Arial; border:0; border-radius:14px; padding:14px 22px; cursor:pointer; }
+    .primary { background:var(--green); color:white; } .primary:hover { background:var(--green-dark); }
+    .secondary { background:#f0fdf4; color:var(--green-dark); border:1px solid #bbdfc0; }
+    button:disabled { opacity:.55; cursor:wait; } a:focus-visible,button:focus-visible { outline:3px solid #153b20; outline-offset:3px; }
+    #status { min-height:24px; margin-top:16px; font-size:14px; } #status[data-error="true"] { color:#b91c1c; }
+    .empty { text-align:center; padding:60px 20px; color:#64748b; background:#f8fafc; }
+    iframe { display:block; width:100%; height:75vh; min-height:450px; border:0; background:white; }
+    [hidden] { display:none!important; }
+    @media(max-width:600px) { main{padding:20px 14px} .content,.card-head{padding:22px} .actions{flex-direction:column} button{width:100%} }
+  </style>
+</head>
+<body>
+  <header><div class="header-inner">
+    <a class="brand" href="home.html">SGE-2026<small>Gestão de Estágios IFRS</small></a>
+    <a class="back" href="home.html">← VOLTAR</a>
+  </div></header>
+  <main>
+    <section class="card" aria-labelledby="title">
+      <div class="card-head">
+        <span class="badge">DADOS FICTÍCIOS · DEMONSTRAÇÃO</span>
+        <h1 id="title">Termo de compromisso de estágio</h1>
+        <p class="muted">Visualize o documento antes de gerar o arquivo PDF.</p>
+      </div>
+      <div class="content">
+        <p>Estágio <strong id="stageId"></strong></p>
+        <p class="muted">O termo e o PDF serão preenchidos com os dados do estágio selecionado.</p>
+        <div class="actions">
+          <button id="previewButton" class="secondary" type="button">Visualizar termo</button>
+          <button id="pdfButton" class="primary" type="button">Baixar PDF</button>
+        </div>
+        <p id="status" role="status" aria-live="polite"></p>
+      </div>
+    </section>
+    <section class="card" aria-labelledby="previewTitle">
+      <div class="card-head"><h2 id="previewTitle">Prévia do documento</h2></div>
+      <div id="emptyPreview" class="empty">Clique em “Visualizar termo” para carregar o documento.</div>
+      <!-- O sandbox permite exibir HTML/CSS sem executar scripts do documento. -->
+      <iframe id="previewFrame" title="Prévia do termo de compromisso de estágio" sandbox hidden></iframe>
+    </section>
+  </main>
+  <script>
+    const previewButton = document.getElementById('previewButton');
+    const pdfButton = document.getElementById('pdfButton');
+    const status = document.getElementById('status');
+    const frame = document.getElementById('previewFrame');
+    const emptyPreview = document.getElementById('emptyPreview');
+    const stageId = Number(new URLSearchParams(window.location.search).get('id'));
+    const validStageId = Number.isSafeInteger(stageId) && stageId > 0;
+    // URLs relativas usam o mesmo servidor das páginas atuais; não é preciso configurar CORS.
+    const baseUrl = validStageId ? `/termos/estagios/${stageId}` : null;
+
+    function mensagem(texto, erro = false) {
+      status.textContent = texto;
+      status.dataset.error = String(erro);
+    }
+    function ocupado(valor) {
+      // Impede chamadas repetidas enquanto uma geração está em andamento.
+      previewButton.disabled = valor;
+      pdfButton.disabled = valor;
+    }
+    if (validStageId) {
+      document.getElementById('stageId').textContent = `#${stageId}`;
+    } else {
+      ocupado(true);
+      mensagem('ID do estágio inválido. Volte à lista e selecione um estágio.', true);
+    }
+    async function verificarResposta(resposta) {
+      if (resposta.ok) return;
+      const erro = await resposta.json().catch(() => ({}));
+      throw new Error(erro.error || erro.message || `Falha na requisição (${resposta.status}).`);
+    }
+
+    previewButton.addEventListener('click', async () => {
+      ocupado(true);
+      mensagem('Carregando a prévia…');
+      try {
+        const resposta = await fetch(`${baseUrl}/html`);
+        await verificarResposta(resposta);
+        // srcdoc recebe o HTML completo retornado pela API e o exibe no iframe.
+        frame.srcdoc = await resposta.text();
+        frame.hidden = false;
+        emptyPreview.hidden = true;
+        mensagem('Prévia carregada.');
+      } catch (erro) {
+        mensagem(erro.message, true);
+      } finally { ocupado(false); }
+    });
+
+    pdfButton.addEventListener('click', async () => {
+      ocupado(true);
+      mensagem('Gerando o PDF. Aguarde…');
+      try {
+        const resposta = await fetch(`${baseUrl}/pdf`);
+        await verificarResposta(resposta);
+        // Os bytes recebidos viram um Blob local, com endereço temporário para download.
+        const arquivo = await resposta.blob();
+        const url = URL.createObjectURL(arquivo);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `termo-estagio-${stageId}.pdf`;
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+        mensagem('Download do PDF iniciado.');
+      } catch (erro) {
+        mensagem(erro.message, true);
+      } finally { ocupado(false); }
+    });
+  </script>
+</body>
+</html>

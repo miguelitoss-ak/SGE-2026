@@ -1,0 +1,13 @@
+@baseUrl = http://localhost:3000
+@estagioId = 1
+
+### Preview HTML do estágio fictício (200)
+GET {{baseUrl}}/termos/estagios/{{estagioId}}/html
+Accept: text/html
+
+### Download do PDF do estágio fictício (200; requer Chrome)
+GET {{baseUrl}}/termos/estagios/{{estagioId}}/pdf
+Accept: application/pdf
+
+### ID fictício inexistente (404)
+GET {{baseUrl}}/termos/estagios/999/html
