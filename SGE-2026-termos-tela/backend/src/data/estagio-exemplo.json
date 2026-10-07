@@ -1,0 +1,126 @@
+{
+  "id": 1,
+  "instituicao": {
+    "nome": "IFRS – Campus Bento Gonçalves",
+    "cnpj": "10.637.926/0002-27",
+    "endereco": "Av. Osvaldo Aranha, 540 – Bento Gonçalves/RS",
+    "telefone": "(54) 3455-3200",
+    "email": "estagios@bento.ifrs.edu.br",
+    "representante": "Representante da instituição (exemplo)",
+    "cargo": "Coordenação de estágios"
+  },
+  "concedente": {
+    "razaoSocial": "Empresa de Tecnologia Exemplo Ltda.",
+    "cnpj": "00.000.000/0000-00",
+    "endereco": "Rua Exemplo, 100",
+    "cidadeEstado": "Bento Gonçalves/RS",
+    "telefone": "(54) 0000-0000",
+    "email": "empresa@example.com",
+    "representante": "Maria Exemplo",
+    "cpf": "000.000.000-00",
+    "cargo": "Diretora",
+    "supervisor": "Carlos Exemplo",
+    "cargoSupervisor": "Desenvolvedor",
+    "formacaoSupervisor": "Tecnologia em Análise e Desenvolvimento de Sistemas",
+    "emailSupervisor": "supervisor@example.com",
+    "telefoneSupervisor": "(54) 0000-0000"
+  },
+  "estudante": {
+    "nome": "João da Silva (dados fictícios)",
+    "curso": "Técnico em Informática para Internet integrado ao E.M.",
+    "anoSerie": "3º ano",
+    "cpf": "000.000.000-00",
+    "endereco": "Rua Modelo, 200 – Bento Gonçalves/RS",
+    "telefone": "(54) 0000-0000",
+    "email": "estudante@example.com",
+    "orientador": "Professora Ana Exemplo"
+  },
+  "estagio": {
+    "inicio": "2026-10-15",
+    "termino": "2026-12-15",
+    "cargaHorariaTotal": 200,
+    "cargaHorariaSemanal": 20,
+    "bolsa": 800,
+    "alimentacao": true,
+    "transporte": true,
+    "moradia": false,
+    "atividades": [
+      "Auxiliar no desenvolvimento de APIs em Node.js.",
+      "Implementar consultas e atualizações em banco de dados.",
+      "Documentar endpoints e executar testes sob supervisão."
+    ],
+    "seguro": {
+      "seguradora": "Seguradora exemplo",
+      "apolice": "APOLICE-EXEMPLO",
+      "contrato": "CONTRATO-EXEMPLO",
+      "capital": 20000
+    }
+  },
+  "localAssinatura": "Bento Gonçalves/RS",
+  "dataAssinatura": "2026-10-06",
+  "horarios": [
+    {
+      "dia": "Segunda",
+      "manhaEntrada": "08:00",
+      "manhaSaida": "12:00",
+      "tardeEntrada": "",
+      "tardeSaida": "",
+      "noiteEntrada": "",
+      "noiteSaida": ""
+    },
+    {
+      "dia": "Terça",
+      "manhaEntrada": "08:00",
+      "manhaSaida": "12:00",
+      "tardeEntrada": "",
+      "tardeSaida": "",
+      "noiteEntrada": "",
+      "noiteSaida": ""
+    },
+    {
+      "dia": "Quarta",
+      "manhaEntrada": "08:00",
+      "manhaSaida": "12:00",
+      "tardeEntrada": "",
+      "tardeSaida": "",
+      "noiteEntrada": "",
+      "noiteSaida": ""
+    },
+    {
+      "dia": "Quinta",
+      "manhaEntrada": "08:00",
+      "manhaSaida": "12:00",
+      "tardeEntrada": "",
+      "tardeSaida": "",
+      "noiteEntrada": "",
+      "noiteSaida": ""
+    },
+    {
+      "dia": "Sexta",
+      "manhaEntrada": "08:00",
+      "manhaSaida": "12:00",
+      "tardeEntrada": "",
+      "tardeSaida": "",
+      "noiteEntrada": "",
+      "noiteSaida": ""
+    },
+    {
+      "dia": "Sábado",
+      "manhaEntrada": "",
+      "manhaSaida": "",
+      "tardeEntrada": "",
+      "tardeSaida": "",
+      "noiteEntrada": "",
+      "noiteSaida": ""
+    },
+    {
+      "dia": "Domingo",
+      "manhaEntrada": "",
+      "manhaSaida": "",
+      "tardeEntrada": "",
+      "tardeSaida": "",
+      "noiteEntrada": "",
+      "noiteSaida": ""
+    }
+  ]
+}

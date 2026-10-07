@@ -1,0 +1,67 @@
+### Configurações de Variáveis
+@baseUrl = http://localhost:3000
+@email = vicente@gmail.com
+@senha = 123333
+
+
+### 1. Registrar um novo usuário
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+    "email": "{{email}}",
+    "password": "{{senha}}"
+}
+
+### 2. Realizar Login (Para obter o Token)
+# @name login
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+    "email": "{{email}}",
+    "password": "{{senha}}"
+}
+
+### Captura o token da resposta do login acima
+@authToken = {{login.response.body.token}}
+
+### 3. Testar Rota Protecionada (Método /me)
+GET {{baseUrl}}/auth/me
+Authorization: Bearer {{authToken}}
+
+### 4. Testar Login com Senha Errada (Deve retornar 401)
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+    "email": "{{email}}",
+    "password": "senha_errada"
+}
+
+### 5. Cadastro usuário empresa (portal empresa)
+POST {{baseUrl}}/auth/empresa/register
+Content-Type: application/json
+
+{
+    "nome": "Contato RH",
+    "email": "rh.exemplo@empresa.com",
+    "password": "senha123",
+    "telefone": "11999990000"
+}
+
+### 6. Login usuário empresa
+# @name loginEmpresa
+POST {{baseUrl}}/auth/empresa/login
+Content-Type: application/json
+
+{
+    "email": "patricia@techinova.com",
+    "password": "senha123"
+}
+
+@empresaToken = {{loginEmpresa.response.body.token}}
+
+### 7. Perfil com token (após seed ou registro)
+GET {{baseUrl}}/auth/me
+Authorization: Bearer {{empresaToken}}

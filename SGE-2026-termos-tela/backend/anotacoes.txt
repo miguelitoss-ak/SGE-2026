@@ -1,0 +1,5 @@
+http://localhost:3000/estagios/1/orientador
+
+{
+"id_orientador: 1
+}
