@@ -14,6 +14,11 @@ class SupervisorModel {
 
   static async create(supervisor) {
     const { nome, cpf, cargo, telefone, email, id_empresa } = supervisor;
+    const idEmpresaNum = Number(id_empresa);
+    if (!Number.isInteger(idEmpresaNum) || idEmpresaNum < 1) {
+      throw new Error('id_empresa inválido.');
+    }
+
     const created = await prisma.supervisor.create({
       data: {
         nome,
@@ -21,7 +26,7 @@ class SupervisorModel {
         cargo,
         telefone,
         email,
-        id_empresa,
+        id_empresa: idEmpresaNum,
       },
     });
     return created.id;
