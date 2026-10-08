@@ -292,6 +292,13 @@
         const userId = localStorage.getItem('userId');
         const userMatricula = localStorage.getItem('userMatricula');
         const userRole = localStorage.getItem('role');
+        const editStageId = Number(new URLSearchParams(window.location.search).get('edit'));
+        const isEditing = Number.isSafeInteger(editStageId) && editStageId > 0;
+        const draftKey = `sge:estagio:rascunho:${userId || 'anon'}`;
+
+        function isAdminRole(role) {
+            return ['ADMIN', 'ADMINISTRADOR'].includes((role || '').toString().trim().toUpperCase());
+        }
 
         const DAYS = [
             { key: 'SEGUNDA', label: 'Segunda' },
@@ -637,9 +644,9 @@
             ];
             const obrigatorioSelect = document.querySelector('select[name="obrigatorio"]');
 
-            const isAdminRole = ['ADMIN', 'ADMINISTRADOR'].includes((userRole || '').toString().trim().toUpperCase());
+            const isAdmin = isAdminRole(userRole);
 
-            if (isAdminRole) {
+            if (isAdmin) {
                 situacaoContainer.classList.remove('hidden');
             } else {
                 situacaoContainer.classList.add('hidden');
@@ -651,7 +658,7 @@
 
             function atualizarApoliceAccess() {
                 const obrigatorio = obrigatorioSelect.value === '1';
-                const podeEditar = isAdminRole || !obrigatorio;
+                const podeEditar = isAdmin || !obrigatorio;
 
                 apoliceInputs.forEach((input) => {
                     input.disabled = !podeEditar;
@@ -679,6 +686,12 @@
             // 3. Preenche os dados do aluno logado na interface e no campo oculto
             document.getElementById('studentDisplay').textContent = `${userName} (${userMatricula || 'S/M'})`;
             document.getElementById('studentIdInput').value = userId;
+
+            if (isEditing) {
+                document.title = 'SGE-2026 | Editar Estágio';
+                document.querySelector('h2 span').textContent = 'EDIÇÃO DE ESTÁGIO';
+                document.querySelector('form button[type="submit"]').textContent = 'SALVAR ALTERAÇÕES';
+            }
 
             // 3. Função para carregar opções dinamicamente nos selects
             const carregarOpcoes = async (url, elementId, textKey) => {
@@ -882,12 +895,113 @@
                     supervisorResultados.classList.add('hidden');
                 }
             });
+
+            function dateValue(value) {
+                return value ? String(value).slice(0, 10) : '';
+            }
+
+            function preencherFormulario(estagio) {
+                document.getElementById('studentDisplay').textContent = `${estagio.aluno?.nome || userName} (${estagio.aluno?.matricula || userMatricula || 'S/M'})`;
+                document.getElementById('studentIdInput').value = estagio.id_aluno || '';
+                document.getElementById('id_empresa').value = estagio.id_empresa || '';
+                empresaBusca.value = getEmpresaDisplayName(estagio.empresa || {});
+                document.getElementById('id_orientador').value = estagio.id_orientador || '';
+                orientadorBusca.value = estagio.orientador?.nome || '';
+                document.getElementById('id_supervisor').value = estagio.id_supervisor || '';
+                supervisorBusca.value = estagio.supervisor?.nome || '';
+                document.getElementById('data_inicio').value = dateValue(estagio.data_inicio);
+                document.getElementById('data_fim').value = dateValue(estagio.data_fim);
+                document.getElementById('carga_horaria_total').value = estagio.carga_horaria_total || '';
+                document.querySelector('[name="situacao"]').value = estagio.situacao || 'ATIVO';
+                document.getElementById('obrigatorio').value = estagio.obrigatorio ? '1' : '0';
+                document.querySelector('[name="area"]').value = estagio.area || '';
+                document.querySelector('[name="bolsa_auxilio"]').value = estagio.bolsa_auxilio || '';
+                document.querySelector('[name="beneficio_transporte"]').checked = Boolean(estagio.beneficio_transporte);
+                document.querySelector('[name="beneficio_alimentacao"]').checked = Boolean(estagio.beneficio_alimentacao);
+                document.querySelector('[name="numero_apolice"]').value = estagio.numero_apolice || '';
+                document.querySelector('[name="nome_seguradora"]').value = estagio.nome_seguradora || '';
+                document.querySelector('[name="valor_apolice"]').value = estagio.valor_apolice || '';
+                scheduleState = createEmptyScheduleState();
+                (estagio.dias_semana_estagio || []).forEach((h) => {
+                    const shift = h.turno === 'MANHA' ? 'manha' : 'tardeNoite';
+                    if (scheduleState[h.dia_semana]?.[shift]) {
+                        scheduleState[h.dia_semana][shift] = {
+                            entrada: String(h.horario_inicio || '').match(/(\d{2}:\d{2})/)?.[1] || '',
+                            saida: String(h.horario_saida || '').match(/(\d{2}:\d{2})/)?.[1] || '',
+                        };
+                    }
+                });
+                renderScheduleTable();
+                updateComputedFields();
+                document.getElementById('data_fim').value = dateValue(estagio.data_fim);
+                atualizarApoliceAccess();
+            }
+
+            function restaurarRascunho() {
+                if (isEditing) return;
+                try {
+                    const rascunho = JSON.parse(localStorage.getItem(draftKey) || 'null');
+                    if (!rascunho) return;
+                    Object.entries(rascunho.campos || {}).forEach(([name, value]) => {
+                        const campo = document.querySelector(`[name="${name}"]`);
+                        if (!campo) return;
+                        if (campo.type === 'checkbox') campo.checked = Boolean(value);
+                        else campo.value = value;
+                    });
+                    ['empresa', 'orientador', 'supervisor'].forEach((nome) => {
+                        const item = rascunho[nome];
+                        if (!item) return;
+                        const input = document.getElementById(`id_${nome}`);
+                        const busca = document.getElementById(`${nome}Busca`);
+                        if (input) input.value = item.id || '';
+                        if (busca) busca.value = item.nome || '';
+                    });
+                    scheduleState = rascunho.horarios || createEmptyScheduleState();
+                    renderScheduleTable();
+                    updateComputedFields();
+                    atualizarApoliceAccess();
+                } catch (_) { localStorage.removeItem(draftKey); }
+            }
+
+            try {
+                if (isEditing) {
+                    if (!isAdmin) throw new Error('Somente administradores podem alterar estágios.');
+                    const resposta = await fetch(`/estagios/${editStageId}`, { headers: { Authorization: `Bearer ${currentToken}` } });
+                    const estagio = await resposta.json();
+                    if (!resposta.ok) throw new Error(estagio.error || 'Não foi possível carregar o estágio.');
+                    preencherFormulario(estagio);
+                } else {
+                    restaurarRascunho();
+                }
+            } catch (error) {
+                alert(error.message);
+                window.location.href = 'home.html';
+            }
         });
 
         // Lógica de envio do formulário via Fetch
         const stageForm = document.querySelector('form');
 
+        function salvarRascunho() {
+            if (isEditing) return;
+            const campos = {};
+            stageForm.querySelectorAll('[name]').forEach((campo) => {
+                campos[campo.name] = campo.type === 'checkbox' ? campo.checked : campo.value;
+            });
+            localStorage.setItem(draftKey, JSON.stringify({
+                campos,
+                horarios: scheduleState,
+                empresa: { id: document.getElementById('id_empresa').value, nome: document.getElementById('empresaBusca').value },
+                orientador: { id: document.getElementById('id_orientador').value, nome: document.getElementById('orientadorBusca').value },
+                supervisor: { id: document.getElementById('id_supervisor').value, nome: document.getElementById('supervisorBusca').value },
+            }));
+        }
+
+        stageForm.addEventListener('input', salvarRascunho);
+        stageForm.addEventListener('change', salvarRascunho);
+
         stageForm.addEventListener('reset', () => {
+            localStorage.removeItem(draftKey);
             scheduleState = createEmptyScheduleState();
             setTimeout(() => {
                 renderScheduleTable();
@@ -953,8 +1067,8 @@
                 };
 
             try {
-                const res = await fetch('/estagios', {
-                    method: 'POST',
+                const res = await fetch(isEditing ? `/estagios/${editStageId}` : '/estagios', {
+                    method: isEditing ? 'PUT' : 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                         Authorization: `Bearer ${submitToken}`,
@@ -963,7 +1077,8 @@
                 });
 
                 if (res.ok) {
-                    alert('Estágio cadastrado com sucesso!');
+                    localStorage.removeItem(draftKey);
+                    alert(isEditing ? 'Estágio atualizado com sucesso!' : 'Estágio cadastrado com sucesso!');
                     window.location.href = 'home.html';
                 } else {
                     const err = await res.json();

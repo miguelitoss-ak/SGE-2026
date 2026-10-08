@@ -3,7 +3,7 @@ const EstagioService = require('../services/estagioService');
 class EstagioController {
   static async getAll(req, res) {
     try {
-      const estagios = await EstagioService.getAll();
+      const estagios = await EstagioService.getAll(req.user);
       res.json(estagios);
     } catch (error) {
       res.status(500).json({ error: error.message });
@@ -16,7 +16,7 @@ class EstagioController {
       if (!estagio) return res.status(404).json({ error: 'Estágio não encontrado.' });
       return res.json(estagio);
     } catch (error) {
-      const status = error.message === 'Somente ADMIN pode editar estágios.' ? 403 : 400;
+      const status = /permissão|Somente ADMIN/.test(error.message) ? 403 : 400;
       return res.status(status).json({ error: error.message });
     }
   }
@@ -92,16 +92,15 @@ class EstagioController {
       const { id_orientador } = req.body; // ID do orientador selecionado
 
       // Chamamos o service que você já preparou
-      const estagioAtualizado = await EstagioService.vincularOrientador(idEstagio, id_orientador);
+      const estagioAtualizado = await EstagioService.vincularOrientador(idEstagio, id_orientador, req.user);
 
       res.status(200).json({
         message: 'Orientador vinculado com sucesso!',
         data: estagioAtualizado
       });
     } catch (error) {
-      // Se o erro for "não encontrado", poderíamos usar 404, 
-      // mas o 400 (Bad Request) já atende bem erros de validação
-      res.status(400).json({ error: error.message });
+      const status = error.message === 'Somente ADMIN pode editar estágios.' ? 403 : 400;
+      res.status(status).json({ error: error.message });
     }
   }
 }

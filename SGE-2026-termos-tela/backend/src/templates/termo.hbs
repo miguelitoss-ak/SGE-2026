@@ -6,27 +6,45 @@
     <title>Termo de estágio</title>
     <style>
         body {
-            font: 10pt Arial, sans-serif;
+            font: 10pt Calibri, Arial, sans-serif;
             color: #111;
             line-height: 1.4
         }
 
         header {
             text-align: center;
-            font-size: 9pt
+            font-size: 8pt;
+            line-height: 1.35;
+            margin: 0 0 18px
+        }
+
+        .brasao {
+            width: 55px;
+            height: 55px;
+            display: block;
+            margin: 0 auto 5px
+        }
+
+        .subtitulo {
+            font-weight: bold;
+            font-size: 10.5pt;
+            text-align: center;
+            margin: -4px 0 22px
         }
 
         h1 {
-            font-size: 15pt;
+            font-size: 13pt;
             text-align: center;
-            margin: 22px 0 8px
+            margin: 0 0 5px;
+            font-weight: 700
         }
 
         h2 {
             font-size: 10pt;
-            background: #e9eeea;
-            border: 1px solid #999;
-            padding: 7px;
+            background: #fff;
+            border: 0;
+            border-bottom: 1px solid #111;
+            padding: 7px 0 3px;
             break-after: avoid
         }
 
@@ -105,10 +123,9 @@
 </head>
 
 <body>
-    <header>MINISTÉRIO DA EDUCAÇÃO<br>SECRETARIA DE EDUCAÇÃO PROFISSIONAL E TECNOLÓGICA<br>{{instituicao.nome}}</header>
-    <h1>TERMO DE COMPROMISSO DE ESTÁGIO OBRIGATÓRIO</h1>
-    <p style="text-align:center">{{estudante.curso}}</p>
-    <p class="aviso">TERMO DE ESTÁGIO {{#if estagio.obrigatorio}}OBRIGATÓRIO{{else}}NÃO OBRIGATÓRIO{{/if}}</p>
+    <header><img class="brasao" src="{{brasaoDataUri}}" alt="Brasão da República">MINISTÉRIO DA EDUCAÇÃO<br>SECRETARIA DE EDUCAÇÃO PROFISSIONAL E TECNOLÓGICA<br>{{instituicao.nome}}<br>{{instituicao.campus}}</header>
+    <h1>TERMO DE COMPROMISSO DE ESTÁGIO {{#if estagio.obrigatorio}}OBRIGATÓRIO{{else}}NÃO OBRIGATÓRIO{{/if}}</h1>
+    <p class="subtitulo">(Instrumento jurídico que trata o artigo 3º da Lei nº 11.788/2008)</p>
     <h2>DADOS DA INSTITUIÇÃO</h2>
     <table>
         <tr>
@@ -138,6 +155,10 @@
         <tr>
             <td style="width:35%"><strong>Cargo</strong></td>
             <td>{{instituicao.cargo}}</td>
+        </tr>
+        <tr>
+            <td style="width:35%"><strong>Seção de Estágios</strong></td>
+            <td>{{instituicao.coordenadora}} [Cargo: {{instituicao.cargoCoordenadora}}] · e-mail: {{instituicao.emailEstagios}}</td>
         </tr>
     </table>
     <h2>DADOS DA CONCEDENTE</h2>

@@ -41,7 +41,7 @@
   <main>
     <section class="card" aria-labelledby="title">
       <div class="card-head">
-        <span class="badge">DADOS FICTÍCIOS · DEMONSTRAÇÃO</span>
+        <span class="badge">TERMO PREENCHIDO COM DADOS DO SISTEMA</span>
         <h1 id="title">Termo de compromisso de estágio</h1>
         <p class="muted">Visualize o documento antes de gerar o arquivo PDF.</p>
       </div>
@@ -58,8 +58,8 @@
     <section class="card" aria-labelledby="previewTitle">
       <div class="card-head"><h2 id="previewTitle">Prévia do documento</h2></div>
       <div id="emptyPreview" class="empty">Clique em “Visualizar termo” para carregar o documento.</div>
-      <!-- O sandbox permite exibir HTML/CSS sem executar scripts do documento. -->
-      <iframe id="previewFrame" title="Prévia do termo de compromisso de estágio" sandbox hidden></iframe>
+      <!-- O visualizador nativo de PDF não funciona dentro de iframe sandboxado. -->
+      <iframe id="previewFrame" title="Prévia do termo de compromisso de estágio" hidden></iframe>
     </section>
   </main>
   <script>
@@ -98,10 +98,10 @@
       ocupado(true);
       mensagem('Carregando a prévia…');
       try {
-        const resposta = await fetch(`${baseUrl}/html`);
+        const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+        const resposta = await fetch(`${baseUrl}/pdf`, { headers: { Authorization: `Bearer ${token}` } });
         await verificarResposta(resposta);
-        // srcdoc recebe o HTML completo retornado pela API e o exibe no iframe.
-        frame.srcdoc = await resposta.text();
+        frame.src = URL.createObjectURL(await resposta.blob());
         frame.hidden = false;
         emptyPreview.hidden = true;
         mensagem('Prévia carregada.');
@@ -114,7 +114,8 @@
       ocupado(true);
       mensagem('Gerando o PDF. Aguarde…');
       try {
-        const resposta = await fetch(`${baseUrl}/pdf`);
+        const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+        const resposta = await fetch(`${baseUrl}/pdf`, { headers: { Authorization: `Bearer ${token}` } });
         await verificarResposta(resposta);
         // Os bytes recebidos viram um Blob local, com endereço temporário para download.
         const arquivo = await resposta.blob();

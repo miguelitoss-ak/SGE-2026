@@ -24,6 +24,7 @@ h.registerHelper('simNao', value => value === true ? 'Sim' : value === false ? '
 // Os caminhos partem deste arquivo, independentemente da pasta do terminal.
 const caminhoClausulas = path.join(__dirname, '../data/clausulas.json');
 const caminhoTemplate = path.join(__dirname, '../templates/termo.hbs');
+const caminhoBrasao = path.join(__dirname, '../assets/brasao-mec.jpg');
 const diasSemana = [
   ['SEGUNDA', 'Segunda'],
   ['TERCA', 'Terça'],
@@ -85,7 +86,19 @@ function mapearParaTemplate(estagio) {
   };
 
   return {
-    instituicao: {},
+    instituicao: {
+      nome: 'INSTITUTO FEDERAL DE EDUCAÇÃO, CIÊNCIA E TECNOLOGIA DO RIO GRANDE DO SUL',
+      campus: 'CAMPUS BENTO GONÇALVES',
+      cnpj: '10.637.926/0002-27',
+      endereco: 'Av. Osvaldo Aranha, 540 – Juventude da Enologia Bento Gonçalves, RS – 95700-2026',
+      telefone: '54.3455.3200',
+      email: 'comunicacao@bento.ifrs.edu.br',
+      representante: 'Rodrigo Otávio Câmara Monteiro',
+      cargo: 'Diretor-geral',
+      coordenadora: 'Érica Primaz',
+      cargoCoordenadora: 'Coord. da Seção de Estágios',
+      emailEstagios: 'estagios@bento.ifrs.edu.br',
+    },
     estudante: {
       nome: texto(aluno.nome),
       curso: texto(aluno.curso?.nome),
@@ -139,11 +152,11 @@ function mapearParaTemplate(estagio) {
 }
 
 class TermoService {
-  static async buscarEstagio(id) {
+  static async buscarEstagio(id, user) {
     const estagioId = Number(id);
     if (!Number.isSafeInteger(estagioId) || estagioId < 1) return null;
 
-    return prisma.estagio.findUnique({
+    const estagio = await prisma.estagio.findUnique({
       where: { id: estagioId },
       include: {
         aluno: { include: { curso: true } },
@@ -153,17 +166,37 @@ class TermoService {
         dias_semana_estagio: true,
       },
     });
+    if (!estagio) return null;
+
+    const role = String(user?.role || '').toUpperCase();
+    if (role === 'ADMIN' || role === 'ADMINISTRADOR') return estagio;
+    if (!user) throw new Error('Usuário não autenticado.');
+    let aluno = user.email
+      ? await prisma.aluno.findFirst({ where: { email: user.email }, select: { id: true } })
+      : null;
+    if (!aluno && user.matricula) {
+      aluno = await prisma.aluno.findUnique({ where: { matricula: Number(user.matricula) }, select: { id: true } });
+    }
+    if (!aluno || aluno.id !== estagio.id_aluno) {
+      throw new Error('Você não tem permissão para acessar este estágio.');
+    }
+    return estagio;
   }
 
   static async gerarHTML(dados) {
-    const [htmlTemplate, textoClausulas] = await Promise.all([
+    const [htmlTemplate, textoClausulas, brasao] = await Promise.all([
       fs.readFile(caminhoTemplate, 'utf8'),
       fs.readFile(caminhoClausulas, 'utf8'),
+      fs.readFile(caminhoBrasao),
     ]);
     const template = h.compile(htmlTemplate);
     const clausulas = JSON.parse(textoClausulas);
     // {{campo}} aplica escape HTML. O resultado é uma string, sem arquivo de saída.
-    return template({ ...mapearParaTemplate(dados), clausulas });
+    return template({
+      ...mapearParaTemplate(dados),
+      clausulas,
+      brasaoDataUri: `data:image/jpeg;base64,${brasao.toString('base64')}`,
+    });
   }
 }
 

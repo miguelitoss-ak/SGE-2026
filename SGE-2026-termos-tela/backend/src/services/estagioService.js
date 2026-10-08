@@ -136,19 +136,33 @@ class EstagioService {
     return await EstagioModel.create(data);
   }
 
-  static async getAll() {
-    return await EstagioModel.findAll();
+  static async getAll(user) {
+    if (!user) throw new Error('Usuário não autenticado.');
+    // A listagem geral é administrativa; alunos recebem apenas os próprios vínculos.
+    return this._isAdminUser(user)
+      ? EstagioModel.findAll()
+      : this.getMeusEstagios(user);
   }
 
   static async getById(id, user) {
-    if (!this._isAdminUser(user)) {
-      throw new Error('Somente ADMIN pode editar estágios.');
-    }
     const stageId = Number(id);
     if (!Number.isSafeInteger(stageId) || stageId < 1) {
       throw new Error('ID do estágio inválido.');
     }
-    return EstagioModel.findDetailsById(stageId);
+    const estagio = await EstagioModel.findDetailsById(stageId);
+    if (!estagio) return null;
+    await this.assertCanAccess(estagio, user);
+    return estagio;
+  }
+
+  static async assertCanAccess(estagio, user) {
+    if (!user) throw new Error('Usuário não autenticado.');
+    if (this._isAdminUser(user)) return true;
+    const alunoId = await this._resolveAlunoId(undefined, user);
+    if (Number(estagio.id_aluno) !== Number(alunoId)) {
+      throw new Error('Você não tem permissão para acessar este estágio.');
+    }
+    return true;
   }
 
   static async updateEstagio(id, data, user) {
@@ -213,7 +227,10 @@ class EstagioService {
     return await EstagioModel.findByAlunoId(aluno.id);
   }
 
-  static async vincularOrientador(idEstagio, id_orientador) {
+  static async vincularOrientador(idEstagio, id_orientador, user) {
+    if (!this._isAdminUser(user)) {
+      throw new Error('Somente ADMIN pode editar estágios.');
+    }
     if (idEstagio === undefined || idEstagio === null || idEstagio === '') {
       throw new Error('O ID do estágio é obrigatório.');
     }
