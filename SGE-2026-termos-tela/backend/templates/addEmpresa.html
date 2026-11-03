@@ -212,6 +212,12 @@
             }
         }
 
+        function setSectionEnabled(section, enabled) {
+            section.querySelectorAll('input').forEach((input) => {
+                input.disabled = !enabled;
+            });
+        }
+
         function toggleForm(type) {
             // Reset all fields and hide both forms
             cnpjFields.querySelectorAll('input').forEach(input => {
@@ -224,12 +230,15 @@
             });
             cnpjFields.classList.add('hidden');
             ieFields.classList.add('hidden');
+            setSectionEnabled(cnpjFields, false);
+            setSectionEnabled(ieFields, false);
             formActions.classList.add('hidden');
 
             // Set type and show relevant form
             if (type === 'cnpj') {
                 typeCadastro.value = 'cnpj';
                 cnpjFields.classList.remove('hidden');
+                setSectionEnabled(cnpjFields, true);
                 formActions.classList.remove('hidden');
                 // Set required fields for CNPJ
                 setRequired(form.querySelector('#cnpjFields input[name="CNPJ_NibocoProd"]'), true);
@@ -250,6 +259,7 @@
             } else if (type === 'ie') {
                 typeCadastro.value = 'ie';
                 ieFields.classList.remove('hidden');
+                setSectionEnabled(ieFields, true);
                 formActions.classList.remove('hidden');
                 // Set required fields for IE
                 setRequired(form.querySelector('#ieFields input[name="inscricao_estadual"]'), true);

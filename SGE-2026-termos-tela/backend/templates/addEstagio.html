@@ -63,11 +63,14 @@
                     <p class="text-xs font-light opacity-90">Gestão de Estágios IFRS</p>
                 </div>
             </div>
-            <div class="flex items-center">
+            <div class="flex items-center gap-2">
                 <a href="home.html" class="flex items-center space-x-2 bg-white/10 hover:bg-white/20 px-4 py-2 rounded-xl transition-colors font-bold text-sm">
                     <i data-lucide="arrow-left" class="w-4 h-4"></i>
                     <span>VOLTAR</span>
                 </a>
+                <button id="logoutButton" type="button" class="flex items-center space-x-2 bg-white/10 hover:bg-white/20 px-4 py-2 rounded-xl transition-colors font-bold text-sm">
+                    <i data-lucide="log-out" class="w-4 h-4"></i><span>SAIR</span>
+                </button>
             </div>
         </div>
     </header>
@@ -92,10 +95,16 @@
                         </h3>
                         <div class="field-group">
                             <div class="field-header mb-1">
-                                <label class="field-header-label block text-xs font-bold text-gray-500">ALUNO (Seu Cadastro)</label>
+                                <label id="studentLabel" class="field-header-label block text-xs font-bold text-gray-500">ALUNO (Seu Cadastro)</label>
+                                <button id="openStudentModal" type="button" class="field-header-link hidden text-[10px] font-bold text-ifrs-green hover:underline">NÃO O ENCONTROU? CADASTRAR NOVO</button>
                             </div>
                             <div id="studentDisplay" class="w-full bg-gray-100 border border-gray-200 rounded-xl px-4 py-3 text-gray-700 font-medium italic field-shell">
                                 Carregando dados do aluno...
+                            </div>
+                            <div id="studentAdminPicker" class="relative mt-2 hidden">
+                                <input id="alunoBusca" type="text" autocomplete="off" placeholder="Digite o nome, matrícula ou e-mail do aluno" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 pr-10 focus:ring-2 focus:ring-ifrs-green outline-none transition-all">
+                                <i data-lucide="search" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4"></i>
+                                <div id="alunoResultados" class="absolute z-50 left-0 right-0 top-full mt-1 max-h-60 overflow-y-auto rounded-xl border border-gray-200 bg-white shadow-lg hidden"></div>
                             </div>
                             <input type="hidden" id="studentIdInput" name="id_aluno" value="">
                         </div>
@@ -190,6 +199,7 @@
                             <select name="situacao" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-ifrs-green outline-none transition-all">
                                 <option value="ATIVO">Ativo</option>
                                 <option value="PENDENTE">Pendente</option>
+                                <option value="CONCLUIDO">Concluído</option>
                             </select>
                         </div>
                         <div>
@@ -260,15 +270,15 @@
                     <div id="apoliceSection" class="grid grid-cols-1 md:grid-cols-3 gap-6 pt-2">
                         <div>
                             <label class="block text-xs font-bold text-gray-500 mb-1">NÚMERO DA APÓLICE</label>
-                            <input type="text" name="numero_apolice" placeholder="Ex: AP-2026-001" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-ifrs-green outline-none transition-all">
+                            <input type="text" name="numero_apolice" maxlength="30" placeholder="Ex: AP-2026-001" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-ifrs-green outline-none transition-all">
                         </div>
                         <div>
-                            <label class="block text-xs font-bold text-gray-500 mb-1">NOME DA SEGURADORA</label>
-                            <input type="text" name="nome_seguradora" placeholder="Ex: Seguradora X" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-ifrs-green outline-none transition-all">
+                            <label class="block text-xs font-bold text-gray-500 mb-1">APÓLICE</label>
+                            <input type="text" name="apolice" maxlength="30" placeholder="Ex: Seguro contra acidentes" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-ifrs-green outline-none transition-all">
                         </div>
                         <div>
-                            <label class="block text-xs font-bold text-gray-500 mb-1">VALOR DA APÓLICE (R$)</label>
-                            <input type="number" step="0.01" name="valor_apolice" placeholder="0.00" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-ifrs-green outline-none transition-all">
+                            <label class="block text-xs font-bold text-gray-500 mb-1">CAPITAL SEGURADO</label>
+                            <input type="text" name="capital_segurado" maxlength="30" placeholder="Ex: R$ 10.000,00" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus:ring-2 focus:ring-ifrs-green outline-none transition-all">
                         </div>
                     </div>
                     <p id="apoliceHelper" class="text-xs text-gray-500"></p>
@@ -283,6 +293,26 @@
             </form>
         </div>
     </main>
+    <div id="studentModal" class="fixed inset-0 z-[100] hidden items-center justify-center bg-black/50 p-4" role="dialog" aria-modal="true" aria-labelledby="studentModalTitle">
+        <div class="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-2xl bg-white p-6 shadow-2xl">
+            <div class="mb-5 flex items-center justify-between">
+                <div><h2 id="studentModalTitle" class="text-xl font-black text-gray-800">CADASTRAR ALUNO</h2><p class="mt-1 text-sm text-gray-500">O aluno receberá uma conta com perfil ALUNO.</p></div>
+                <button id="closeStudentModal" type="button" class="rounded-lg p-2 text-gray-500 hover:bg-gray-100" aria-label="Fechar">✕</button>
+            </div>
+            <form id="studentRegistrationForm" class="grid grid-cols-1 gap-4 md:grid-cols-2">
+                <div><label class="block text-xs font-bold text-gray-500 mb-1">MATRÍCULA</label><input name="matricula" required maxlength="10" inputmode="numeric" class="w-full rounded-xl border border-gray-200 px-4 py-3" placeholder="Ex: 2024123456"></div>
+                <div><label class="block text-xs font-bold text-gray-500 mb-1">NOME COMPLETO</label><input name="nome" required class="w-full rounded-xl border border-gray-200 px-4 py-3" placeholder="Nome completo"></div>
+                <div><label class="block text-xs font-bold text-gray-500 mb-1">CPF</label><input name="cpf" required maxlength="14" class="w-full rounded-xl border border-gray-200 px-4 py-3" placeholder="000.000.000-00"></div>
+                <div><label class="block text-xs font-bold text-gray-500 mb-1">TELEFONE</label><input name="telefone" required maxlength="15" class="w-full rounded-xl border border-gray-200 px-4 py-3" placeholder="(00) 90000-0000"></div>
+                <div><label class="block text-xs font-bold text-gray-500 mb-1">E-MAIL</label><input name="email" type="email" required class="w-full rounded-xl border border-gray-200 px-4 py-3" placeholder="aluno@exemplo.com"></div>
+                <div><label class="block text-xs font-bold text-gray-500 mb-1">DATA DE NASCIMENTO</label><input name="data_nasc" type="date" required class="w-full rounded-xl border border-gray-200 px-4 py-3"></div>
+                <div><label class="block text-xs font-bold text-gray-500 mb-1">CURSO</label><select id="studentCourse" name="id_curso" required class="w-full rounded-xl border border-gray-200 px-4 py-3"><option value="">Selecione...</option></select></div>
+                <div><label class="block text-xs font-bold text-gray-500 mb-1">SENHA TEMPORÁRIA</label><input name="senha" type="password" required minlength="6" class="w-full rounded-xl border border-gray-200 px-4 py-3"></div>
+                <div class="md:col-span-2"><label class="block text-xs font-bold text-gray-500 mb-1">CONFIRMAR SENHA</label><input name="confirmar_senha" type="password" required minlength="6" class="w-full rounded-xl border border-gray-200 px-4 py-3"></div>
+                <div class="md:col-span-2 flex justify-end gap-3 pt-2"><button id="cancelStudentModal" type="button" class="rounded-xl px-5 py-3 font-bold text-gray-600 hover:bg-gray-100">CANCELAR</button><button type="submit" class="rounded-xl bg-ifrs-green px-5 py-3 font-bold text-white hover-bg-ifrs-green">CRIAR CONTA E SELECIONAR</button></div>
+            </form>
+        </div>
+    </div>
 <script>
         // Inicializa os ícones do Lucide
         lucide.createIcons();
@@ -299,6 +329,15 @@
         function isAdminRole(role) {
             return ['ADMIN', 'ADMINISTRADOR'].includes((role || '').toString().trim().toUpperCase());
         }
+
+        function logout() {
+            ['token', 'userName', 'userId', 'userMatricula', 'role'].forEach((key) => {
+                localStorage.removeItem(key);
+                sessionStorage.removeItem(key);
+            });
+            window.location.replace('login.html');
+        }
+        document.getElementById('logoutButton').addEventListener('click', logout);
 
         const DAYS = [
             { key: 'SEGUNDA', label: 'Segunda' },
@@ -639,8 +678,8 @@
             const apoliceHelper = document.getElementById('apoliceHelper');
             const apoliceInputs = [
                 document.querySelector('input[name="numero_apolice"]'),
-                document.querySelector('input[name="nome_seguradora"]'),
-                document.querySelector('input[name="valor_apolice"]'),
+                document.querySelector('input[name="apolice"]'),
+                document.querySelector('input[name="capital_segurado"]'),
             ];
             const obrigatorioSelect = document.querySelector('select[name="obrigatorio"]');
 
@@ -683,9 +722,19 @@
             obrigatorioSelect.addEventListener('change', atualizarApoliceAccess);
             atualizarApoliceAccess();
 
-            // 3. Preenche os dados do aluno logado na interface e no campo oculto
-            document.getElementById('studentDisplay').textContent = `${userName} (${userMatricula || 'S/M'})`;
-            document.getElementById('studentIdInput').value = userId;
+            // Alunos criam estágio para si; ADMIN seleciona o aluno responsável pelo estágio.
+            const studentDisplay = document.getElementById('studentDisplay');
+            const studentIdInput = document.getElementById('studentIdInput');
+            if (isAdmin) {
+                document.getElementById('studentLabel').textContent = 'ALUNO';
+                document.getElementById('studentAdminPicker').classList.remove('hidden');
+                document.getElementById('openStudentModal').classList.remove('hidden');
+                studentDisplay.textContent = 'Selecione um aluno para este estágio.';
+                studentIdInput.value = '';
+            } else {
+                studentDisplay.textContent = `${userName} (${userMatricula || 'S/M'})`;
+                studentIdInput.value = userId;
+            }
 
             if (isEditing) {
                 document.title = 'SGE-2026 | Editar Estágio';
@@ -717,6 +766,7 @@
             let empresas = [];
             let orientadores = [];
             let supervisores = [];
+            let alunos = [];
 
             try {
                 const resEmpresas = await fetch('http://localhost:3000/empresas');
@@ -739,6 +789,15 @@
                 console.error('Erro ao carregar supervisores:', err);
             }
 
+            if (isAdmin) {
+                try {
+                    const resAlunos = await fetch('/alunos');
+                    alunos = await resAlunos.json();
+                } catch (err) {
+                    console.error('Erro ao carregar alunos:', err);
+                }
+            }
+
             const empresaBusca = document.getElementById('empresaBusca');
             const empresaResultados = document.getElementById('empresaResultados');
             const empresaInputHidden = document.getElementById('id_empresa');
@@ -748,6 +807,89 @@
             const supervisorBusca = document.getElementById('supervisorBusca');
             const supervisorResultados = document.getElementById('supervisorResultados');
             const supervisorInputHidden = document.getElementById('id_supervisor');
+            const alunoBusca = document.getElementById('alunoBusca');
+            const alunoResultados = document.getElementById('alunoResultados');
+            const studentModal = document.getElementById('studentModal');
+            const studentRegistrationForm = document.getElementById('studentRegistrationForm');
+
+            function selecionarAluno(aluno) {
+                studentDisplay.textContent = `${aluno.nome} (${aluno.matricula || 'S/M'})`;
+                studentIdInput.value = aluno.id;
+                alunoBusca.value = aluno.nome;
+                alunoResultados.classList.add('hidden');
+            }
+
+            function renderizarAlunos() {
+                if (!isAdmin) return;
+                const termo = alunoBusca.value.trim().toLowerCase();
+                const encontrados = alunos.filter((aluno) => `${aluno.nome || ''} ${aluno.matricula || ''} ${aluno.email || ''}`.toLowerCase().includes(termo)).slice(0, 50);
+                renderizarResultados(alunoResultados, encontrados, selecionarAluno, (aluno) => aluno.nome, (aluno) => `${aluno.matricula || 'S/M'}${aluno.email ? ` · ${aluno.email}` : ''}`);
+            }
+
+            if (isAdmin) {
+                alunoBusca.addEventListener('input', renderizarAlunos);
+                alunoBusca.addEventListener('focus', renderizarAlunos);
+            }
+
+            function abrirModalAluno() {
+                studentModal.classList.remove('hidden');
+                studentModal.classList.add('flex');
+                studentRegistrationForm.elements.matricula.focus();
+            }
+            function fecharModalAluno() {
+                studentModal.classList.add('hidden');
+                studentModal.classList.remove('flex');
+            }
+
+            document.getElementById('openStudentModal').addEventListener('click', abrirModalAluno);
+            document.getElementById('closeStudentModal').addEventListener('click', fecharModalAluno);
+            document.getElementById('cancelStudentModal').addEventListener('click', fecharModalAluno);
+            studentModal.addEventListener('click', (event) => { if (event.target === studentModal) fecharModalAluno(); });
+
+            try {
+                const resCursos = await fetch('/cursos');
+                const cursos = await resCursos.json();
+                const studentCourse = document.getElementById('studentCourse');
+                cursos.forEach((curso) => {
+                    const option = document.createElement('option');
+                    option.value = curso.id;
+                    option.textContent = curso.nome;
+                    studentCourse.appendChild(option);
+                });
+            } catch (err) {
+                console.error('Erro ao carregar cursos:', err);
+            }
+
+            studentRegistrationForm.addEventListener('submit', async (event) => {
+                event.preventDefault();
+                const formData = Object.fromEntries(new FormData(studentRegistrationForm).entries());
+                if (formData.senha !== formData.confirmar_senha) {
+                    alert('As senhas não coincidem.');
+                    return;
+                }
+                const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+                const submitButton = studentRegistrationForm.querySelector('button[type="submit"]');
+                submitButton.disabled = true;
+                try {
+                    const response = await fetch('/auth/admin/alunos', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+                        body: JSON.stringify(formData),
+                    });
+                    const result = await response.json();
+                    if (!response.ok) throw new Error(result.error || 'Não foi possível cadastrar o aluno.');
+                    const aluno = { id: result.user.alunoId, nome: formData.nome, matricula: formData.matricula, email: formData.email };
+                    alunos.push(aluno);
+                    selecionarAluno(aluno);
+                    studentRegistrationForm.reset();
+                    fecharModalAluno();
+                    alert('Conta do aluno criada e selecionada para o estágio.');
+                } catch (error) {
+                    alert(error.message);
+                } finally {
+                    submitButton.disabled = false;
+                }
+            });
 
             function filtrarPorTexto(lista, campo, termo) {
                 const valor = termo.toLowerCase().trim();
@@ -761,26 +903,23 @@
             function getEmpresaDisplayName(item) {
                 const nomeFantasia = (item.nome_fantasia || '').trim();
                 const nomeSocial = (item.nome_social || '').trim();
-                const representante = (item.representante || '').trim();
-                const email = (item.email || '').trim();
                 const cnpj = (item.CNPJ_NibocoProd || '').trim();
 
                 if (nomeSocial) return nomeSocial;
                 if (nomeFantasia) return nomeFantasia;
-                if (representante) return representante;
-                if (email) return email;
-                if (cnpj) return `CNPJ ${cnpj}`;
-                return `Empresa ${item.id}`;
+                return cnpj ? `Empresa sem nome cadastrado (CNPJ ${cnpj})` : `Empresa sem nome cadastrado (${item.id})`;
             }
 
             function getEmpresaSubtitle(item) {
                 const nomeSocial = (item.nome_social || '').trim();
                 const nomeFantasia = (item.nome_fantasia || '').trim();
                 const cnpj = (item.CNPJ_NibocoProd || '').trim();
+                const representante = (item.representante || '').trim();
 
                 if (nomeSocial && nomeSocial !== getEmpresaDisplayName(item)) return nomeSocial;
                 if (nomeFantasia && nomeFantasia !== getEmpresaDisplayName(item)) return nomeFantasia;
                 if (cnpj) return `CNPJ ${cnpj}`;
+                if (representante) return `Representante: ${representante}`;
                 return item.email || '';
             }
 
@@ -919,8 +1058,8 @@
                 document.querySelector('[name="beneficio_transporte"]').checked = Boolean(estagio.beneficio_transporte);
                 document.querySelector('[name="beneficio_alimentacao"]').checked = Boolean(estagio.beneficio_alimentacao);
                 document.querySelector('[name="numero_apolice"]').value = estagio.numero_apolice || '';
-                document.querySelector('[name="nome_seguradora"]').value = estagio.nome_seguradora || '';
-                document.querySelector('[name="valor_apolice"]').value = estagio.valor_apolice || '';
+                document.querySelector('[name="apolice"]').value = estagio.apolice || estagio.nome_seguradora || '';
+                document.querySelector('[name="capital_segurado"]').value = estagio.capital_segurado || estagio.valor_apolice || '';
                 scheduleState = createEmptyScheduleState();
                 (estagio.dias_semana_estagio || []).forEach((h) => {
                     const shift = h.turno === 'MANHA' ? 'manha' : 'tardeNoite';
@@ -1061,8 +1200,8 @@
                     beneficio_transporte: !!data.beneficio_transporte,
                     beneficio_alimentacao: !!data.beneficio_alimentacao,
                     numero_apolice: data.numero_apolice?.trim() || null,
-                    nome_seguradora: data.nome_seguradora?.trim() || null,
-                    valor_apolice: data.valor_apolice ? parseFloat(data.valor_apolice) : null,
+                    apolice: data.apolice?.trim() || null,
+                    capital_segurado: data.capital_segurado?.trim() || null,
                     dt_registro: new Date().toISOString().split('T')[0] // Data atual do registro
                 };
 
@@ -1082,6 +1221,11 @@
                     window.location.href = 'home.html';
                 } else {
                     const err = await res.json();
+                    if (res.status === 401 || res.status === 403) {
+                        alert('Sua sessão expirou. Faça login novamente para salvar o estágio.');
+                        logout();
+                        return;
+                    }
                     alert(err.error || 'Erro ao salvar estágio.');
                 }
             } catch (err) {

@@ -13,13 +13,13 @@ h.registerHelper('data', value => {
   return `${dia}/${mes}/${ano}`;
 });
 h.registerHelper('moeda', value => {
-  if (value === null || value === undefined || value === '') return '';
+  if (value === null || value === undefined || value === '') return 'Não informado';
   const amount = Number(value);
   return Number.isFinite(amount)
     ? new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(amount)
-    : '';
+    : 'Não informado';
 });
-h.registerHelper('simNao', value => value === true ? 'Sim' : value === false ? 'Não' : '');
+h.registerHelper('simNao', value => value === true ? 'Sim' : value === false ? 'Não' : 'Não informado');
 
 // Os caminhos partem deste arquivo, independentemente da pasta do terminal.
 const caminhoClausulas = path.join(__dirname, '../data/clausulas.json');
@@ -37,6 +37,32 @@ const diasSemana = [
 
 function texto(value) {
   return value === null || value === undefined ? '' : String(value);
+}
+
+function textoDocumento(value) {
+  const valueText = texto(value).trim();
+  return valueText || 'Não informado';
+}
+
+function formatarCpf(value) {
+  const digits = texto(value).replace(/\D/g, '');
+  return digits.length === 11
+    ? `${digits.slice(0, 3)}.${digits.slice(3, 6)}.${digits.slice(6, 9)}-${digits.slice(9)}`
+    : textoDocumento(value);
+}
+
+function formatarCnpj(value) {
+  const digits = texto(value).replace(/\D/g, '');
+  return digits.length === 14
+    ? `${digits.slice(0, 2)}.${digits.slice(2, 5)}.${digits.slice(5, 8)}/${digits.slice(8, 12)}-${digits.slice(12)}`
+    : textoDocumento(value);
+}
+
+function formatarTelefone(value) {
+  const digits = texto(value).replace(/\D/g, '');
+  if (digits.length === 11) return `(${digits.slice(0, 2)}) ${digits.slice(2, 7)}-${digits.slice(7)}`;
+  if (digits.length === 10) return `(${digits.slice(0, 2)}) ${digits.slice(2, 6)}-${digits.slice(6)}`;
+  return textoDocumento(value);
 }
 
 function hora(value) {
@@ -100,54 +126,51 @@ function mapearParaTemplate(estagio) {
       emailEstagios: 'estagios@bento.ifrs.edu.br',
     },
     estudante: {
-      nome: texto(aluno.nome),
-      curso: texto(aluno.curso?.nome),
-      cpf: texto(aluno.cpf),
-      email: texto(aluno.email),
-      telefone: texto(aluno.telefone),
-      orientador: texto(orientador.nome),
+      nome: textoDocumento(aluno.nome),
+      matricula: textoDocumento(aluno.matricula),
+      curso: textoDocumento(aluno.curso?.nome),
+      cpf: formatarCpf(aluno.cpf),
+      email: textoDocumento(aluno.email),
+      telefone: formatarTelefone(aluno.telefone),
+      orientador: textoDocumento(orientador.nome),
     },
     concedente: {
-      razaoSocial: texto(empresa.nome_social || empresa.nome_fantasia),
-      nome: texto(empresa.nome_fantasia),
-      cnpj: texto(empresa.CNPJ_NibocoProd),
-      endereco: texto(empresa.endereco),
-      cidadeEstado: '',
-      telefone: texto(empresa.telefone),
-      email: texto(empresa.email),
-      representante: texto(empresa.representante),
-      cpf: '',
-      cargo: texto(empresa.cargo),
-      supervisor: texto(supervisor.nome),
-      cargoSupervisor: texto(supervisor.cargo),
-      formacaoSupervisor: '',
-      emailSupervisor: texto(supervisor.email),
-      telefoneSupervisor: texto(supervisor.telefone),
+      razaoSocial: textoDocumento(empresa.nome_social || empresa.nome_fantasia),
+      nome: textoDocumento(empresa.nome_fantasia),
+      cnpj: formatarCnpj(empresa.CNPJ_NibocoProd),
+      endereco: textoDocumento(empresa.endereco),
+      telefone: formatarTelefone(empresa.telefone),
+      email: textoDocumento(empresa.email),
+      representante: textoDocumento(empresa.representante),
+      cargo: textoDocumento(empresa.cargo),
+      supervisor: textoDocumento(supervisor.nome),
+      cargoSupervisor: textoDocumento(supervisor.cargo),
+      emailSupervisor: textoDocumento(supervisor.email),
+      telefoneSupervisor: formatarTelefone(supervisor.telefone),
     },
     estagio: {
       id: estagio.id,
       inicio: estagio.data_inicio,
       termino: estagio.data_fim,
-      cargaHorariaTotal: estagio.carga_horaria_total,
-      cargaHorariaSemanal: decimal(estagio.carga_horaria_semanal),
+      cargaHorariaTotal: estagio.carga_horaria_total ?? 'Não informado',
+      cargaHorariaSemanal: decimal(estagio.carga_horaria_semanal) ?? 'Não informado',
       bolsa: decimal(estagio.bolsa_auxilio),
       alimentacao: estagio.beneficio_alimentacao,
       transporte: estagio.beneficio_transporte,
       moradia: null,
       obrigatorio: estagio.obrigatorio === true,
-      area: texto(estagio.area),
+      area: textoDocumento(estagio.area),
       atividades: [],
       seguro: {
-        seguradora: texto(estagio.nome_seguradora),
-        apolice: texto(estagio.numero_apolice),
-        contrato: '',
-        capital: decimal(estagio.valor_apolice),
+        apolice: textoDocumento(estagio.apolice),
+        numero: textoDocumento(estagio.numero_apolice),
+        capitalSegurado: textoDocumento(estagio.capital_segurado),
       },
     },
     horarios: mapearHorarios(estagio.dias_semana_estagio),
     clausulas: [],
-    localAssinatura: '',
-    dataAssinatura: null,
+    localAssinatura: 'Bento Gonçalves/RS',
+    dataAssinatura: estagio.dt_registro || estagio.data_inicio,
   };
 }
 

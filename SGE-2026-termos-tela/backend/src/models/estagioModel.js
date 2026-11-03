@@ -87,9 +87,9 @@ class EstagioModel {
       id_orientador,
       id_documento,
       obrigatorio,
+      apolice,
       numero_apolice,
-      nome_seguradora,
-      valor_apolice,
+      capital_segurado,
       area,
       horarios,
     } = data;
@@ -120,6 +120,13 @@ class EstagioModel {
         throw new Error(`${fieldName} inválido.`);
       }
       return n;
+    };
+
+    const textoSeguro = (value, fieldName) => {
+      if (value === null || value === undefined || String(value).trim() === '') return null;
+      const text = String(value).trim();
+      if (text.length > 30) throw new Error(`${fieldName} deve ter no máximo 30 caracteres.`);
+      return text;
     };
 
     const idAlunoNum = toRequiredInt(id_aluno, 'id_aluno');
@@ -204,12 +211,9 @@ class EstagioModel {
           id_supervisor: idSupervisorNum,
           id_orientador: idOrientadorNum,
           id_documento: idDocumentoNum,
-          numero_apolice: numero_apolice || null,
-          nome_seguradora: nome_seguradora || null,
-          valor_apolice:
-            valor_apolice === null || valor_apolice === undefined || valor_apolice === ''
-              ? null
-              : new Prisma.Decimal(valor_apolice),
+          apolice: textoSeguro(apolice, 'Apólice'),
+          numero_apolice: textoSeguro(numero_apolice, 'Número da apólice'),
+          capital_segurado: textoSeguro(capital_segurado, 'Capital segurado'),
           area: area === null || area === undefined || String(area).trim() === ''
             ? null
             : String(area).trim(),
@@ -303,6 +307,12 @@ class EstagioModel {
       if (!Number.isFinite(number) || number < 0) throw new Error(`${field} inválido.`);
       return new Prisma.Decimal(number);
     };
+    const textoSeguro = (value, field) => {
+      if (value === null || value === undefined || String(value).trim() === '') return null;
+      const text = String(value).trim();
+      if (text.length > 30) throw new Error(`${field} deve ter no máximo 30 caracteres.`);
+      return text;
+    };
     const boolean = (value) => value === true || value === 'true' || value === 1 || value === '1';
 
     return prisma.$transaction(async (transaction) => {
@@ -322,9 +332,9 @@ class EstagioModel {
           bolsa_auxilio: decimal(data.bolsa_auxilio, 'Bolsa auxílio'),
           beneficio_alimentacao: boolean(data.beneficio_alimentacao),
           beneficio_transporte: boolean(data.beneficio_transporte),
-          numero_apolice: String(data.numero_apolice || '').trim() || null,
-          nome_seguradora: String(data.nome_seguradora || '').trim() || null,
-          valor_apolice: decimal(data.valor_apolice, 'Valor da apólice'),
+          apolice: textoSeguro(data.apolice, 'Apólice'),
+          numero_apolice: textoSeguro(data.numero_apolice, 'Número da apólice'),
+          capital_segurado: textoSeguro(data.capital_segurado, 'Capital segurado'),
         },
       });
 

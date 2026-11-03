@@ -168,9 +168,9 @@ model Estagio {
   carga_horaria_semanal  Decimal? @db.Decimal(10, 2)
   situacao              String
   obrigatorio           Boolean  @default(true)
-  numero_apolice        String?
-  nome_seguradora       String?
-  valor_apolice         Decimal? @db.Decimal(10, 2)
+  apolice               String?  @db.VarChar(30)
+  numero_apolice        String?  @db.VarChar(30)
+  capital_segurado      String?  @db.VarChar(30)
   area                  String?  @db.VarChar(255)
   id_aluno               Int
   id_empresa             Int

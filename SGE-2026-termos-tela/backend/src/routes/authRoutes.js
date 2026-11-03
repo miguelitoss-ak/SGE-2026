@@ -6,6 +6,7 @@ const { authenticateToken } = require('../middlewares/authMiddleware');
 const router = express.Router();
 
 router.post('/register', AuthController.register);
+router.post('/admin/alunos', authenticateToken, AuthController.registerAlunoByAdmin);
 router.post('/login', AuthController.login);
 router.post('/empresa/register', AuthController.registerEmpresaUser);
 router.post('/empresa/login', AuthController.loginEmpresaUser);

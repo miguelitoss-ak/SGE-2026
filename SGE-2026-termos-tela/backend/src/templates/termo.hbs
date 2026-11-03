@@ -89,6 +89,11 @@
             font-size: 9pt
         }
 
+        .plano-atividades {
+            min-height: 145px;
+            margin-top: 8px;
+        }
+
         .clausula p {
             text-align: justify
         }
@@ -176,10 +181,6 @@
             <td>{{concedente.endereco}}</td>
         </tr>
         <tr>
-            <td style="width:35%"><strong>Cidade/Estado</strong></td>
-            <td>{{concedente.cidadeEstado}}</td>
-        </tr>
-        <tr>
             <td style="width:35%"><strong>Telefone</strong></td>
             <td>{{concedente.telefone}}</td>
         </tr>
@@ -192,10 +193,6 @@
             <td>{{concedente.representante}}</td>
         </tr>
         <tr>
-            <td style="width:35%"><strong>CPF</strong></td>
-            <td>{{concedente.cpf}}</td>
-        </tr>
-        <tr>
             <td style="width:35%"><strong>Cargo</strong></td>
             <td>{{concedente.cargo}}</td>
         </tr>
@@ -206,10 +203,6 @@
         <tr>
             <td style="width:35%"><strong>Cargo do supervisor</strong></td>
             <td>{{concedente.cargoSupervisor}}</td>
-        </tr>
-        <tr>
-            <td style="width:35%"><strong>Formação/experiência</strong></td>
-            <td>{{concedente.formacaoSupervisor}}</td>
         </tr>
         <tr>
             <td style="width:35%"><strong>E-mail do supervisor</strong></td>
@@ -225,6 +218,10 @@
         <tr>
             <td style="width:35%"><strong>Nome</strong></td>
             <td>{{estudante.nome}}</td>
+        </tr>
+        <tr>
+            <td style="width:35%"><strong>Matrícula</strong></td>
+            <td>{{estudante.matricula}}</td>
         </tr>
         <tr>
             <td style="width:35%"><strong>Curso</strong></td>
@@ -249,9 +246,9 @@
     </table>
     <section class="nova-pagina">
         <h2>CLÁUSULA PRIMEIRA — CONDIÇÕES E PLANO DE ATIVIDADES</h2>
-        <p>As partes qualificadas celebram este termo de estágio curricular supervisionado obrigatório. As condições e
+        <p>As partes qualificadas celebram este termo de estágio curricular supervisionado {{#if estagio.obrigatorio}}obrigatório{{else}}não obrigatório{{/if}}. As condições e
             atividades estão descritas a seguir.</p>
-        <ol>{{#each estagio.atividades}}<li>{{this}}</li>{{/each}}</ol>
+        {{#if estagio.atividades}}<ol>{{#each estagio.atividades}}<li>{{this}}</li>{{/each}}</ol>{{else}}<p>As atividades serão detalhadas no Plano de Atividades de Estágio.</p>{{/if}}
         <table>
             <tr>
                 <td>Período</td>
@@ -271,13 +268,20 @@
             </tr>
             <tr>
                 <td>Benefícios</td>
-                <td>Alimentação: {{simNao estagio.alimentacao}}<br>Transporte: {{simNao estagio.transporte}}<br>Moradia:
-                    {{simNao estagio.moradia}}</td>
+                <td>Alimentação: {{simNao estagio.alimentacao}}<br>Transporte: {{simNao estagio.transporte}}</td>
             </tr>
             <tr>
                 <td>Seguro</td>
-                <td>{{estagio.seguro.seguradora}}<br>Apólice: {{estagio.seguro.apolice}}<br>Contrato:
-                    {{estagio.seguro.contrato}}<br>Capital: {{moeda estagio.seguro.capital}}</td>
+                <td>Apólice: {{estagio.seguro.apolice}}<br>Número da Apólice: {{estagio.seguro.numero}}<br>Capital
+                    Segurado: {{estagio.seguro.capitalSegurado}}</td>
+            </tr>
+        </table>
+        <table>
+            <tr>
+                <td>
+                    <strong>Plano de Atividades do Estágio - descrição das atividades a serem desenvolvidas pelo(a) estagiário(a):</strong>
+                    <div class="plano-atividades">&nbsp;</div>
+                </td>
             </tr>
         </table>
         <h2>HORÁRIOS DO ESTÁGIO</h2>

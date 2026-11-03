@@ -37,6 +37,10 @@ class EmpresaService {
       inscricao_estadual: ie || null,
     };
 
+    if (!String(empresaData.nome_social || '').trim()) {
+      throw new Error('Nome da empresa ou do produtor é obrigatório.');
+    }
+
     if (ie) {
       if (ie.length < 6 || ie.length > 8) {
         throw new Error('Inscrição estadual deve ter entre 6 e 8 caracteres.');

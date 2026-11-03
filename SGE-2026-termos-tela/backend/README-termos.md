@@ -1,6 +1,6 @@
-# Prévia HTML e PDF do termo — etapa com dados fictícios
+# Prévia HTML e PDF do termo
 
-Esta funcionalidade usa apenas `src/data/estagio-exemplo.json` e não consulta nem altera o banco. O único ID de exemplo é 1. As novas rotas são públicas nesta etapa e não exigem token. Antes de trocar a origem por dados reais, integre a autenticação JWT e a autorização por estágio.
+Esta funcionalidade consulta o estágio cadastrado no banco, exige autenticação JWT e aplica autorização: administradores podem emitir qualquer termo e alunos somente o próprio. A geração não altera os dados do estágio.
 
 ## Instalação e execução
 
@@ -25,8 +25,8 @@ Se usar o Chrome instalado, configure `PUPPETEER_EXECUTABLE_PATH` no ambiente co
 
 | Método | URL | Resposta |
 | --- | --- | --- |
-| GET | http://localhost:3000/termos/estagios/1/html | HTML preenchido |
-| GET | http://localhost:3000/termos/estagios/1/pdf | PDF para download |
+| GET | http://localhost:3000/termos/estagios/:id/html | HTML preenchido |
+| GET | http://localhost:3000/termos/estagios/:id/pdf | PDF para download |
 
 Abra a primeira URL no navegador para conferir o termo. A segunda inicia o download. No REST Client, abra `src/testsHTTP/termos_api_test.rest` e clique em Send Request. Salve o corpo da resposta se quiser guardar o HTML ou PDF no seu computador.
 

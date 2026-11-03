@@ -36,7 +36,7 @@ class UserModel {
       });
 
       // Cria automaticamente o registro na tabela Aluno (para o negócio/estágios)
-      await tx.aluno.create({
+      const newAluno = await tx.aluno.create({
         data: {
           matricula: parseInt(matricula), // Converte para Int conforme o schema da tabela alunos
           nome,
@@ -48,7 +48,7 @@ class UserModel {
         }
       });
 
-      return newUser;
+      return { ...newUser, alunoId: newAluno.id };
     });
   }
 }

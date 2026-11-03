@@ -3,6 +3,14 @@ const AlunoModel = require('../models/alunoModel');
 const OrientadorModel = require('../models/orientadorModel');
 
 class EstagioService {
+  static _normalizeSituacao(value) {
+    const situacao = String(value || 'ATIVO').trim().toUpperCase();
+    if (!['ATIVO', 'PENDENTE', 'CONCLUIDO'].includes(situacao)) {
+      throw new Error('Situação do estágio inválida.');
+    }
+    return situacao;
+  }
+
   static _isAdminUser(user) {
     const role = String(user?.role || '').toUpperCase();
     return role === 'ADMIN' || role === 'ADMINISTRADOR';
@@ -118,7 +126,10 @@ class EstagioService {
 
     const obrigatorio = this._parseBoolean(data.obrigatorio);
     const isAdmin = this._isAdminUser(user);
-    const apoliceFieldsFilled = [data.numero_apolice, data.nome_seguradora, data.valor_apolice].some(
+    // Aceita os nomes antigos durante a transição, sem gravá-los no banco.
+    data.apolice = data.apolice ?? data.nome_seguradora;
+    data.capital_segurado = data.capital_segurado ?? data.valor_apolice;
+    const apoliceFieldsFilled = [data.apolice, data.numero_apolice, data.capital_segurado].some(
       (value) => value !== undefined && value !== null && String(value).trim() !== ''
     );
 
@@ -128,7 +139,7 @@ class EstagioService {
 
     data.obrigatorio = obrigatorio;
 
-    if (!data.situacao) data.situacao = 'ATIVO';
+    data.situacao = this._normalizeSituacao(data.situacao);
 
     data.id_aluno = await this._resolveAlunoId(data.id_aluno, user);
     data.id_orientador = await this._resolveOrientadorId(data.id_orientador);
@@ -191,6 +202,9 @@ class EstagioService {
     }
     if (!String(data.area || '').trim()) throw new Error('Área de atuação é obrigatória.');
 
+    data.apolice = data.apolice ?? data.nome_seguradora;
+    data.capital_segurado = data.capital_segurado ?? data.valor_apolice;
+    data.situacao = this._normalizeSituacao(data.situacao);
     const obrigatorio = this._parseBoolean(data.obrigatorio);
     data.obrigatorio = obrigatorio;
     data.id_orientador = await this._resolveOrientadorId(data.id_orientador);

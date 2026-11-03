@@ -166,16 +166,11 @@
             function getEmpresaLabel(empresa) {
                 const nomeFantasia = (empresa.nome_fantasia || '').trim();
                 const nomeSocial = (empresa.nome_social || '').trim();
-                const representante = (empresa.representante || '').trim();
                 const cnpj = (empresa.CNPJ_NibocoProd || '').trim();
-                const email = (empresa.email || '').trim();
 
                 if (nomeFantasia) return nomeFantasia;
                 if (nomeSocial) return nomeSocial;
-                if (representante) return representante;
-                if (email) return email;
-                if (cnpj) return `CNPJ ${cnpj}`;
-                return `Empresa ${empresa.id}`;
+                return cnpj ? `Empresa sem nome cadastrado (CNPJ ${cnpj})` : `Empresa sem nome cadastrado (${empresa.id})`;
             }
 
             try {

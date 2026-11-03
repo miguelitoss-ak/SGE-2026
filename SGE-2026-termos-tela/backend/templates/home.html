@@ -56,6 +56,9 @@
                         <i data-lucide="user" class="w-6 h-6"></i>
                     </div>
                 </div>
+                <button id="logoutButton" type="button" class="flex items-center gap-2 rounded-xl bg-white/10 px-4 py-2 text-sm font-bold transition-colors hover:bg-white/20" title="Sair da conta">
+                    <i data-lucide="log-out" class="w-4 h-4"></i><span class="hidden sm:inline">SAIR</span>
+                </button>
             </div>
         </div>
     </header>
@@ -166,6 +169,16 @@
         const token = localStorage.getItem('token');
         const fallbackName = localStorage.getItem('userName') || 'Usuário';
         const fallbackRole = localStorage.getItem('role') || 'Usuário';
+
+        function logout() {
+            ['token', 'userName', 'userId', 'userMatricula', 'role'].forEach((key) => {
+                localStorage.removeItem(key);
+                sessionStorage.removeItem(key);
+            });
+            window.location.replace('login.html');
+        }
+
+        document.getElementById('logoutButton').addEventListener('click', logout);
 
         function normalizeText(value) {
             return (value || '')

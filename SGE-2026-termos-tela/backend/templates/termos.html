@@ -13,7 +13,7 @@
     .header-inner { max-width:1200px; margin:auto; padding:20px 24px; display:flex; align-items:center; justify-content:space-between; gap:16px; }
     .brand { font-size:21px; font-weight:800; text-decoration:none; color:white; }
     .brand small { display:block; margin-top:5px; font-size:12px; font-weight:400; }
-    .back { color:white; text-decoration:none; padding:12px 18px; border-radius:12px; background:#ffffff20; font-weight:700; font-size:13px; }
+    .header-actions { display:flex; gap:8px; } .back { color:white; text-decoration:none; padding:12px 18px; border-radius:12px; background:#ffffff20; font-weight:700; font-size:13px; } .logout { color:white; border:0; padding:12px 18px; border-radius:12px; background:#ffffff20; font-weight:700; font-size:13px; }
     main { max-width:1200px; margin:auto; padding:32px 24px; }
     .card { background:white; border:1px solid #e2e8f0; border-radius:24px; box-shadow:0 8px 24px #00000006; overflow:hidden; margin-bottom:24px; }
     .card-head { padding:28px; border-bottom:1px solid #f1f5f9; }
@@ -36,7 +36,7 @@
 <body>
   <header><div class="header-inner">
     <a class="brand" href="home.html">SGE-2026<small>Gestão de Estágios IFRS</small></a>
-    <a class="back" href="home.html">← VOLTAR</a>
+    <div class="header-actions"><a class="back" href="home.html">← VOLTAR</a><button id="logoutButton" class="logout" type="button">SAIR</button></div>
   </div></header>
   <main>
     <section class="card" aria-labelledby="title">
@@ -72,6 +72,13 @@
     const validStageId = Number.isSafeInteger(stageId) && stageId > 0;
     // URLs relativas usam o mesmo servidor das páginas atuais; não é preciso configurar CORS.
     const baseUrl = validStageId ? `/termos/estagios/${stageId}` : null;
+
+    document.getElementById('logoutButton').addEventListener('click', () => {
+      ['token', 'userName', 'userId', 'userMatricula', 'role'].forEach((key) => {
+        localStorage.removeItem(key); sessionStorage.removeItem(key);
+      });
+      window.location.replace('login.html');
+    });
 
     function mensagem(texto, erro = false) {
       status.textContent = texto;

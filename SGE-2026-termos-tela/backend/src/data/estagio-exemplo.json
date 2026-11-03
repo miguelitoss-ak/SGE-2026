@@ -50,10 +50,9 @@
       "Documentar endpoints e executar testes sob supervisão."
     ],
     "seguro": {
-      "seguradora": "Seguradora exemplo",
-      "apolice": "APOLICE-EXEMPLO",
-      "contrato": "CONTRATO-EXEMPLO",
-      "capital": 20000
+      "apolice": "Seguro escolar",
+      "numero": "APOLICE-EXEMPLO",
+      "capitalSegurado": "R$ 20.000,00"
     }
   },
   "localAssinatura": "Bento Gonçalves/RS",

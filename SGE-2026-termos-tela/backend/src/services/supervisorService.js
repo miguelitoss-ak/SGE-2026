@@ -4,6 +4,16 @@ const validateEmail = require('../utils/validateEmail');
 
 class SupervisorService {
   static async createSupervisor(data) {
+    data.nome = String(data.nome || '').trim();
+    data.cpf = String(data.cpf || '').replace(/\D/g, '');
+    data.id_empresa = Number(data.id_empresa);
+
+    if (!data.nome) {
+      throw new Error('O nome do supervisor é obrigatório.');
+    }
+    if (!Number.isSafeInteger(data.id_empresa) || data.id_empresa < 1) {
+      throw new Error('Selecione uma empresa válida para o supervisor.');
+    }
     // Regra de Negócio: Validar e-mail se fornecido
     if (data.email && !validateEmail(data.email)) {
       throw new Error("O e-mail do supervisor é inválido.");
